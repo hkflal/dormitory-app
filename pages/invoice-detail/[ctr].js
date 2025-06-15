@@ -1,0 +1,689 @@
+import { useState, useEffect, useCallback } from 'react';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, writeBatch, query, where } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+import { useAuth } from '../../contexts/AuthContext';
+import { useRouter } from 'next/router';
+import { PlusIcon, ArrowDownTrayIcon, PencilIcon, TrashIcon, ArrowPathIcon, ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import AddInvoiceModal from '../../components/AddInvoiceModal';
+import AccountEditModal from '../../components/AccountEditModal';
+
+const InvoiceDetailPage = () => {
+    const { currentUser, login } = useAuth();
+    const router = useRouter();
+    const { ctr } = router.query; // Get the contract number from URL
+    
+    const [invoices, setInvoices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showDepositModal, setShowDepositModal] = useState(false);
+    const [editingInvoice, setEditingInvoice] = useState(null);
+    const [updatingStatus, setUpdatingStatus] = useState({});
+    const [generatingPdf, setGeneratingPdf] = useState(null);
+    const [showInfoModal, setShowInfoModal] = useState(false);
+    const [infoModalMessage, setInfoModalMessage] = useState('');
+    const [searchTerm, setSearchTerm] = useState("");
+    const [showAccountEditModal, setShowAccountEditModal] = useState(false);
+    const [accountInfo, setAccountInfo] = useState({
+        contract_number: '',
+        employee_names: [],
+        rental_amount: '',
+        property_name: '',
+        frequency: 1,
+        notes: ''
+    });
+
+    // Function to generate next invoice number
+    const generateNextInvoiceNumber = async (contractNumber, type = 'Z') => {
+        try {
+            const invoicesQuery = query(
+                collection(db, 'invoices'),
+                where('contract_number', '==', contractNumber)
+            );
+            
+            const snapshot = await getDocs(invoicesQuery);
+            const existingInvoices = snapshot.docs.map(doc => doc.data());
+            
+            // Filter by type and find the highest number
+            const typeInvoices = existingInvoices.filter(inv => 
+                inv.invoice_number && inv.invoice_number.includes(`-${type}`)
+            );
+            
+            if (typeInvoices.length === 0) {
+                return `${contractNumber}-${type}001`;
+            }
+            
+            const numbers = typeInvoices.map(inv => {
+                const parts = inv.invoice_number.split('-')[1];
+                if (parts && parts.startsWith(type)) {
+                    return parseInt(parts.substring(1));
+                }
+                return 0;
+            }).filter(num => !isNaN(num));
+            
+            const maxNumber = Math.max(...numbers);
+            const nextNumber = maxNumber + 1;
+            
+            return `${contractNumber}-${type}${String(nextNumber).padStart(3, '0')}`;
+        } catch (error) {
+            console.error('Error generating invoice number:', error);
+            return `${contractNumber}-${type}001`;
+        }
+    };
+
+    const fetchContractInvoices = useCallback(async () => {
+        if (!currentUser || !ctr) {
+            console.log('No authenticated user or contract number, skipping fetch');
+            setLoading(false);
+            return;
+        }
+        
+        setLoading(true);
+        try {
+            // Simplified query without orderBy (to avoid index requirement)
+            const invoicesQuery = query(
+                collection(db, 'invoices'),
+                where('contract_number', '==', ctr)
+            );
+            
+            const invoicesSnapshot = await getDocs(invoicesQuery);
+            let invoicesData = invoicesSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            
+            // Sort in JavaScript instead (temporary fix)
+            invoicesData.sort((a, b) => {
+                const dateA = a.created_at?.toDate?.() || new Date(a.created_at || 0);
+                const dateB = b.created_at?.toDate?.() || new Date(b.created_at || 0);
+                return dateB - dateA; // Descending order (newest first)
+            });
+            
+            // Auto-update status for overdue invoices on load
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+            const batch = writeBatch(db);
+            let updatesMade = 0;
+            
+            invoicesData = invoicesData.map(invoice => {
+                // Convert Firestore timestamp to Date if needed
+                let endDate = invoice.end_date;
+                if (endDate && endDate.toDate) {
+                    endDate = endDate.toDate();
+                } else if (endDate) {
+                    endDate = new Date(endDate);
+                }
+
+                if (endDate && invoice.status === 'pending' && endDate < today) {
+                    const invoiceRef = doc(db, 'invoices', invoice.id);
+                    batch.update(invoiceRef, { status: 'overdue' });
+                    updatesMade++;
+                    return { ...invoice, status: 'overdue' };
+                }
+                return invoice;
+            });
+
+            if (updatesMade > 0) {
+                await batch.commit();
+                console.log(`Updated ${updatesMade} overdue invoices`);
+            }
+            
+            setInvoices(invoicesData);
+            deriveAccountInfo(invoicesData);
+        } catch (error) {
+            console.error('Error fetching contract invoices:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, [ctr, currentUser]);
+
+    useEffect(() => {
+        fetchContractInvoices();
+    }, [fetchContractInvoices]);
+
+    const getStatusLabel = (status) => {
+        switch (status) {
+            case 'paid': return '已付款';
+            case 'pending': return '待付款';
+            case 'overdue': return '逾期';
+            case 'newly_signed': return '新簽約';
+            default: return '未知';
+        }
+    };
+    
+    const openEditModal = (invoice) => {
+        setEditingInvoice(invoice);
+        setShowAddModal(true);
+    };
+
+    const openAddInvoiceModal = async () => {
+        // Pre-populate with suggested invoice number
+        const suggestedNumber = await generateNextInvoiceNumber(ctr, 'Z');
+        setEditingInvoice({
+            contract_number: ctr,
+            invoice_number: suggestedNumber,
+            status: 'pending'
+        });
+        setShowAddModal(true);
+    };
+
+    const openAddDepositModal = async () => {
+        // Pre-populate with suggested deposit invoice number
+        const suggestedNumber = await generateNextInvoiceNumber(ctr, 'A');
+        setEditingInvoice({
+            contract_number: ctr,
+            invoice_number: suggestedNumber,
+            status: 'pending',
+            is_deposit: true
+        });
+        setShowDepositModal(true);
+    };
+
+    const handleDownloadInvoice = async (invoice) => {
+        if (!invoice || generatingPdf === invoice.id) return;
+        if (invoice.status === 'newly_signed') {
+            setInfoModalMessage('This is a newly signed contract. Please generate the first invoice using the "Generate First Invoice" button before downloading.');
+            setShowInfoModal(true);
+            return;
+        }
+        // If docxUrl exists, download the DOCX directly
+        if (invoice.docxUrl) {
+            const a = document.createElement('a');
+            a.href = invoice.docxUrl;
+            a.download = `${invoice.invoice_number}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            return;
+        }
+        setGeneratingPdf(invoice.id);
+        try {
+            // Use the Firebase Function via the rewrite configured in firebase.json
+            const response = await fetch(`/api/generate-invoice-pdf?invoiceId=${invoice.id}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    throw new Error(errorJson.message || 'Failed to download invoice');
+                } catch (e) {
+                    throw new Error(`Failed to download invoice: ${errorText}`);
+                }
+            }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${invoice.invoice_number}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading invoice:', error);
+            alert(`無法下載發票: ${error.message}`);
+        } finally {
+            setGeneratingPdf(null);
+        }
+    };
+
+    const handleStatusChange = async (invoiceId, newStatus) => {
+        setUpdatingStatus(prev => ({ ...prev, [invoiceId]: true }));
+        try {
+            // Update invoice status in Firestore
+            const invoiceRef = doc(db, 'invoices', invoiceId);
+            await updateDoc(invoiceRef, { 
+                status: newStatus,
+                updated_at: new Date()
+            });
+            
+            setInvoices(prevInvoices =>
+                prevInvoices.map(inv =>
+                    inv.id === invoiceId ? { ...inv, status: newStatus } : inv
+                )
+            );
+        } catch (error) {
+            console.error('Failed to update status', error);
+        } finally {
+            setUpdatingStatus(prev => ({ ...prev, [invoiceId]: false }));
+        }
+    };
+    
+    const handleDeleteInvoice = async (invoiceId) => {
+        if (window.confirm('Are you sure you want to delete this invoice?')) {
+            try {
+                // Delete invoice from Firestore
+                const invoiceRef = doc(db, 'invoices', invoiceId);
+                await deleteDoc(invoiceRef);
+                
+                setInvoices(invoices.filter(i => i.id !== invoiceId));
+            } catch (error) {
+                console.error('Failed to delete invoice', error);
+            }
+        }
+    };
+
+    const formatCurrency = (amount) => amount != null ? `HK$${Number(amount).toFixed(2)}` : 'N/A';
+    const formatDate = (date) => {
+        if (!date) return 'N/A';
+        // Handle Firestore timestamp
+        if (date.toDate) {
+            return date.toDate().toLocaleDateString('en-CA');
+        }
+        // Handle regular date string/object
+        return new Date(date).toLocaleDateString('en-CA');
+    };
+
+    const getStatusBadge = (status) => {
+        const badgeStyles = {
+            paid: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+            pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+            overdue: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+            newly_signed: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+        };
+        return (
+            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${badgeStyles[status] || 'bg-gray-100 text-gray-800'}`}>
+                {getStatusLabel(status)}
+            </span>
+        );
+    };
+
+    // Filter invoices by search term
+    const filteredInvoices = searchTerm.trim()
+        ? invoices.filter(inv =>
+            (inv.invoice_number || "").toLowerCase().includes(searchTerm.trim().toLowerCase())
+        )
+        : invoices;
+
+    const calculateTotal = (amount, nEmployees, frequency) => {
+        const unitPrice = parseFloat(amount) || 0;
+        const employees = parseInt(nEmployees) || 1;
+        const period = parseInt(frequency) || 1;
+        return unitPrice * employees * period;
+    };
+
+    const InvoiceCard = ({ invoice }) => {
+        const totalPrice = calculateTotal(invoice.amount, invoice.n_employees, invoice.frequency);
+        
+        // Compact horizontal card for all invoices - keeping exact same design as main page
+        return (
+            <div className="px-3 py-2 my-1 bg-white rounded shadow-sm dark:bg-gray-800 flex items-center min-h-[56px]">
+                <div className="flex-1 grid grid-cols-6 gap-2 items-center">
+                    <div className="flex flex-col">
+                        <span className="text-xs font-medium text-primary-600 truncate dark:text-primary-400">
+                            {invoice.invoice_number}
+                            {invoice.is_deposit && <span className="ml-1 text-orange-500">(押金)</span>}
+                        </span>
+                        {invoice.auto_generated && (
+                            <span className="text-xs bg-blue-100 text-blue-800 px-1 rounded mt-1 inline-block w-fit dark:bg-blue-900 dark:text-blue-300">
+                                續約 - 自動生成
+                            </span>
+                        )}
+                    </div>
+                    <span className="text-xs text-gray-900 dark:text-white">{invoice.contract_number}</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {(invoice.employee_names || []).join(', ')}
+                        {invoice.n_employees && <span className="ml-1 text-gray-400">({invoice.n_employees}人)</span>}
+                    </span>
+                    <div className="flex flex-col">
+                        <span className="text-xs font-medium text-gray-900 dark:text-white">
+                            {formatCurrency(totalPrice)}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                            {formatCurrency(invoice.amount)} × {invoice.n_employees || 1} × {invoice.frequency || 1}
+                        </span>
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{formatDate(invoice.start_date)} ~ {formatDate(invoice.end_date)}</span>
+                    <span>{getStatusBadge(invoice.status)}</span>
+                </div>
+                <div className="flex items-center space-x-1 ml-2">
+                    <button onClick={() => handleDownloadInvoice(invoice)} disabled={generatingPdf === invoice.id} className="p-1 text-green-600 hover:text-green-900 disabled:opacity-50" title={invoice.docxUrl ? '下載DOCX' : '下載PDF'}>
+                        {generatingPdf === invoice.id ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : <ArrowDownTrayIcon className="h-4 w-4" />}
+                    </button>
+                    <select value={invoice.status} onChange={(e) => handleStatusChange(invoice.id, e.target.value)} disabled={updatingStatus[invoice.id]}
+                        className="text-xs border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white">
+                        <option value="pending">待付款</option>
+                        <option value="paid">已付款</option>
+                        <option value="overdue">逾期</option>
+                    </select>
+                    <button onClick={() => openEditModal(invoice)} className="p-1 text-primary-600 hover:text-primary-900" title="編輯">
+                        <PencilIcon className="h-4 w-4" />
+                    </button>
+                    <button onClick={() => handleDeleteInvoice(invoice.id)} className="p-1 text-red-600 hover:text-red-900" title="刪除">
+                        <TrashIcon className="h-4 w-4" />
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
+    const [loginForm, setLoginForm] = useState({ email: 'kazaffong@hkflal.com', password: '' });
+    const [loginError, setLoginError] = useState('');
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setIsLoggingIn(true);
+        setLoginError('');
+        try {
+            await login(loginForm.email, loginForm.password);
+        } catch (error) {
+            setLoginError('Invalid email or password. Please try again.');
+            console.error('Login error:', error);
+        } finally {
+            setIsLoggingIn(false);
+        }
+    };
+
+    const deriveAccountInfo = useCallback((invoicesData) => {
+        if (invoicesData.length === 0) return;
+        
+        // Get the most recent non-deposit invoice to derive account info
+        const recentInvoice = invoicesData
+            .filter(inv => !inv.is_deposit)
+            .sort((a, b) => {
+                const dateA = a.created_at?.toDate?.() || new Date(a.created_at || 0);
+                const dateB = b.created_at?.toDate?.() || new Date(b.created_at || 0);
+                return dateB - dateA;
+            })[0];
+        
+        if (recentInvoice) {
+            setAccountInfo({
+                contract_number: recentInvoice.contract_number || ctr,
+                employee_names: recentInvoice.employee_names || [],
+                rental_amount: recentInvoice.amount || '',
+                property_name: recentInvoice.property_name || '',
+                frequency: recentInvoice.frequency || 1,
+                notes: recentInvoice.notes || ''
+            });
+        }
+    }, [ctr]);
+
+    const handleUpdateAccountInfo = async (updatedInfo) => {
+        try {
+            // Update all future invoices (pending/overdue) with new account information
+            const batch = writeBatch(db);
+            let updateCount = 0;
+            
+            invoices.forEach(invoice => {
+                if (['pending', 'overdue'].includes(invoice.status)) {
+                    // Recalculate n_employees based on updated employee names
+                    const nEmployees = updatedInfo.employee_names ? updatedInfo.employee_names.length : 0;
+                    
+                    const invoiceRef = doc(db, 'invoices', invoice.id);
+                    batch.update(invoiceRef, {
+                        employee_names: updatedInfo.employee_names,
+                        amount: parseFloat(updatedInfo.rental_amount) || invoice.amount,
+                        property_name: updatedInfo.property_name,
+                        frequency: updatedInfo.frequency,
+                        n_employees: nEmployees,
+                        notes: updatedInfo.notes,
+                        updated_at: new Date()
+                    });
+                    updateCount++;
+                }
+            });
+            
+            if (updateCount > 0) {
+                await batch.commit();
+                console.log(`Updated ${updateCount} invoices with new account information`);
+                
+                // Refresh the invoices to show updated data
+                await fetchContractInvoices();
+                
+                setInfoModalMessage(`成功更新 ${updateCount} 張發票的帳戶資訊`);
+                setShowInfoModal(true);
+            } else {
+                setInfoModalMessage('沒有找到可更新的發票（只更新待付款和逾期發票）');
+                setShowInfoModal(true);
+            }
+            
+            setAccountInfo(updatedInfo);
+            setShowAccountEditModal(false);
+            
+        } catch (error) {
+            console.error('Error updating account information:', error);
+            setInfoModalMessage('更新帳戶資訊時發生錯誤');
+            setShowInfoModal(true);
+        }
+    };
+
+    if (!currentUser) {
+        return (
+            <div className="p-4 md:p-6 lg:p-8">
+                <div className="max-w-md mx-auto">
+                    <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Sign In Required</h1>
+                    <form onSubmit={handleLogin} className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                value={loginForm.email}
+                                onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                value={loginForm.password}
+                                onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                                required
+                            />
+                        </div>
+                        {loginError && (
+                            <div className="text-red-600 text-sm">{loginError}</div>
+                        )}
+                        <button
+                            type="submit"
+                            disabled={isLoggingIn}
+                            className="w-full py-2 px-4 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                        >
+                            {isLoggingIn ? 'Signing In...' : 'Sign In'}
+                        </button>
+                    </form>
+                    <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                        Use your admin credentials to access the invoice management system.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="p-4 md:p-6 lg:p-8">
+            <header className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div className="flex items-center space-x-4">
+                    <button 
+                        onClick={() => router.back()}
+                        className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                        <ArrowLeftIcon className="w-4 h-4 mr-2" />
+                        返回
+                    </button>
+                    <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                        合約 {ctr} - 發票詳情
+                    </h1>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <button 
+                        onClick={openAddInvoiceModal}
+                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        <PlusIcon className="w-4 h-4 mr-2" />
+                        新增發票
+                    </button>
+                    <button 
+                        onClick={openAddDepositModal}
+                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                        <PlusIcon className="w-4 h-4 mr-2" />
+                        新增押金發票
+                    </button>
+                </div>
+            </header>
+
+            {/* Account Information Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-lg font-medium text-gray-900 dark:text-white">帳戶資訊</h2>
+                        <button
+                            onClick={() => setShowAccountEditModal(true)}
+                            className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-primary-600 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:bg-primary-900 dark:text-primary-300 dark:border-primary-700 dark:hover:bg-primary-800">
+                            <PencilIcon className="w-4 h-4 mr-1" />
+                            編輯帳戶資訊
+                        </button>
+                    </div>
+                </div>
+                <div className="px-6 py-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                合約號碼
+                            </label>
+                            <p className="text-sm text-gray-900 dark:text-white font-mono bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded">
+                                {accountInfo.contract_number || ctr}
+                            </p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                租戶姓名 ({accountInfo.employee_names?.length || 0}人)
+                            </label>
+                            <p className="text-sm text-gray-900 dark:text-white">
+                                {accountInfo.employee_names?.join(', ') || '未設定'}
+                            </p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                租金總額
+                            </label>
+                            <div className="text-sm text-gray-900 dark:text-white">
+                                <span className="font-medium">
+                                    {accountInfo.rental_amount ? formatCurrency(calculateTotal(accountInfo.rental_amount, accountInfo.employee_names?.length, accountInfo.frequency)) : '未設定'}
+                                </span>
+                                {accountInfo.rental_amount && (
+                                    <div className="text-xs text-gray-500 mt-1">
+                                        {formatCurrency(accountInfo.rental_amount)} × {accountInfo.employee_names?.length || 1}人 × {accountInfo.frequency || 1}個月
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                物業名稱
+                            </label>
+                            <p className="text-sm text-gray-900 dark:text-white">
+                                {accountInfo.property_name || '未設定'}
+                            </p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                租期
+                            </label>
+                            <p className="text-sm text-gray-900 dark:text-white">
+                                {accountInfo.frequency ? `${accountInfo.frequency}個月` : '未設定'}
+                                {accountInfo.frequency === 1 && ' (月租)'}
+                                {accountInfo.frequency === 3 && ' (季租)'}
+                                {accountInfo.frequency === 6 && ' (半年租)'}
+                                {accountInfo.frequency === 12 && ' (年租)'}
+                            </p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                備註
+                            </label>
+                            <p className="text-sm text-gray-900 dark:text-white">
+                                {accountInfo.notes || '無'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {loading ? (<p>Loading invoices for contract {ctr}...</p>) : (
+                <main>
+                    <div className="py-2">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                            所有發票 ({filteredInvoices.length})
+                        </h3>
+                        <div>
+                            {filteredInvoices.length === 0 ? (
+                                <div className="text-center py-8">
+                                    <p className="text-gray-500 dark:text-gray-400">此合約暫無發票記錄</p>
+                                    <button 
+                                        onClick={openAddInvoiceModal}
+                                        className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md shadow-sm hover:bg-primary-700">
+                                        <PlusIcon className="w-5 h-5 mr-2" />
+                                        建立第一張發票
+                                    </button>
+                                </div>
+                            ) : (
+                                filteredInvoices.map(invoice => <InvoiceCard key={invoice.id} invoice={invoice} />)
+                            )}
+                        </div>
+                    </div>
+                </main>
+            )}
+
+            {showAddModal && (
+                <AddInvoiceModal
+                    isOpen={showAddModal}
+                    onClose={() => setShowAddModal(false)}
+                    onSave={fetchContractInvoices}
+                    invoiceData={editingInvoice}
+                />
+            )}
+
+            {showDepositModal && (
+                <AddInvoiceModal
+                    isOpen={showDepositModal}
+                    onClose={() => setShowDepositModal(false)}
+                    onSave={fetchContractInvoices}
+                    invoiceData={editingInvoice}
+                    isDepositInvoice={true}
+                />
+            )}
+
+            {showInfoModal && (
+                <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div className="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl dark:bg-gray-800 sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                            <div>
+                                <div className="flex items-center justify-center w-12 h-12 mx-auto bg-blue-100 rounded-full">
+                                    <InformationCircleIcon className="w-6 h-6 text-blue-600" aria-hidden="true" />
+                                </div>
+                                <div className="mt-3 text-center sm:mt-5">
+                                    <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white" id="modal-title">Action Required</h3>
+                                    <div className="mt-2"><p className="text-sm text-gray-500 dark:text-gray-400">{infoModalMessage}</p></div>
+                                </div>
+                            </div>
+                            <div className="mt-5 sm:mt-6">
+                                <button type="button" onClick={() => setShowInfoModal(false)} className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white border border-transparent rounded-md shadow-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:text-sm">
+                                    OK
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Account Edit Modal */}
+            {showAccountEditModal && (
+                <AccountEditModal
+                    isOpen={showAccountEditModal}
+                    onClose={() => setShowAccountEditModal(false)}
+                    accountInfo={accountInfo}
+                    onSave={handleUpdateAccountInfo}
+                />
+            )}
+        </div>
+    );
+};
+
+export default InvoiceDetailPage;

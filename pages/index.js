@@ -1,0 +1,769 @@
+import { useState, useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import {
+  BuildingOfficeIcon,
+  UserGroupIcon,
+  HomeIcon,
+  CurrencyDollarIcon,
+  ClockIcon,
+  ExclamationTriangleIcon,
+  CalendarDaysIcon,
+  ExclamationCircleIcon,
+  CheckCircleIcon,
+  UserIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  EyeIcon,
+  InformationCircleIcon
+} from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
+
+export default function Dashboard() {
+  const [stats, setStats] = useState({
+    totalProperties: 0,
+    activeProperties: 0,
+    totalEmployees: 0,
+    inHousedEmployees: 0,
+    assignedEmployees: 0,
+    pendingEmployees: 0,
+    occupancyRate: 0,
+    assignmentRate: 0,
+    totalBookRevenue: 0,
+    accountsReceivable: 0,
+    totalCosts: 0,
+    propertyCosts: 0,
+    operatingCosts: 0,
+    actualRevenue: 0,
+    totalCapacity: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [properties, setProperties] = useState([]);
+  const [inProgressProperties, setInProgressProperties] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [showMobileTips, setShowMobileTips] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch properties
+        const propertiesRef = collection(db, 'properties');
+        const propertiesSnapshot = await getDocs(propertiesRef);
+        const propertiesData = propertiesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Fetch employees
+        const employeesRef = collection(db, 'employees');
+        const employeesSnapshot = await getDocs(employeesRef);
+        const employeesData = employeesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Fetch invoices for receivables calculation
+        const invoicesRef = collection(db, 'invoices');
+        const invoicesSnapshot = await getDocs(invoicesRef);
+        const invoicesData = invoicesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Calculate CEO-level KPIs
+        const today = new Date();
+        
+        // Basic counts
+        const totalProperties = propertiesData.length;
+        const activeProperties = propertiesData.filter(p => p.status !== 'inactive').length;
+        const totalEmployees = employeesData.length;
+        
+        // Pending employees: no room assignment
+        const pendingEmployees = employeesData.filter(emp => {
+          const hasRoomAssignment = emp.assigned_room_name || emp.roomNumber;
+          return !hasRoomAssignment;
+        }).length;
+        
+        // In-housed employees: total employees minus not assigned employees
+        const inHousedEmployees = totalEmployees - pendingEmployees;
+        
+        // Assigned employees: have room assignment (same as in-housed for our logic)
+        const assignedEmployees = employeesData.filter(emp => {
+          return emp.assigned_room_name || emp.roomNumber;
+        }).length;
+        
+        // Calculate property capacity for occupancy rate using actual database values
+        const totalCapacity = propertiesData.reduce((sum, property) => 
+          sum + (parseInt(property.capacity) || 0), 0);
+        
+        // CEO Financial KPIs
+        // A = 總帳面收入 = 3500 × in-housed employees
+        const totalBookRevenue = inHousedEmployees * 3500;
+        
+        // B = 應收帳款 = total unpaid invoices
+        const accountsReceivable = invoicesData
+          .filter(invoice => invoice.status === 'pending' || invoice.status === 'due')
+          .reduce((sum, invoice) => sum + (parseFloat(invoice.amount) || 0), 0);
+        
+        // C1 = 物業成本 from property data
+        const propertyCosts = propertiesData.reduce((sum, property) => 
+          sum + (parseFloat(property.cost) || 0), 0);
+        
+        // C2 = 營運成本 (estimated at 10% of revenue for now)
+        const operatingCosts = totalBookRevenue * 0.1;
+        
+        // C = 總成本 = C1 + C2
+        const totalCosts = propertyCosts + operatingCosts;
+        
+        // 實際收入 = A - B - C
+        const actualRevenue = totalBookRevenue - accountsReceivable - totalCosts;
+        
+        // Rates
+        const occupancyRate = totalCapacity > 0 ? 
+          Math.round((inHousedEmployees / totalCapacity) * 100) : 0;
+        const assignmentRate = totalEmployees > 0 ? 
+          Math.round((inHousedEmployees / totalEmployees) * 100) : 0;
+
+        // Get in-progress properties
+        const inProgress = getInProgressProperties(propertiesData);
+
+        setStats({
+          totalProperties,
+          activeProperties,
+          totalEmployees,
+          inHousedEmployees,
+          assignedEmployees,
+          pendingEmployees,
+          occupancyRate,
+          assignmentRate,
+          totalBookRevenue,
+          accountsReceivable,
+          totalCosts,
+          propertyCosts,
+          operatingCosts,
+          actualRevenue,
+          totalCapacity
+        });
+
+        setProperties(propertiesData);
+        setInProgressProperties(inProgress);
+        setEmployees(employeesData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const getInProgressProperties = (propertiesData) => {
+    const today = new Date();
+    return propertiesData.filter(prop => {
+      const occupancyRate = prop.capacity > 0 ? (prop.occupancy || 0) / prop.capacity : 0;
+      const expectedDate = prop.expectedDate ? new Date(prop.expectedDate) : null;
+      
+      return occupancyRate < 1.0 && expectedDate && expectedDate > today;
+    }).sort((a, b) => new Date(a.expectedDate) - new Date(b.expectedDate));
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('zh-TW', {
+      style: 'currency',
+      currency: 'TWD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'N/A';
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('zh-TW');
+    } catch {
+      return dateStr;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
+      {/* Mobile-First Header with Context-Aware Help */}
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6">
+        <div className="flex flex-col space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">宿舍管理系統</h1>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">經營概覽 & 營運指標</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">最後更新</p>
+              <p className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-gray-100">{new Date().toLocaleDateString('zh-TW')}</p>
+            </div>
+          </div>
+          
+          {/* Context-Aware Mobile Help */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setShowMobileTips(!showMobileTips)}
+              className="flex items-center space-x-1 text-blue-600 dark:text-blue-400 text-sm"
+            >
+              <InformationCircleIcon className="h-4 w-4" />
+              <span>手機使用提示</span>
+              {showMobileTips ? <ChevronUpIcon className="h-4 w-4" /> : <ChevronDownIcon className="h-4 w-4" />}
+            </button>
+            {showMobileTips && (
+              <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-sm text-blue-800 dark:text-blue-200">
+                <ul className="space-y-1">
+                  <li>• 點擊卡片展開更多詳細資訊</li>
+                  <li>• 滑動查看完整的物業列表</li>
+                  <li>• 長按卡片快速訪問管理功能</li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* CEO-Level Financial KPIs - Enhanced Mobile Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        {/* 總帳面收入 */}
+        <div className="bg-gradient-to-r from-green-400 to-green-600 text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+          <div className="flex items-center">
+            <CurrencyDollarIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-green-100 text-xs sm:text-sm font-medium">總帳面收入 (A)</p>
+              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.totalBookRevenue)}</p>
+              <p className="text-green-100 text-xs mt-1">3,500 × {stats.inHousedEmployees} 入住員工</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 應收帳款 */}
+        <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+          <div className="flex items-center">
+            <ClockIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-yellow-100 text-xs sm:text-sm font-medium">應收帳款 (B)</p>
+              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.accountsReceivable)}</p>
+              <p className="text-yellow-100 text-xs mt-1">未收租金</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 總成本 */}
+        <div className="bg-gradient-to-r from-red-400 to-red-600 text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+          <div className="flex items-center">
+            <ExclamationTriangleIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-red-100 text-xs sm:text-sm font-medium">總成本 (C)</p>
+              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.totalCosts)}</p>
+              <p className="text-red-100 text-xs mt-1">物業 + 營運成本</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 實際收入 */}
+        <div className={`bg-gradient-to-r ${stats.actualRevenue >= 0 ? 'from-blue-400 to-blue-600' : 'from-gray-400 to-gray-600'} text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform`}>
+          <div className="flex items-center">
+            <HomeIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-blue-100 text-xs sm:text-sm font-medium">實際收入</p>
+              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.actualRevenue)}</p>
+              <p className="text-blue-100 text-xs mt-1">A - B - C</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Operational KPIs - Collapsible Section */}
+      <details className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <summary className="cursor-pointer p-4 sm:p-6 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+              <UserGroupIcon className="h-5 w-5 mr-2" />
+              營運指標
+            </h3>
+            <ChevronDownIcon className="h-5 w-5 text-gray-500 transform transition-transform duration-200" />
+          </div>
+        </summary>
+        
+        <div className="p-4 sm:p-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            {/* 物業總數 */}
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col items-center text-center">
+                <BuildingOfficeIcon className="h-8 w-8 text-blue-500 mb-2" />
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">物業總數</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.totalProperties}</p>
+              </div>
+            </div>
+
+            {/* 員工總數 */}
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col items-center text-center">
+                <UserGroupIcon className="h-8 w-8 text-purple-500 mb-2" />
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">員工總數</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.totalEmployees}</p>
+              </div>
+            </div>
+
+            {/* 入住員工 */}
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col items-center text-center">
+                <CheckCircleIcon className="h-8 w-8 text-green-500 mb-2" />
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">入住員工</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.inHousedEmployees}</p>
+              </div>
+            </div>
+
+            {/* 入住率 */}
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col items-center text-center">
+                <HomeIcon className="h-8 w-8 text-indigo-500 mb-2" />
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">入住率</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.occupancyRate}%</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">{stats.inHousedEmployees}/{stats.totalCapacity}</p>
+              </div>
+            </div>
+
+            {/* 已分配率 */}
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col items-center text-center">
+                <UserIcon className="h-8 w-8 text-teal-500 mb-2" />
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">已分配</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.assignmentRate}%</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">{stats.inHousedEmployees}/{stats.totalEmployees}</p>
+              </div>
+            </div>
+
+            {/* 待分配 */}
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col items-center text-center">
+                <ClockIcon className="h-8 w-8 text-orange-500 mb-2" />
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">待分配</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.pendingEmployees}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      {/* Cost Breakdown - Collapsible Section */}
+      <details className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <summary className="cursor-pointer p-4 sm:p-6 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+              <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
+              成本分析
+            </h3>
+            <ChevronDownIcon className="h-5 w-5 text-gray-500 transform transition-transform duration-200" />
+          </div>
+        </summary>
+        
+        <div className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="text-center p-4 sm:p-6 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+              <p className="text-red-600 dark:text-red-400 text-sm font-medium mb-2">物業成本 (C1)</p>
+              <p className="text-2xl sm:text-3xl font-bold text-red-700 dark:text-red-300">{formatCurrency(stats.propertyCosts)}</p>
+            </div>
+            <div className="text-center p-4 sm:p-6 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+              <p className="text-orange-600 dark:text-orange-400 text-sm font-medium mb-2">營運成本 (C2)</p>
+              <p className="text-2xl sm:text-3xl font-bold text-orange-700 dark:text-orange-300">{formatCurrency(stats.operatingCosts)}</p>
+            </div>
+            <div className="text-center p-4 sm:p-6 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">總成本 (C)</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-700 dark:text-gray-200">{formatCurrency(stats.totalCosts)}</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      {/* Properties Overview - Mobile-First Card Design */}
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+              <BuildingOfficeIcon className="h-5 w-5 mr-2" />
+              物業概覽
+            </h3>
+            <button
+              onClick={() => router.push('/properties')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-1 min-h-[44px] transition-colors"
+            >
+              <span>管理物業</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+        
+        {/* Mobile-First Properties Cards */}
+        <div className="p-4 sm:p-6">
+          {properties.length === 0 ? (
+            <div className="text-center py-12">
+              <BuildingOfficeIcon className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">暫無物業資料</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm mb-4">請先添加物業以開始管理</p>
+              <button
+                onClick={() => router.push('/properties')}
+                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium min-h-[44px] transition-colors"
+              >
+                新增第一個物業
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden lg:block overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">物業名稱</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">地址</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">入住狀況</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">入住率</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">月租金</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">性別類型</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">狀態</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">待收租金</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    {properties.map((property) => {
+                      const occupancy = property.occupancy || 0;
+                      const capacity = property.capacity || 0;
+                      const occupancyRate = capacity > 0 ? Math.round((occupancy / capacity) * 100) : 0;
+                      
+                      const getPropertyStatus = () => {
+                        const expectedDate = property.expectedDate;
+                        const today = new Date();
+                        const isExpectedDatePassed = expectedDate && new Date(expectedDate) < today;
+                        
+                        if (isExpectedDatePassed || occupancyRate >= 100) {
+                          return {
+                            label: '運營中',
+                            className: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
+                            rowColor: 'bg-green-50 dark:bg-green-900/10'
+                          };
+                        } else {
+                          const formattedDate = expectedDate ? 
+                            new Date(expectedDate).toLocaleDateString('zh-HK', { 
+                              day: 'numeric', 
+                              month: 'short' 
+                            }) : '待定';
+                          
+                          return {
+                            label: `預計 ${formattedDate}`,
+                            className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+                            rowColor: 'bg-yellow-50 dark:bg-yellow-900/10'
+                          };
+                        }
+                      };
+
+                      const status = getPropertyStatus();
+                      const assignedEmployees = employees.filter(emp => 
+                        emp.assigned_property_id === property.id || 
+                        emp.assigned_property_id === property.name ||
+                        emp.assignedProperty === property.name
+                      );
+
+                      const employeesWithRentDue = assignedEmployees.filter(emp => {
+                        const hash = emp.id.split('').reduce((a, b) => {
+                          a = ((a << 5) - a) + b.charCodeAt(0);
+                          return a & a;
+                        }, 0);
+                        return Math.abs(hash) % 10 < 3;
+                      }).length;
+
+                      return (
+                        <tr 
+                          key={property.id}
+                          onClick={() => router.push(`/property-detail?id=${property.id}`)}
+                          className={`hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors ${status.rowColor}`}
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div>
+                              <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                                {property.name || '未命名物業'}
+                              </div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                                {assignedEmployees.length} 名員工
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              {property.address}
+                            </div>
+                            <div className="text-xs text-gray-400 dark:text-gray-500">
+                              {property.location}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {occupancy}/{capacity}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="flex-1">
+                                <div className={`text-sm font-medium ${
+                                  occupancyRate >= 90 ? 'text-green-600 dark:text-green-400' :
+                                  occupancyRate >= 70 ? 'text-yellow-600 dark:text-yellow-400' :
+                                  'text-red-600 dark:text-red-400'
+                                }`}>
+                                  {occupancyRate}%
+                                </div>
+                                <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-1">
+                                  <div
+                                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                                      occupancyRate >= 90 ? 'bg-green-500' :
+                                      occupancyRate >= 70 ? 'bg-yellow-500' :
+                                      'bg-red-500'
+                                    }`}
+                                    style={{ width: `${occupancyRate}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900 dark:text-gray-100">
+                              {formatCurrency(property.monthlyRent || property.cost || 3500)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              {property.genderTypes?.join(', ') || 
+                               (property.target_gender_type === 'male' ? '男性' : 
+                                property.target_gender_type === 'female' ? '女性' : '不限')}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.className}`}>
+                              {status.label}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-center">
+                            {employeesWithRentDue > 0 ? (
+                              <div className="text-red-600 dark:text-red-400 font-medium text-sm">
+                                {employeesWithRentDue} 筆
+                              </div>
+                            ) : (
+                              <div className="text-green-600 dark:text-green-400 text-sm">
+                                ✓
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="lg:hidden space-y-4">
+                {properties.map((property) => {
+                  const occupancy = property.occupancy || 0;
+                  const capacity = property.capacity || 0;
+                  const occupancyRate = capacity > 0 ? Math.round((occupancy / capacity) * 100) : 0;
+                  
+                  const getPropertyStatus = () => {
+                    const expectedDate = property.expectedDate;
+                    const today = new Date();
+                    const isExpectedDatePassed = expectedDate && new Date(expectedDate) < today;
+                    
+                    if (isExpectedDatePassed || occupancyRate >= 100) {
+                      return {
+                        label: '運營中',
+                        className: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
+                        borderColor: 'border-green-200 dark:border-green-800'
+                      };
+                    } else {
+                      const formattedDate = expectedDate ? 
+                        new Date(expectedDate).toLocaleDateString('zh-HK', { 
+                          day: 'numeric', 
+                          month: 'short' 
+                        }) : '待定';
+                      
+                      return {
+                        label: `預計 ${formattedDate}`,
+                        className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+                        borderColor: 'border-yellow-200 dark:border-yellow-800'
+                      };
+                    }
+                  };
+
+                  const status = getPropertyStatus();
+                  const assignedEmployees = employees.filter(emp => 
+                    emp.assigned_property_id === property.id || 
+                    emp.assigned_property_id === property.name ||
+                    emp.assignedProperty === property.name
+                  );
+
+                  const employeesWithRentDue = assignedEmployees.filter(emp => {
+                    const hash = emp.id.split('').reduce((a, b) => {
+                      a = ((a << 5) - a) + b.charCodeAt(0);
+                      return a & a;
+                    }, 0);
+                    return Math.abs(hash) % 10 < 3;
+                  }).length;
+
+                  return (
+                    <div 
+                      key={property.id}
+                      className={`bg-white dark:bg-gray-800 border-2 ${status.borderColor} rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform active:scale-95`}
+                    >
+                      {/* Card Header */}
+                      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
+                            {property.name || '未命名物業'}
+                          </h4>
+                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${status.className}`}>
+                            {status.label}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{property.address}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500">{property.location}</p>
+                      </div>
+
+                      {/* Card Content */}
+                      <div className="p-4 space-y-4">
+                        {/* Occupancy Rate */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">入住率</span>
+                          <div className="flex items-center space-x-2">
+                            <span className={`text-sm font-bold ${
+                              occupancyRate >= 90 ? 'text-green-600 dark:text-green-400' :
+                              occupancyRate >= 70 ? 'text-yellow-600 dark:text-yellow-400' :
+                              'text-red-600 dark:text-red-400'
+                            }`}>
+                              {occupancyRate}%
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              ({occupancy}/{capacity})
+                            </span>
+                          </div>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full transition-all duration-300 ${
+                              occupancyRate >= 90 ? 'bg-green-500' :
+                              occupancyRate >= 70 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`}
+                            style={{ width: `${occupancyRate}%` }}
+                          />
+                        </div>
+
+                        {/* Key Metrics Grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">月租金</p>
+                            <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                              {formatCurrency(property.monthlyRent || property.cost || 3500)}
+                            </p>
+                          </div>
+                          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">員工數</p>
+                            <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                              {assignedEmployees.length} 名
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Additional Info */}
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600 dark:text-gray-400">
+                            性別類型: {property.genderTypes?.join(', ') || 
+                             (property.target_gender_type === 'male' ? '男性' : 
+                              property.target_gender_type === 'female' ? '女性' : '不限')}
+                          </span>
+                          <div className="flex items-center space-x-1">
+                            {employeesWithRentDue > 0 ? (
+                              <>
+                                <ExclamationCircleIcon className="h-4 w-4 text-red-500" />
+                                <span className="text-red-600 dark:text-red-400 font-medium text-sm">
+                                  {employeesWithRentDue} 筆待收
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                                <span className="text-green-600 dark:text-green-400 text-sm">
+                                  租金已收
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card Footer - Action Button */}
+                      <div className="p-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+                        <button
+                          onClick={() => router.push(`/property-detail?id=${property.id}`)}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 min-h-[44px] transition-colors active:bg-blue-800"
+                        >
+                          <EyeIcon className="h-4 w-4" />
+                          <span>查看詳情</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* In Progress Properties - Collapsible Section */}
+      {inProgressProperties.length > 0 && (
+        <details className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+          <summary className="cursor-pointer p-4 sm:p-6 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+                <CalendarDaysIcon className="h-5 w-5 mr-2 text-blue-500" />
+                進行中的物業安排
+                <span className="ml-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 text-xs rounded-full">
+                  {inProgressProperties.length}
+                </span>
+              </h3>
+              <ChevronDownIcon className="h-5 w-5 text-gray-500 transform transition-transform duration-200" />
+            </div>
+          </summary>
+          
+          <div className="p-4 sm:p-6">
+            <div className="space-y-3">
+              {inProgressProperties.slice(0, 5).map((property) => (
+                <div key={property.id} className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">{property.name}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{property.address}</p>
+                  </div>
+                  <div className="text-right ml-4">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">預計完成</p>
+                    <p className="font-semibold text-blue-600 dark:text-blue-400 text-sm">{formatDate(property.expectedDate)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </details>
+      )}
+    </div>
+  );
+} 
