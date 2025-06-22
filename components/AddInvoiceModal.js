@@ -28,50 +28,6 @@ const calculateNEmployees = (employeeNames) => {
   return employeeNames.filter(name => name && name.trim().length > 0).length;
 };
 
-// Update the handleSubmit function to include computed fields
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  try {
-    // Parse employee names
-    const employeeNamesArray = formData.employee_names
-      .split(',')
-      .map(name => name.trim())
-      .filter(name => name.length > 0);
-    
-    // Calculate computed fields
-    const frequency = calculateFrequency(formData.start_date, formData.end_date);
-    const nEmployees = calculateNEmployees(employeeNamesArray);
-    
-    const invoiceData = {
-      ...formData,
-      employee_names: employeeNamesArray,
-      amount: parseFloat(formData.amount) || 0,
-      is_deposit: isDepositInvoice,
-      frequency: frequency, // Add computed field
-      n_employees: nEmployees, // Add computed field
-      created_at: new Date(),
-      updated_at: new Date()
-    };
-    
-    if (isEditing) {
-      const invoiceRef = doc(db, 'invoices', invoiceData.id);
-      await updateDoc(invoiceRef, {
-        ...invoiceData,
-        updated_at: new Date()
-      });
-    } else {
-      await addDoc(collection(db, 'invoices'), invoiceData);
-    }
-    
-    onSave();
-    onClose();
-  } catch (error) {
-    console.error('Error saving invoice:', error);
-    alert('保存發票時發生錯誤');
-  }
-};
-
 const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoice = false }) => {
   const [formData, setFormData] = useState({
     invoice_number: '',
@@ -83,7 +39,8 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
     status: 'pending',
     notes: '',
     total: '', // Add total field
-    is_deposit: false
+    is_deposit: false,
+    n: 2 // Default deposit months for deposit invoices
   });
 
   const isEditing = Boolean(invoiceData && invoiceData.id);
@@ -177,7 +134,8 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
           status: invoiceData.status || 'pending',
           notes: invoiceData.notes || '',
           total: invoiceData.total || invoiceData.amount || '',
-          is_deposit: invoiceData.is_deposit || false
+          is_deposit: invoiceData.is_deposit || false,
+          n: invoiceData.n || (isDepositInvoice ? 2 : 1) // Default n=2 for deposits
         });
       } else {
         // Reset for new invoice with auto-generated invoice number and auto-filled data
@@ -203,7 +161,8 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
           status: invoiceData?.status || 'pending',
           notes: '',
           total: invoiceData?.total || invoiceData?.amount || latestData?.total || latestData?.amount || '',
-          is_deposit: isDepositInvoice
+          is_deposit: isDepositInvoice,
+          n: isDepositInvoice ? 2 : 1 // Default n=2 for deposit invoices, n=1 for regular
         });
       }
     };
@@ -221,10 +180,19 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Parse employee names and calculate computed fields
+    const employeeNamesArray = formData.employee_names
+      .split(',')
+      .map(name => name.trim())
+      .filter(name => name.length > 0);
+    
+    const frequency = calculateFrequency(formData.start_date, formData.end_date);
+    const nEmployees = calculateNEmployees(employeeNamesArray);
+    
     // Convert employee_names string back to an array
     const submissionData = {
         ...formData,
-        employee_names: formData.employee_names.split(',').map(name => name.trim()).filter(Boolean),
+        employee_names: employeeNamesArray,
         amount: parseFloat(formData.amount),
         total: parseFloat(formData.total) || parseFloat(formData.amount),
         start_date: new Date(formData.start_date),
@@ -232,7 +200,10 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
         created_at: isEditing ? invoiceData.created_at : new Date(),
         updated_at: new Date(),
         is_deposit: isDepositInvoice || formData.is_deposit,
-        template_type: isDepositInvoice ? 'deposit' : 'invoice' // Track which template to use
+        template_type: isDepositInvoice ? 'deposit' : 'invoice', // Track which template to use
+        frequency: frequency, // Add computed field
+        n_employees: nEmployees, // Add computed field
+        n: parseInt(formData.n) || (isDepositInvoice ? 2 : 1) // Include n field for deposit invoices
     };
 
     try {
@@ -309,7 +280,9 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300">金額 (HK$)</label>
+            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              {isDepositInvoice ? '單月押金金額 (HK$)' : '金額 (HK$)'}
+            </label>
             <input 
               type="number" 
               name="amount" 
@@ -322,19 +295,46 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
             />
           </div>
-          <div>
-            <label htmlFor="total" className="block text-sm font-medium text-gray-700 dark:text-gray-300">總計 (HK$)</label>
-            <input 
-              type="number" 
-              name="total" 
-              id="total" 
-              value={formData.total} 
-              onChange={handleChange} 
-              step="0.01"
-              placeholder="如未指定則與金額相同"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
-            />
-          </div>
+          
+          {/* Add n field for deposit invoices */}
+          {isDepositInvoice && (
+            <div>
+              <label htmlFor="n" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                按金月數 (n)
+              </label>
+              <input 
+                type="number" 
+                name="n" 
+                id="n" 
+                value={formData.n} 
+                onChange={handleChange} 
+                required 
+                min="1"
+                max="12"
+                placeholder="2"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                總押金 = 單月押金 × 人數 × 按金月數
+              </p>
+            </div>
+          )}
+          
+          {!isDepositInvoice && (
+            <div>
+              <label htmlFor="total" className="block text-sm font-medium text-gray-700 dark:text-gray-300">總計 (HK$)</label>
+              <input 
+                type="number" 
+                name="total" 
+                id="total" 
+                value={formData.total} 
+                onChange={handleChange} 
+                step="0.01"
+                placeholder="如未指定則與金額相同"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
+              />
+            </div>
+          )}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

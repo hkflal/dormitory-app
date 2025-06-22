@@ -1,0 +1,3363 @@
+[
+  {
+    "id": "0nmqP16ra2y2tDJfefWc",
+    "end_date": {
+      "_seconds": 1751212800,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1751212800,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1743436800,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10106",
+    "employee_names": [
+      "钟美媛"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "start_date": {
+      "_seconds": 1743436800,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10106-Z005",
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 785000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10106-Z005.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 164000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "2cFHZTJNcH6BJKDnf0Jj",
+    "invoice_number": "D10128-Z001",
+    "issue_date": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10128",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "due_date": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "叶洁慧",
+      "张晓冰",
+      "许水云",
+      "林丽芬",
+      "曾春芳",
+      "岑永梅",
+      "熊家文",
+      "陳麗珠"
+    ],
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 785000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10128-Z001.docx",
+    "n_employees": 8,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 169000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "4OgZE6xh7iNJ6ZJ6yCs2",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "issue_date": null,
+    "employee_names": [
+      "吉大城"
+    ],
+    "contract_number": "D10164",
+    "due_date": null,
+    "invoice_number": "CTR-D10164",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 785000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10164.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 170000000
+    },
+    "frequency": 1,
+    "end_date": {
+      "_seconds": 1752710400,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "total": 3500,
+    "notes": "",
+    "updated_at": {
+      "_seconds": 1750053753,
+      "_nanoseconds": 309000000
+    },
+    "template_type": "invoice",
+    "is_deposit": false,
+    "n": 1,
+    "start_date": {
+      "_seconds": 1750204800,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "5YKQKP3YxE5ELjilsMXM",
+    "invoice_number": "D10103-Z009",
+    "contract_number": "D10103",
+    "due_date": {
+      "_seconds": 1751212800,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1743436800,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "employee_names": [
+      "陈裕维",
+      "黄锡球"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "start_date": {
+      "_seconds": 1743436800,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1751212800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 785000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10103-Z009.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 171000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "5a74heCPODQAKdmFx4qK",
+    "employee_names": [
+      "黄金坚"
+    ],
+    "due_date": null,
+    "contract_number": "D10163",
+    "invoice_number": "CTR-D10163",
+    "amount": 0,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "issue_date": null,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 785000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10163.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 172000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "7n43H718a5TBQyi8DszR",
+    "invoice_number": "D10122-Z006",
+    "contract_number": "D10122",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "due_date": {
+      "_seconds": 1750608000,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "张展中",
+      "吴尚彬",
+      "钟海俊"
+    ],
+    "end_date": {
+      "_seconds": 1750608000,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1748016000,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1748016000,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 785000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10122-Z006.docx",
+    "n_employees": 3,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 173000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "8AerynQv36uprzNvzIQ5",
+    "issue_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "end_date": null,
+    "start_date": null,
+    "amount": 3500,
+    "due_date": null,
+    "invoice_number": "D10145-Z002",
+    "contract_number": "D10145",
+    "employee_names": [
+      "黃隆佳",
+      "卢锦行"
+    ],
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10145-Z002.docx",
+    "updated_at": {
+      "_seconds": 1749667826,
+      "_nanoseconds": 936000000
+    },
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1749667863,
+      "_nanoseconds": 760000000
+    },
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 173000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "9WyzIJVYt4Y3Huxr8gTr",
+    "start_date": {
+      "_seconds": 1749916800,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1749916800,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "吴春玉",
+      "孔梅花",
+      "林惠娟"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "amount": 3500,
+    "invoice_number": "D10116-Z0012",
+    "end_date": {
+      "_seconds": 1757779200,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10116",
+    "due_date": {
+      "_seconds": 1757779200,
+      "_nanoseconds": 0
+    },
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10116-Z0012.docx",
+    "n_employees": 3,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 174000000
+    },
+    "frequency": 3,
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1750013249,
+      "_nanoseconds": 916000000
+    }
+  },
+  {
+    "id": "CJzVlBHgOI0ztK8DayIE",
+    "contract_number": "D10156",
+    "issue_date": null,
+    "invoice_number": "CTR-D10156",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "amount": 0,
+    "due_date": null,
+    "employee_names": [
+      "陈悦江"
+    ],
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 785000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10156.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 174000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "CamiNh9RgTmANgE8DBN5",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "employee_names": [
+      "苏媚"
+    ],
+    "start_date": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1749830400,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10138-Z005",
+    "contract_number": "D10138",
+    "amount": 3500,
+    "issue_date": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1749830400,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 785000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10138-Z005.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 175000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "DgMwNSDHr2cqhGBAeG05",
+    "issue_date": {
+      "_seconds": 1745337600,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1745337600,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10129",
+    "due_date": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "梁燕紅",
+      "楊玉妃"
+    ],
+    "invoice_number": "D10129-Z003",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10129-Z003.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 176000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "DjiKZ3qWtcST00NcmiFX",
+    "due_date": null,
+    "issue_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "invoice_number": "CTR-D10159",
+    "contract_number": "D10159",
+    "amount": 0,
+    "employee_names": [
+      "陳燕",
+      "陈燕",
+      "周国利",
+      "罗源长",
+      "王金權",
+      "司徒嘉愉"
+    ],
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10159.docx",
+    "n_employees": 6,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 177000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "Dl3CGaZFlj9H26uHpJfJ",
+    "due_date": {
+      "_seconds": 1755273600,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10137",
+    "amount": 3500,
+    "end_date": {
+      "_seconds": 1755273600,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "范晓玲"
+    ],
+    "invoice_number": "D10137-Z002",
+    "issue_date": {
+      "_seconds": 1747411200,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "start_date": {
+      "_seconds": 1747411200,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10137-Z002.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 177000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "Eo0gjVolw1Y1muyi0K6h",
+    "contract_number": "D10116",
+    "amount": 3500,
+    "end_date": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "胡秋明",
+      "张瑜美"
+    ],
+    "invoice_number": "D10116-Z009",
+    "start_date": {
+      "_seconds": 1746892800,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "issue_date": {
+      "_seconds": 1746892800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10116-Z009.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 177000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "G46jVhR3VdpsDjR4T2xR",
+    "invoice_number": "CTR-D10165",
+    "issue_date": null,
+    "contract_number": "D10165",
+    "due_date": null,
+    "employee_names": [
+      "黄健生"
+    ],
+    "amount": 0,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10165.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 178000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "GCSsGNaFUffLfmZALXr6",
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1743523200,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10118",
+    "invoice_number": "D10118-Z002",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "issue_date": {
+      "_seconds": 1743523200,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "叶结华",
+      "谭荣娥"
+    ],
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10118-Z002.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 178000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "HbJ1hJaGB1hJl1GMsdhs",
+    "invoice_number": "D10103-Z013",
+    "contract_number": "D10103",
+    "employee_names": [
+      "陈裕维",
+      "黄锡球"
+    ],
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1750032000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1757894400,
+      "_nanoseconds": 0
+    },
+    "notes": "",
+    "total": 21000,
+    "is_deposit": false,
+    "n": 1,
+    "created_at": {
+      "_seconds": 1750056864,
+      "_nanoseconds": 243000000
+    },
+    "template_type": "invoice",
+    "frequency": 3,
+    "n_employees": 2,
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10103/D10103-Z013.docx",
+    "docx_file_path": "invoices/D10103/D10103-Z013.docx",
+    "docx_generation_status": "success",
+    "docx_generated_at": {
+      "_seconds": 1750056869,
+      "_nanoseconds": 29000000
+    },
+    "updated_at": {
+      "_seconds": 1750056913,
+      "_nanoseconds": 357000000
+    },
+    "lastUpdated": {
+      "_seconds": 1750091426,
+      "_nanoseconds": 313000000
+    },
+    "status": "paid"
+  },
+  {
+    "id": "HiHbFF6OzatwJxI1sy5b",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "due_date": null,
+    "start_date": null,
+    "amount": 3500,
+    "employee_names": [
+      "朱保臻",
+      "张弛",
+      "谢远光"
+    ],
+    "issue_date": null,
+    "contract_number": "D10140",
+    "invoice_number": "D10140-Z001",
+    "end_date": null,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10140-Z001.docx",
+    "n_employees": 3,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 179000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "IXkDK5U57B42bDpHeNNB",
+    "created_at": {
+      "_seconds": 1750056988,
+      "_nanoseconds": 821000000
+    },
+    "updated_at": {
+      "_seconds": 1750056988,
+      "_nanoseconds": 821000000
+    },
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/undefined/undefined.docx",
+    "docx_file_path": "invoices/undefined/undefined.docx",
+    "docx_generation_status": "success",
+    "docx_generated_at": {
+      "_seconds": 1750056991,
+      "_nanoseconds": 126000000
+    },
+    "lastUpdated": {
+      "_seconds": 1750057043,
+      "_nanoseconds": 961000000
+    },
+    "status": "paid"
+  },
+  {
+    "id": "JZqguj8KmehQpfmdYVjH",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "contract_number": "D10154",
+    "due_date": null,
+    "amount": 3500,
+    "end_date": null,
+    "employee_names": [
+      "魏伟雄",
+      "毛曉雯"
+    ],
+    "start_date": null,
+    "invoice_number": "D10154-Z001",
+    "issue_date": null,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10154-Z001.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 179000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "Kzv1LxANgf4mcFipQgGk",
+    "contract_number": "D10142",
+    "end_date": {
+      "_seconds": 1750608000,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "amount": 3500,
+    "invoice_number": "D10142-Z001",
+    "due_date": {
+      "_seconds": 1750608000,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1742745600,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1742745600,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "余泽富"
+    ],
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10142-Z001.docx",
+    "updated_at": {
+      "_seconds": 1749667833,
+      "_nanoseconds": 716000000
+    },
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1749667863,
+      "_nanoseconds": 760000000
+    },
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 180000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "L1QceqVC1m3A2tpC81B8",
+    "due_date": null,
+    "amount": 0,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "issue_date": null,
+    "employee_names": [
+      "鄧翠瑤",
+      "黄志肯",
+      "李乐彬"
+    ],
+    "invoice_number": "CTR-D10157",
+    "contract_number": "D10157",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10157.docx",
+    "n_employees": 3,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 180000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "LC725cNS3PCCANy3TVtF",
+    "contract_number": "D10160",
+    "invoice_number": "CTR-D10160",
+    "employee_names": [
+      "馬鳳儀",
+      "朱雄孟"
+    ],
+    "amount": 0,
+    "due_date": null,
+    "issue_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10160.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 181000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "LS8QzHhyfgMbSVTeywNP",
+    "contract_number": "D10111",
+    "end_date": {
+      "_seconds": 1758470400,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1750608000,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10111-Z003",
+    "employee_names": [
+      "罗祝辉",
+      "陈嘉荣"
+    ],
+    "issue_date": {
+      "_seconds": 1750608000,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1758470400,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "amount": 3500,
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10111-Z003.docx",
+    "updated_at": {
+      "_seconds": 1749667341,
+      "_nanoseconds": 436000000
+    },
+    "status": "paid",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 181000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "Lt0sQi0V65N6najuAWw4",
+    "created_at": {
+      "_seconds": 1750056965,
+      "_nanoseconds": 933000000
+    },
+    "updated_at": {
+      "_seconds": 1750056965,
+      "_nanoseconds": 933000000
+    },
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/undefined/undefined.docx",
+    "docx_file_path": "invoices/undefined/undefined.docx",
+    "docx_generation_status": "success",
+    "docx_generated_at": {
+      "_seconds": 1750056968,
+      "_nanoseconds": 780000000
+    },
+    "lastUpdated": {
+      "_seconds": 1750057043,
+      "_nanoseconds": 961000000
+    },
+    "status": "paid"
+  },
+  {
+    "id": "LvGp818SZ02mTLjS1t8P",
+    "issue_date": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10124",
+    "start_date": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "马明令",
+      "李锦宁",
+      "赖勇强",
+      "关泳琳",
+      "苏金珠"
+    ],
+    "amount": 3500,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "end_date": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10124-Z002",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10124-Z002.docx",
+    "n_employees": 5,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 182000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "MNWVrHSxOeRv1YT2gfgI",
+    "employee_names": [
+      "黄悅婷",
+      "何清霞",
+      "吴俊毅",
+      "江锦波",
+      "曾金花"
+    ],
+    "issue_date": {
+      "_seconds": 1750953600,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "contract_number": "D10101",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "invoice_number": "D10101-Z0031",
+    "due_date": {
+      "_seconds": 1753459200,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1753401600,
+      "_nanoseconds": 0
+    },
+    "notes": "",
+    "start_date": {
+      "_seconds": 1750896000,
+      "_nanoseconds": 0
+    },
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10101-Z0031.docx",
+    "updated_at": {
+      "_seconds": 1749918984,
+      "_nanoseconds": 682000000
+    },
+    "status": "paid",
+    "n_employees": 5,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 182000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "MYdWTNCYVAOKIiSyBd8q",
+    "due_date": {
+      "_seconds": 1754841600,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "谭洁敏",
+      "谭嘉欣",
+      "黄东妮"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "end_date": {
+      "_seconds": 1754841600,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1746979200,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10102",
+    "issue_date": {
+      "_seconds": 1746979200,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "invoice_number": "D10102-Z007",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10102-Z007.docx",
+    "n_employees": 3,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 183000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "N8Nmv0UHVn87zCqlC8pg",
+    "end_date": {
+      "_seconds": 1751644800,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10130",
+    "start_date": {
+      "_seconds": 1743868800,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "due_date": {
+      "_seconds": 1751644800,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "employee_names": [
+      "伍贵洪"
+    ],
+    "issue_date": {
+      "_seconds": 1743868800,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10130-Z002",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10130-Z002.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 183000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "NHnQUyULwgny4nXercFM",
+    "due_date": null,
+    "amount": 0,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "invoice_number": "CTR-D10162",
+    "contract_number": "D10162",
+    "employee_names": [
+      "李永超",
+      "黄汉林",
+      "钟金材"
+    ],
+    "issue_date": null,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10162.docx",
+    "n_employees": 3,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 184000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "Ni3Qheeo5l52kKcm9050",
+    "invoice_number": "D10141-Z006",
+    "issue_date": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "陈笑英",
+      "陈爱珍"
+    ],
+    "due_date": {
+      "_seconds": 1752595200,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10141",
+    "status": "pending",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "end_date": {
+      "_seconds": 1752595200,
+      "_nanoseconds": 0
+    },
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10141-Z006.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 184000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "NzQE2VbrZuwPI462tauc",
+    "issue_date": {
+      "_seconds": 1745856000,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "何少芳",
+      "蒙嘉敏",
+      "温清秀",
+      "欧颖"
+    ],
+    "start_date": {
+      "_seconds": 1745856000,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "contract_number": "D10106",
+    "end_date": {
+      "_seconds": 1753632000,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "due_date": {
+      "_seconds": 1753632000,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10106-Z006",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10106-Z006.docx",
+    "n_employees": 4,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 185000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "OTJWAdEBbnvH521Y3zxW",
+    "issue_date": null,
+    "due_date": null,
+    "amount": 0,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "employee_names": [
+      "李錦坤",
+      "董興濤"
+    ],
+    "contract_number": "D10148",
+    "invoice_number": "CTR-D10148",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10148.docx",
+    "updated_at": {
+      "_seconds": 1749667823,
+      "_nanoseconds": 995000000
+    },
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1749667863,
+      "_nanoseconds": 760000000
+    },
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 185000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "ObUPT3bTSUCPTJ8m0zFf",
+    "invoice_number": "D10129-Z004",
+    "issue_date": {
+      "_seconds": 1746892800,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "contract_number": "D10129",
+    "employee_names": [
+      "莫嘉強"
+    ],
+    "start_date": {
+      "_seconds": 1746892800,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10129-Z004.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 185000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "P2vnTHJtBEQseGS6dv7f",
+    "amount": 3500,
+    "invoice_number": "D10116-Z0011",
+    "employee_names": [
+      "黎燕芳"
+    ],
+    "end_date": {
+      "_seconds": 1755964800,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1748102400,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1748102400,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "contract_number": "D10116",
+    "due_date": {
+      "_seconds": 1755964800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10116-Z0011.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 186000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "PtGqUPzMgGMTrPvtIzJT",
+    "invoice_number": "D10124-Z003",
+    "contract_number": "D10124",
+    "employee_names": [
+      "马明令",
+      "李锦宁",
+      "赖勇强",
+      "关泳琳",
+      "苏金珠"
+    ],
+    "amount": 3500,
+    "total": 3500,
+    "start_date": {
+      "_seconds": 1751212800,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1759161600,
+      "_nanoseconds": 0
+    },
+    "auto_generated": true,
+    "renewal_tag": "續約 - 自動生成",
+    "renewal_source_id": "LvGp818SZ02mTLjS1t8P",
+    "template_type": "invoice",
+    "is_deposit": false,
+    "created_at": {
+      "_seconds": 1749925022,
+      "_nanoseconds": 614000000
+    },
+    "notes": "自動生成的續約發票 (基於 D10124-Z002)",
+    "n_employees": 5,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 187000000
+    },
+    "frequency": 3,
+    "updated_at": {
+      "_seconds": 1750017942,
+      "_nanoseconds": 283000000
+    },
+    "status": "overdue",
+    "docx_regeneration_requested_at": {
+      "_seconds": 1750162828,
+      "_nanoseconds": 796000000
+    },
+    "docx_generation_started_at": {
+      "_seconds": 1750162833,
+      "_nanoseconds": 763000000
+    },
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10124/D10124-Z003.docx",
+    "docx_regenerated_at": {
+      "_seconds": 1750162835,
+      "_nanoseconds": 208000000
+    },
+    "docx_file_path": "invoices/D10124/D10124-Z003.docx",
+    "docx_generation_status": "success"
+  },
+  {
+    "id": "Q8hQv4BPYfm5WYyHfTXv",
+    "invoice_number": "D10103-Z012",
+    "contract_number": "D10103",
+    "employee_names": [
+      "陈裕维",
+      "黄锡球"
+    ],
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1750982400,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1757894400,
+      "_nanoseconds": 0
+    },
+    "status": "pending",
+    "notes": "",
+    "total": 3500,
+    "is_deposit": false,
+    "n": 1,
+    "created_at": {
+      "_seconds": 1750053819,
+      "_nanoseconds": 916000000
+    },
+    "updated_at": {
+      "_seconds": 1750053819,
+      "_nanoseconds": 916000000
+    },
+    "template_type": "invoice",
+    "frequency": 3,
+    "n_employees": 2,
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10103/D10103-Z012.docx",
+    "docx_file_path": "invoices/D10103/D10103-Z012.docx",
+    "docx_generation_status": "success",
+    "docx_generated_at": {
+      "_seconds": 1750053825,
+      "_nanoseconds": 391000000
+    }
+  },
+  {
+    "id": "RUqLYMaV5BZLeqIOJ0Dl",
+    "issue_date": {
+      "_seconds": 1743523200,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10123-Z002",
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1743523200,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10123",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "employee_names": [
+      "练有芳",
+      "高芬兰",
+      "张金华",
+      "馬水英"
+    ],
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10123-Z002.docx",
+    "n_employees": 4,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 187000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "Sog5M1w0NN7NezXSbVFd",
+    "invoice_number": "D10143-Z001",
+    "contract_number": "D10143",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "employee_names": [
+      "林群英",
+      "叶清林"
+    ],
+    "due_date": {
+      "_seconds": 1756828800,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1748966400,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10143-Z001.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 188000000
+    },
+    "frequency": 3,
+    "end_date": {
+      "_seconds": 1756771200,
+      "_nanoseconds": 0
+    },
+    "total": 3500,
+    "notes": "",
+    "template_type": "invoice",
+    "is_deposit": false,
+    "n": 1,
+    "start_date": {
+      "_seconds": 1748908800,
+      "_nanoseconds": 0
+    },
+    "updated_at": {
+      "_seconds": 1750093869,
+      "_nanoseconds": 306000000
+    }
+  },
+  {
+    "id": "T0aB1hbIlDgFu2eUtbUd",
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1748707200,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1756569600,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "叶王英"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "issue_date": {
+      "_seconds": 1748707200,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1756569600,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10109-Z006",
+    "contract_number": "D10109",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10109-Z006.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 188000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "TP5aZCnH2QyBrTRZ6WGP",
+    "due_date": null,
+    "issue_date": null,
+    "invoice_number": "CTR-D10155",
+    "amount": 0,
+    "employee_names": [
+      "陳遠容",
+      "黄晓潜",
+      "黄春松",
+      "邓伟诺",
+      "林嘉炜"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "contract_number": "D10155",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10155.docx",
+    "n_employees": 5,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 188000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "UrWuAKrKKbO14VsqM49i",
+    "start_date": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "李東霏",
+      "朱昌华",
+      "胡飞",
+      "王子杰",
+      "李天杰",
+      "周培金",
+      "武天赐",
+      "欧桂凤,",
+      "陈佳宁"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "end_date": {
+      "_seconds": 1755100800,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10104",
+    "invoice_number": "D10104-Z003",
+    "due_date": {
+      "_seconds": 1755100800,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 786000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10104-Z003.docx",
+    "n_employees": 9,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 189000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "V5Bi60HM5WkrFe33iwNi",
+    "issue_date": null,
+    "amount": 0,
+    "employee_names": [
+      "王爱民",
+      "林晋洋"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "invoice_number": "CTR-D10144",
+    "contract_number": "D10144",
+    "due_date": null,
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10144.docx",
+    "updated_at": {
+      "_seconds": 1749667829,
+      "_nanoseconds": 650000000
+    },
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1749667863,
+      "_nanoseconds": 760000000
+    },
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 189000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "VXPX4S6F9QRC85gVV637",
+    "issue_date": null,
+    "due_date": null,
+    "invoice_number": "CTR-D10166",
+    "amount": 0,
+    "employee_names": [
+      "梁基志"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "contract_number": "D10166",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10166.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 190000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "VyaywtkloE2nTxQT9TMz",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "issue_date": {
+      "_seconds": 1746028800,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10109",
+    "start_date": {
+      "_seconds": 1746028800,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "刘银平"
+    ],
+    "invoice_number": "D10109-Z005",
+    "due_date": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10109-Z005.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 190000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "WQPPBWzUws6Afd8hIAZ8",
+    "contract_number": "D10131",
+    "start_date": {
+      "_seconds": 1747411200,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "潘建棋"
+    ],
+    "due_date": {
+      "_seconds": 1755273600,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "invoice_number": "D10131-Z002",
+    "issue_date": {
+      "_seconds": 1747411200,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1755273600,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10131-Z002.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 191000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "Xagk9lTAwVlWyp7YNYmq",
+    "issue_date": null,
+    "invoice_number": "CTR-D10158",
+    "due_date": null,
+    "employee_names": [
+      "杨志辉",
+      "陈凯忠",
+      "邓飞凡"
+    ],
+    "amount": 0,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "contract_number": "D10158",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10158.docx",
+    "n_employees": 3,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 191000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "YgpIDLpcjwlxB2Ex3r91",
+    "invoice_number": "D10141-Z007",
+    "contract_number": "D10141",
+    "employee_names": [
+      "周清莲"
+    ],
+    "amount": 3500,
+    "total": 3500,
+    "start_date": {
+      "_seconds": 1750521600,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1758470400,
+      "_nanoseconds": 0
+    },
+    "status": "pending",
+    "auto_generated": true,
+    "renewal_tag": "續約 - 自動生成",
+    "renewal_source_id": "jjWAbN2WurIbzRY9BGMK",
+    "template_type": "invoice",
+    "is_deposit": false,
+    "created_at": {
+      "_seconds": 1749925023,
+      "_nanoseconds": 940000000
+    },
+    "updated_at": {
+      "_seconds": 1749925023,
+      "_nanoseconds": 940000000
+    },
+    "notes": "自動生成的續約發票 (基於 D10141-Z005)",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 192000000
+    },
+    "frequency": 3,
+    "docx_regeneration_requested_at": {
+      "_seconds": 1750162831,
+      "_nanoseconds": 253000000
+    },
+    "docx_generation_started_at": {
+      "_seconds": 1750162833,
+      "_nanoseconds": 755000000
+    },
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10141/D10141-Z007.docx",
+    "docx_regenerated_at": {
+      "_seconds": 1750162835,
+      "_nanoseconds": 219000000
+    },
+    "docx_file_path": "invoices/D10141/D10141-Z007.docx",
+    "docx_generation_status": "success"
+  },
+  {
+    "id": "ZLYH2s1CVSm9LoApEjTb",
+    "end_date": {
+      "_seconds": 1757520000,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10112",
+    "due_date": {
+      "_seconds": 1757520000,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "钟勇"
+    ],
+    "start_date": {
+      "_seconds": 1749657600,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1749657600,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "invoice_number": "D10112-Z003",
+    "amount": 3500,
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10112-Z003.docx",
+    "lastUpdated": {
+      "_seconds": 1749821933,
+      "_nanoseconds": 919000000
+    },
+    "status": "paid",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 192000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "a1WvEerwNyxdXV7z3T4e",
+    "due_date": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1745424000,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "employee_names": [
+      "林健新",
+      "董德荣",
+      "黄嘉和",
+      "胡艳娟",
+      "胡艳媚",
+      "董意开"
+    ],
+    "invoice_number": "D10139-Z001",
+    "start_date": {
+      "_seconds": 1745424000,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10139",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10139-Z001.docx",
+    "n_employees": 6,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 193000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "a5reOeV9gAqIruwkQMuf",
+    "issue_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "end_date": null,
+    "start_date": null,
+    "amount": 3500,
+    "employee_names": [
+      "劳文钊"
+    ],
+    "invoice_number": "D10153-Z001",
+    "due_date": null,
+    "contract_number": "D10153",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10153-Z001.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 193000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "a6olQqM5Fs4L1jyDII4x",
+    "issue_date": {
+      "_seconds": 1749744000,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1749744000,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10121-Z007",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "due_date": {
+      "_seconds": 1752249600,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "王煜燃"
+    ],
+    "end_date": {
+      "_seconds": 1752249600,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10121",
+    "amount": 3500,
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10121-Z007.docx",
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1749888274,
+      "_nanoseconds": 800000000
+    },
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 194000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "aJdFifg9Srk78diAQelU",
+    "invoice_number": "D10135-Z002",
+    "start_date": {
+      "_seconds": 1745078400,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1752076800,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "contract_number": "D10135",
+    "employee_names": [
+      "陈基发"
+    ],
+    "end_date": {
+      "_seconds": 1752076800,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1745078400,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10135-Z002.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 194000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "b4vjuvsNVgaipeOWkkZT",
+    "invoice_number": "D10103-A002",
+    "contract_number": "D10103",
+    "employee_names": [
+      "陈裕维",
+      "黄锡球"
+    ],
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1750032000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1750032000,
+      "_nanoseconds": 0
+    },
+    "notes": "",
+    "total": 21000,
+    "is_deposit": true,
+    "n": 2,
+    "created_at": {
+      "_seconds": 1750056988,
+      "_nanoseconds": 748000000
+    },
+    "template_type": "deposit",
+    "frequency": 1,
+    "n_employees": 2,
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10103/D10103-A002.docx",
+    "docx_file_path": "invoices/D10103/D10103-A002.docx",
+    "docx_generation_status": "success",
+    "docx_generated_at": {
+      "_seconds": 1750056990,
+      "_nanoseconds": 281000000
+    },
+    "updated_at": {
+      "_seconds": 1750057090,
+      "_nanoseconds": 462000000
+    },
+    "status": "paid"
+  },
+  {
+    "id": "bPXWzg1hdYurmH2xP9fi",
+    "end_date": null,
+    "due_date": null,
+    "start_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "employee_names": [
+      "張金水",
+      "彭志彬",
+      "劉美紅"
+    ],
+    "issue_date": null,
+    "invoice_number": "D10152-Z001",
+    "amount": 3500,
+    "contract_number": "D10152",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10152-Z001.docx",
+    "n_employees": 3,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 195000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "bovuFF5iyUPoSFURgnO3",
+    "contract_number": "D10146",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "end_date": {
+      "_seconds": 1750953600,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1748361600,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10146-Z002",
+    "due_date": {
+      "_seconds": 1750953600,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "黄兰香",
+      "陈梓梅"
+    ],
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1748361600,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10146-Z002.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 195000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "cDWk7RYi0tVeyNV8vpBJ",
+    "due_date": {
+      "_seconds": 1756656000,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10145-Z001",
+    "employee_names": [
+      "吴伟池"
+    ],
+    "contract_number": "D10145",
+    "amount": 3500,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "start_date": {
+      "_seconds": 1748793600,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1748793600,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1756656000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10145-Z001.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 196000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "cX1UHiNr5YiqUI3fRnMc",
+    "contract_number": "D10161",
+    "invoice_number": "CTR-D10161",
+    "amount": 0,
+    "due_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "issue_date": null,
+    "employee_names": [
+      "冯文康",
+      "李耀辉"
+    ],
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10161.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 196000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "fYF9Yg5NeCqvdvMbiO1r",
+    "employee_names": [
+      "康少清"
+    ],
+    "invoice_number": "D00000-Z001",
+    "end_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "due_date": null,
+    "start_date": null,
+    "contract_number": "D00000",
+    "amount": 0,
+    "issue_date": null,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D00000-Z001.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 197000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "fv7l3290PmaUBd6ostpm",
+    "due_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "contract_number": "D10143",
+    "amount": 0,
+    "invoice_number": "CTR-D10143",
+    "issue_date": null,
+    "employee_names": [
+      "馮玉麗",
+      "张腾元",
+      "何尤靚",
+      "徐永燕",
+      "冼健儀",
+      "梁海金",
+      "唐文強",
+      "張浩林",
+      "陈芹娜",
+      "梁建伟",
+      "徐绍贤",
+      "郭偉勝",
+      "羅海寧",
+      "沈七林",
+      "黎漢明",
+      "唐海峰"
+    ],
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10143.docx",
+    "updated_at": {
+      "_seconds": 1749667831,
+      "_nanoseconds": 285000000
+    },
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1749667863,
+      "_nanoseconds": 761000000
+    },
+    "n_employees": 16,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 197000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "fzmAICAMYIzthfCoLGH8",
+    "start_date": {
+      "_seconds": 1765555200,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10125",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "invoice_number": "D10125-Z003",
+    "employee_names": [
+      "蔡焕良"
+    ],
+    "status": "pending",
+    "issue_date": {
+      "_seconds": 1765555200,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1758124800,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "due_date": {
+      "_seconds": 1758124800,
+      "_nanoseconds": 0
+    },
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10125-Z003.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 198000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "gH6Y3qzzenOsH9ltyEdH",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "invoice_number": "D10147-Z001",
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1748620800,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "陈富山"
+    ],
+    "end_date": {
+      "_seconds": 1756483200,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10147",
+    "due_date": {
+      "_seconds": 1756483200,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1748620800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10147-Z001.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 198000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "gSO150W4kPN2Yrn3YJVr",
+    "contract_number": "D10167",
+    "employee_names": [
+      "陳瑞儀",
+      "吳燕",
+      "龔麗君",
+      "朱美林",
+      "陳潔玲",
+      "梁建麗",
+      "龐祖榮",
+      "李雪萍",
+      "陳家良",
+      "郭梓豪",
+      "許雲英",
+      "鐘子鋒",
+      "何國安",
+      "葉杰文",
+      "陳伯輝",
+      "李連杰",
+      "王成龍",
+      "黃銳明",
+      "鄧榮基",
+      "陽銘一",
+      "王勇",
+      "王松松"
+    ],
+    "amount": 0,
+    "due_date": null,
+    "issue_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "invoice_number": "CTR-D10167",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10167.docx",
+    "n_employees": 22,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 199000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "gY0aP4vbqOkPajV8Rawt",
+    "invoice_number": "D10136-Z010",
+    "contract_number": "D10136",
+    "employee_names": [
+      "钟守信"
+    ],
+    "amount": 3500,
+    "total": 3500,
+    "status": "pending",
+    "auto_generated": true,
+    "renewal_tag": "續約 - 自動生成",
+    "renewal_source_id": "tuguxdljeHPmxRJzUMbe",
+    "template_type": "invoice",
+    "is_deposit": false,
+    "created_at": {
+      "_seconds": 1749925025,
+      "_nanoseconds": 261000000
+    },
+    "notes": "自動生成的續約發票 (基於 D10136-Z008)",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 199000000
+    },
+    "frequency": 3,
+    "end_date": {
+      "_seconds": 1758240000,
+      "_nanoseconds": 0
+    },
+    "updated_at": {
+      "_seconds": 1750042887,
+      "_nanoseconds": 817000000
+    },
+    "n": 1,
+    "start_date": {
+      "_seconds": 1750291200,
+      "_nanoseconds": 0
+    },
+    "docx_regeneration_requested_at": {
+      "_seconds": 1750162833,
+      "_nanoseconds": 672000000
+    },
+    "docx_generation_started_at": {
+      "_seconds": 1750162834,
+      "_nanoseconds": 431000000
+    },
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10136/D10136-Z010.docx",
+    "docx_regenerated_at": {
+      "_seconds": 1750162835,
+      "_nanoseconds": 231000000
+    },
+    "docx_file_path": "invoices/D10136/D10136-Z010.docx",
+    "docx_generation_status": "success"
+  },
+  {
+    "id": "gjeENVgLd5VXSS7yIjkI",
+    "invoice_number": "D10120-Z002",
+    "due_date": {
+      "_seconds": 1752249600,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1744473600,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1752249600,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10120",
+    "start_date": {
+      "_seconds": 1744473600,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "employee_names": [
+      "黄伟梅"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10120-Z002.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 199000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "h9nVf8bFsn4FXam5LGIc",
+    "employee_names": [
+      "胡荧姬",
+      "叶思劲",
+      "邓北生",
+      "张阳文"
+    ],
+    "contract_number": "D10127",
+    "issue_date": {
+      "_seconds": 1746288000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1754150400,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1746288000,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1754150400,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10127-Z002",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10127-Z002.docx",
+    "n_employees": 4,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 200000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "j229pArR2lB0NICvBcZP",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "due_date": null,
+    "issue_date": null,
+    "amount": 0,
+    "invoice_number": "CTR-D10151",
+    "contract_number": "D10151",
+    "employee_names": [
+      "陈达辉"
+    ],
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10151.docx",
+    "updated_at": {
+      "_seconds": 1749667820,
+      "_nanoseconds": 51000000
+    },
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1749667863,
+      "_nanoseconds": 761000000
+    },
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 200000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "jMiDCiXXimi8VOVOD7Qe",
+    "invoice_number": "D10102-Z008",
+    "contract_number": "D10102",
+    "employee_names": [
+      "陈莉"
+    ],
+    "amount": 3500,
+    "total": 3500,
+    "start_date": {
+      "_seconds": 1751212800,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1759161600,
+      "_nanoseconds": 0
+    },
+    "status": "pending",
+    "auto_generated": true,
+    "renewal_tag": "續約 - 自動生成",
+    "renewal_source_id": "oya2Xxpf1CI7B0Ed1ufJ",
+    "template_type": "invoice",
+    "is_deposit": false,
+    "created_at": {
+      "_seconds": 1749925024,
+      "_nanoseconds": 579000000
+    },
+    "updated_at": {
+      "_seconds": 1749925024,
+      "_nanoseconds": 579000000
+    },
+    "notes": "自動生成的續約發票 (基於 D10102-Z006)",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 201000000
+    },
+    "frequency": 3,
+    "docx_regeneration_requested_at": {
+      "_seconds": 1750162836,
+      "_nanoseconds": 82000000
+    },
+    "docx_generation_started_at": {
+      "_seconds": 1750162837,
+      "_nanoseconds": 99000000
+    },
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10102/D10102-Z008.docx",
+    "docx_regenerated_at": {
+      "_seconds": 1750162837,
+      "_nanoseconds": 542000000
+    },
+    "docx_file_path": "invoices/D10102/D10102-Z008.docx",
+    "docx_generation_status": "success"
+  },
+  {
+    "id": "jhsOKyAK1RFnkHdrUD9f",
+    "invoice_number": "D10142-Z002",
+    "contract_number": "D10142",
+    "employee_names": [
+      "余泽富"
+    ],
+    "amount": 3500,
+    "total": 3500,
+    "start_date": {
+      "_seconds": 1750694400,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1758643200,
+      "_nanoseconds": 0
+    },
+    "status": "pending",
+    "auto_generated": true,
+    "renewal_tag": "續約 - 自動生成",
+    "renewal_source_id": "Kzv1LxANgf4mcFipQgGk",
+    "template_type": "invoice",
+    "is_deposit": false,
+    "created_at": {
+      "_seconds": 1749925021,
+      "_nanoseconds": 930000000
+    },
+    "updated_at": {
+      "_seconds": 1749925021,
+      "_nanoseconds": 930000000
+    },
+    "notes": "自動生成的續約發票 (基於 D10142-Z001)",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 201000000
+    },
+    "frequency": 3,
+    "docx_regeneration_requested_at": {
+      "_seconds": 1750162838,
+      "_nanoseconds": 479000000
+    },
+    "docx_generation_started_at": {
+      "_seconds": 1750162839,
+      "_nanoseconds": 350000000
+    },
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10142/D10142-Z002.docx",
+    "docx_regenerated_at": {
+      "_seconds": 1750162839,
+      "_nanoseconds": 807000000
+    },
+    "docx_file_path": "invoices/D10142/D10142-Z002.docx",
+    "docx_generation_status": "success"
+  },
+  {
+    "id": "jjWAbN2WurIbzRY9BGMK",
+    "issue_date": {
+      "_seconds": 1747843200,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "end_date": {
+      "_seconds": 1750435200,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "周清莲"
+    ],
+    "invoice_number": "D10141-Z005",
+    "due_date": {
+      "_seconds": 1750435200,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10141",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "start_date": {
+      "_seconds": 1747843200,
+      "_nanoseconds": 0
+    },
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10141-Z005.docx",
+    "updated_at": {
+      "_seconds": 1749667835,
+      "_nanoseconds": 771000000
+    },
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1749667863,
+      "_nanoseconds": 761000000
+    },
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 202000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "mapi2lfQqJFGaNGw9AFS",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "amount": 3500,
+    "issue_date": {
+      "_seconds": 1748880000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1756742400,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "李铭欣"
+    ],
+    "contract_number": "D10133",
+    "start_date": {
+      "_seconds": 1748880000,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10133-Z002",
+    "due_date": {
+      "_seconds": 1756742400,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10133-Z002.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 202000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "nIaiSzYwIy01SwK9c19b",
+    "invoice_number": "D10122-Z007",
+    "contract_number": "D10122",
+    "employee_names": [
+      "张展中",
+      "吴尚彬",
+      "钟海俊"
+    ],
+    "amount": 3500,
+    "total": 3500,
+    "start_date": {
+      "_seconds": 1750694400,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1758643200,
+      "_nanoseconds": 0
+    },
+    "status": "pending",
+    "auto_generated": true,
+    "renewal_tag": "續約 - 自動生成",
+    "renewal_source_id": "7n43H718a5TBQyi8DszR",
+    "template_type": "invoice",
+    "is_deposit": false,
+    "created_at": {
+      "_seconds": 1749925021,
+      "_nanoseconds": 62000000
+    },
+    "updated_at": {
+      "_seconds": 1749925021,
+      "_nanoseconds": 62000000
+    },
+    "notes": "自動生成的續約發票 (基於 D10122-Z006)",
+    "n_employees": 3,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 203000000
+    },
+    "frequency": 3,
+    "docx_regeneration_requested_at": {
+      "_seconds": 1750162840,
+      "_nanoseconds": 854000000
+    },
+    "docx_generation_started_at": {
+      "_seconds": 1750162841,
+      "_nanoseconds": 170000000
+    },
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10122/D10122-Z007.docx",
+    "docx_regenerated_at": {
+      "_seconds": 1750162841,
+      "_nanoseconds": 837000000
+    },
+    "docx_file_path": "invoices/D10122/D10122-Z007.docx",
+    "docx_generation_status": "success"
+  },
+  {
+    "id": "oi4ZRTB37WIoXnUo20AG",
+    "due_date": null,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "contract_number": "D10150",
+    "employee_names": [
+      "容俊贤"
+    ],
+    "issue_date": null,
+    "amount": 0,
+    "invoice_number": "CTR-D10150",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10150.docx",
+    "updated_at": {
+      "_seconds": 1749667821,
+      "_nanoseconds": 663000000
+    },
+    "status": "paid",
+    "lastUpdated": {
+      "_seconds": 1749667863,
+      "_nanoseconds": 761000000
+    },
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 203000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "oya2Xxpf1CI7B0Ed1ufJ",
+    "invoice_number": "D10102-Z006",
+    "employee_names": [
+      "陈莉"
+    ],
+    "contract_number": "D10102",
+    "start_date": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "due_date": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10102-Z006.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 204000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "pJtEgSHqDDOEK7mCR2dR",
+    "invoice_number": "D10146-Z003",
+    "contract_number": "D10146",
+    "employee_names": [
+      "黄兰香",
+      "陈梓梅"
+    ],
+    "amount": 3500,
+    "total": 3500,
+    "start_date": {
+      "_seconds": 1751040000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1758988800,
+      "_nanoseconds": 0
+    },
+    "status": "pending",
+    "auto_generated": true,
+    "renewal_tag": "續約 - 自動生成",
+    "renewal_source_id": "bovuFF5iyUPoSFURgnO3",
+    "template_type": "invoice",
+    "is_deposit": false,
+    "created_at": {
+      "_seconds": 1749925023,
+      "_nanoseconds": 277000000
+    },
+    "updated_at": {
+      "_seconds": 1749925023,
+      "_nanoseconds": 277000000
+    },
+    "notes": "自動生成的續約發票 (基於 D10146-Z002)",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 204000000
+    },
+    "frequency": 3,
+    "docx_regeneration_requested_at": {
+      "_seconds": 1750162843,
+      "_nanoseconds": 196000000
+    },
+    "docx_generation_started_at": {
+      "_seconds": 1750162843,
+      "_nanoseconds": 453000000
+    },
+    "docx_url": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10146/D10146-Z003.docx",
+    "docx_regenerated_at": {
+      "_seconds": 1750162844,
+      "_nanoseconds": 22000000
+    },
+    "docx_file_path": "invoices/D10146/D10146-Z003.docx",
+    "docx_generation_status": "success"
+  },
+  {
+    "id": "phT9f07q00F0SWfd0iUg",
+    "issue_date": {
+      "_seconds": 1748534400,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1755532800,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10113-Z003",
+    "contract_number": "D10113",
+    "employee_names": [
+      "陈俊娣"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "end_date": {
+      "_seconds": 1755532800,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1748534400,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10113-Z003.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 204000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "qD8Q5kTzLUtNFbnrt2BM",
+    "start_date": {
+      "_seconds": 1748880000,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1751385600,
+      "_nanoseconds": 0
+    },
+    "contract_number": "D10136",
+    "employee_names": [
+      "黄家海",
+      "梁智恒"
+    ],
+    "due_date": {
+      "_seconds": 1751385600,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10136-Z009",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "amount": 3500,
+    "issue_date": {
+      "_seconds": 1748880000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10136-Z009.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 205000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "rr3aodQqZUa3td2GuhGz",
+    "amount": 0,
+    "invoice_number": "CTR-D00000",
+    "issue_date": null,
+    "employee_names": [
+      "周晓雅"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "due_date": null,
+    "contract_number": "D00000",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 787000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D00000.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 205000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "sPLXA9pxoglVBHdcqQK7",
+    "issue_date": {
+      "_seconds": 1746028800,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "start_date": {
+      "_seconds": 1746028800,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "contract_number": "D10103",
+    "invoice_number": "D10103-Z0010",
+    "employee_names": [
+      "余碧颜"
+    ],
+    "due_date": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 788000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10103-Z0010.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 206000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "sYoa3enqrnZmEQHgSlWE",
+    "contract_number": "D10153",
+    "amount": 0,
+    "issue_date": null,
+    "employee_names": [
+      "张小伟"
+    ],
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "due_date": null,
+    "invoice_number": "CTR-D10153",
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 788000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10153.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 206000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "snFPR7g7sen1TWvzV7SB",
+    "start_date": {
+      "_seconds": 1746288000,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "issue_date": {
+      "_seconds": 1746288000,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1754150400,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10132-Z002",
+    "contract_number": "D10132",
+    "end_date": {
+      "_seconds": 1754150400,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "伍金霞"
+    ],
+    "amount": 3500,
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 788000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10132-Z002.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 207000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "tF4GrQqHCyaX9mOImysn",
+    "invoice_number": "D10134-Z006",
+    "status": "pending",
+    "amount": 3500,
+    "contract_number": "D10134",
+    "issue_date": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "employee_names": [
+      "林曼茵",
+      "罗伟健"
+    ],
+    "due_date": {
+      "_seconds": 1752595200,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "start_date": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1752595200,
+      "_nanoseconds": 0
+    },
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10134-Z006.docx",
+    "n_employees": 2,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 207000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "tuguxdljeHPmxRJzUMbe",
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 268000000
+    },
+    "start_date": {
+      "_seconds": 1747670400,
+      "_nanoseconds": 0
+    },
+    "due_date": {
+      "_seconds": 1750262400,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10136-Z008",
+    "contract_number": "D10136",
+    "amount": 3500,
+    "employee_names": [
+      "钟守信"
+    ],
+    "issue_date": {
+      "_seconds": 1747670400,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1750262400,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 788000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10136-Z008.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 208000000
+    },
+    "frequency": 1
+  },
+  {
+    "id": "uYPJA8LptXuA2Poz52RJ",
+    "employee_names": [
+      "陈超文"
+    ],
+    "contract_number": "D10103",
+    "due_date": {
+      "_seconds": 1756569600,
+      "_nanoseconds": 0
+    },
+    "invoice_number": "D10103-Z0011",
+    "amount": 3500,
+    "end_date": {
+      "_seconds": 1756569600,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "start_date": {
+      "_seconds": 1748707200,
+      "_nanoseconds": 0
+    },
+    "issue_date": {
+      "_seconds": 1748707200,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749510981,
+      "_nanoseconds": 788000000
+    },
+    "status": "paid",
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10103-Z0011.docx",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 209000000
+    },
+    "frequency": 3
+  },
+  {
+    "id": "wYdkj9EOUzzuwhUTN3QB",
+    "due_date": {
+      "_seconds": 1757520000,
+      "_nanoseconds": 0
+    },
+    "start_date": {
+      "_seconds": 1749657600,
+      "_nanoseconds": 0
+    },
+    "created_at": {
+      "_seconds": 1749510903,
+      "_nanoseconds": 267000000
+    },
+    "contract_number": "D10114",
+    "employee_names": [
+      "伍诺琦"
+    ],
+    "invoice_number": "D10114-Z002",
+    "issue_date": {
+      "_seconds": 1749657600,
+      "_nanoseconds": 0
+    },
+    "end_date": {
+      "_seconds": 1757520000,
+      "_nanoseconds": 0
+    },
+    "amount": 3500,
+    "docxUrl": "https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10114-Z002.docx",
+    "lastUpdated": {
+      "_seconds": 1749821933,
+      "_nanoseconds": 922000000
+    },
+    "status": "paid",
+    "n_employees": 1,
+    "computed_fields_added": {
+      "_seconds": 1749927075,
+      "_nanoseconds": 209000000
+    },
+    "frequency": 3
+  }
+]

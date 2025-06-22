@@ -100,10 +100,28 @@ export default function Properties() {
       // Fetch properties
       const propertiesRef = collection(db, 'properties');
       const propertiesSnapshot = await getDocs(propertiesRef);
-      const propertiesData = propertiesSnapshot.docs.map(doc => ({
+      let propertiesData = propertiesSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+
+      // Ensure genderTypes is an array to handle data inconsistencies
+      propertiesData = propertiesData.map(p => {
+          const newP = { ...p };
+          // Case 1: genderTypes is a string
+          if (typeof newP.genderTypes === 'string') {
+              newP.genderTypes = [newP.genderTypes];
+          } 
+          // Case 2: genderTypes is missing, but old field target_gender_type exists
+          else if (!newP.genderTypes && newP.target_gender_type) {
+              newP.genderTypes = [newP.target_gender_type];
+          }
+          // Case 3: genderTypes is not an array for some other reason, safe fallback
+          else if (!Array.isArray(newP.genderTypes)) {
+              newP.genderTypes = [];
+          }
+          return newP;
+      });
 
       // Fetch employees
       const employeesRef = collection(db, 'employees');
@@ -118,35 +136,26 @@ export default function Properties() {
       setProperties(propertiesData);
       setEmployees(employeesData);
       
-      // Filter pending employees - align with property detail page logic
-      // Only count employees who are truly unassigned (no room assignment)
+      // Filter pending employees - those NOT assigned to any property
       const pending = employeesData.filter(emp => {
-        // Check if employee is assigned to any room
-        const hasRoomAssignment = emp.assigned_room_name || emp.roomNumber;
-        
-        // Check if employee is assigned to any property (but not to a specific room)
+        // Employee is pending if they have NO property assignment
         const hasPropertyAssignment = emp.assigned_property_id || emp.assignedProperty;
+        const isPending = !hasPropertyAssignment;
         
-        // Employee is pending if they have no room assignment
-        // This aligns with property detail page logic
-        const isPending = !hasRoomAssignment;
-        
-        console.log(`Employee ${emp.name || emp.firstName || 'Unknown'}: hasRoomAssignment=${hasRoomAssignment}, hasPropertyAssignment=${hasPropertyAssignment}, isPending=${isPending}`);
+        console.log(`Employee ${emp.name || emp.firstName || 'Unknown'}: hasPropertyAssignment=${!!hasPropertyAssignment}, isPending=${isPending}`);
         return isPending;
       });
       
       console.log('Filtered pending employees:', pending);
       setPendingEmployees(pending);
       
-      // Filter housed employees - must have property assignment AND non-pending status
+      // Filter housed employees - those WITH property assignment (regardless of status!)
       const housed = employeesData.filter(emp => {
-        const status = emp.status?.toLowerCase(); 
-        const hasPropertyAssignment = emp.assigned_property_id && emp.assigned_property_id !== '';
+        // Employee is housed if they have ANY property assignment
+        const hasPropertyAssignment = emp.assigned_property_id || emp.assignedProperty;
+        const isHoused = !!hasPropertyAssignment;
         
-        // Employee is housed if they have property assignment AND status is housed/active
-        const isHoused = hasPropertyAssignment && (status === 'housed' || status === 'active');
-        
-        console.log(`Employee ${emp.name || emp.firstName || 'Unknown'}: hasPropertyAssignment=${hasPropertyAssignment}, status=${emp.status}, isHoused=${isHoused}`);
+        console.log(`Employee ${emp.name || emp.firstName || 'Unknown'}: hasPropertyAssignment=${!!hasPropertyAssignment}, status=${emp.status}, isHoused=${isHoused}`);
         return isHoused;
       });
       
@@ -409,22 +418,22 @@ export default function Properties() {
 
   const handleEditProperty = async (e) => {
     e.preventDefault();
+    if (!editingProperty) return;
+
     try {
-      const oldData = { ...editingProperty };
-      
       const propertyRef = doc(db, 'properties', editingProperty.id);
-      await updateDoc(propertyRef, {
+      const updatedData = { 
         ...editPropertyForm,
-        genderTypes: editPropertyForm.target_gender_type === 'any' ? ['Male', 'Female'] : [editPropertyForm.target_gender_type],
-        updatedAt: new Date()
-      });
-      
-      // Log the property update
+        genderTypes: [editPropertyForm.target_gender_type]
+      };
+      await updateDoc(propertyRef, updatedData);
+
+      // Log the update
       await logPropertyUpdate(
         editingProperty.id,
         editingProperty.name,
-        oldData,
-        editPropertyForm
+        editingProperty,
+        updatedData
       );
       
       setShowEditPropertyModal(false);
@@ -449,19 +458,11 @@ export default function Properties() {
   const handleAddProperty = async (e) => {
     e.preventDefault();
     try {
-      const totalCapacity = newProperty.rooms.reduce((sum, room) => sum + room.capacity, 0);
-      
       const propertyData = {
         ...newProperty,
-        capacity: totalCapacity,
+        genderTypes: [newProperty.target_gender_type],
+        capacity: newProperty.rooms.reduce((acc, room) => acc + Number(room.capacity || 0), 0),
         occupancy: 0,
-        totalRooms: newProperty.rooms.length,
-        occupiedRooms: 0,
-        genderTypes: newProperty.target_gender_type === 'any' ? ['Male', 'Female'] : [newProperty.target_gender_type],
-        amenities: ['WiFi', 'Laundry'],
-        monthlyRent: 800,
-        status: 'Available',
-        expectedDate: '2025-06-21',
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -525,7 +526,7 @@ export default function Properties() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-6 flex justify-between items-center">
+        <div className="sm:flex sm:items-center sm:justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">物業管理</h1>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -724,26 +725,17 @@ export default function Properties() {
         </DragOverlay>
 
         {/* Property Details Modal */}
-        {showPropertyModal && selectedProperty && (
-          <PropertyDetailsModal 
-            property={selectedProperty}
-            employees={getPropertyEmployees(selectedProperty.name, selectedProperty.id)}
-            onClose={() => setShowPropertyModal(false)}
-            onRoomReassignment={handleRoomReassignment}
-            onEdit={() => {
-              setShowPropertyModal(false);
-              openEditPropertyModal(selectedProperty);
-            }}
-            onKickEmployee={handleKickEmployee}
-          />
-        )}
+        <PropertyDetailsModal 
+          property={selectedProperty} 
+          employees={selectedProperty ? getPropertyEmployees(selectedProperty.name, selectedProperty.id) : []}
+          onClose={() => setSelectedProperty(null)}
+          onKickEmployee={handleKickEmployee}
+          onRoomReassignment={handleRoomReassignment}
+          onEdit={openEditPropertyModal}
+        />
 
         {/* Edit Property Modal */}
-                <Modal
-          isOpen={showEditPropertyModal}
-          onClose={() => setShowEditPropertyModal(false)}
-          title="編輯物業"
-        >
+        <Modal isOpen={showEditPropertyModal} onClose={() => setShowEditPropertyModal(false)} title="編輯物業">
           <form onSubmit={handleEditProperty} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -863,11 +855,7 @@ export default function Properties() {
         </Modal>
 
         {/* Add Property Modal */}
-                <Modal
-          isOpen={showAddModal}
-          onClose={() => setShowAddModal(false)}
-          title="新增物業"
-        >
+        <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="新增物業">
           <form onSubmit={handleAddProperty} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -923,6 +911,27 @@ export default function Properties() {
                   <option value="Female">Female</option>
                   <option value="mixed">Mixed</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Property Capacity
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  placeholder="Maximum occupants for this property"
+                  value={newProperty.capacity || ''}
+                  onChange={(e) => setNewProperty(prev => ({ 
+                    ...prev, 
+                    capacity: parseInt(e.target.value) || '' 
+                  }))}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  required
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Maximum number of people allowed in this property (independent of room capacities)
+                </p>
               </div>
             </div>
 
@@ -1247,14 +1256,14 @@ function PropertyCard({ property, housedEmployees, onViewDetails, onEdit }) {
               {status.label}
             </span>
             <button
-              onClick={() => onEdit(property)}
+              onClick={(e) => { e.stopPropagation(); onEdit(property); }}
               className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               title="編輯物業"
             >
               <PencilIcon className="h-5 w-5" />
             </button>
             <button
-              onClick={() => onViewDetails(property)}
+              onClick={(e) => { e.stopPropagation(); onViewDetails(property); }}
               className="p-1 text-gray-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               title="查看詳情"
             >
@@ -1314,6 +1323,10 @@ function PropertyCard({ property, housedEmployees, onViewDetails, onEdit }) {
 }
 
 function PropertyDetailsModal({ property, employees, onClose, onRoomReassignment, onEdit, onKickEmployee }) {
+  if (!property) return null;
+
+  const [activeTab, setActiveTab] = useState('rooms');
+  const [editingRoom, setEditingRoom] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState('');
 
   console.log('PropertyDetailsModal employees:', employees);

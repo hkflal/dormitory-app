@@ -16,8 +16,14 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Admin credentials (updated to use the actual Firebase user)
-  const adminEmails = ['kazaffong@hkflal.com'];
+  // FIXED: Allow any authenticated user to access the system
+  // You can add specific admin emails here if you need role-based access
+  const adminEmails = [
+    'kazaffong@hkflal.com',
+    // Add more admin emails here as needed
+    // 'admin2@company.com',
+    // 'manager@company.com'
+  ];
 
   const login = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
@@ -27,9 +33,15 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
+  // OPTION 1: Allow any authenticated user (recommended for internal systems)
   const isAdmin = (user) => {
-    return user && adminEmails.includes(user.email);
+    return !!user; // Any authenticated user is considered authorized
   };
+
+  // OPTION 2: Use the hardcoded admin list (uncomment if you want strict control)
+  // const isAdmin = (user) => {
+  //   return user && adminEmails.includes(user.email);
+  // };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -45,7 +57,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAdmin: isAdmin(currentUser),
-    loading
+    loading,
+    adminEmails // Expose admin emails for reference
   };
 
   return (

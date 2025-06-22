@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { db } from '../lib/firebase';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc } from 'firebase/firestore';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
-// Add custom CSS for scrollbar hiding
+// Add this comprehensive CSS fix at the very top of the component, before the return statement
+
 const customStyles = `
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -11,11 +13,130 @@ const customStyles = `
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+  
+  /* 🎯 FINAL Z-INDEX HIERARCHY FIX - CONSIDERS DESKTOP SIDEBAR */
+  /* 
+   * Desktop Sidebar: lg:fixed (implicit very high z-index, ~1000+)
+   * Mobile sidebar overlay: z-40
+   * Mobile bottom nav: z-30
+   * Top navigation: z-10
+   * 
+   * Our table elements must be BELOW the desktop sidebar!
+   */
+  
+  /* Column dropdown menus - High but below desktop sidebar */
+  .column-dropdown {
+    z-index: 35 !important;
+    position: absolute !important;
+  }
+  
+  /* ID Header - Below desktop sidebar, above everything else */
+  .data-table-id-header {
+    z-index: 30 !important;
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    background-color: rgb(249 250 251) !important;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  /* ID Cells - Below header, above content */
+  .data-table-id-cell {
+    z-index: 25 !important;
+    position: sticky !important;
+    left: 0 !important;
+    background-color: white !important;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05) !important;
+  }
+  
+  /* ID Cell hover state */
+  .data-table-id-cell-hover {
+    background-color: rgb(239 246 255) !important;
+  }
+  
+  /* Table header - Above content */
+  .data-table-header {
+    z-index: 20 !important;
+    position: sticky !important;
+    top: 0 !important;
+    background-color: rgb(249 250 251) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  /* Regular table cells - Lowest priority */
+  .data-table-cell {
+    z-index: 5 !important;
+    position: relative !important;
+    background-color: white !important;
+  }
+  
+  /* Table container - Base level */
+  .data-table-container {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  
+  /* DESKTOP RESPONSIVE: Ensure table respects sidebar space */
+  @media (min-width: 1024px) {
+    .data-table-container {
+      /* Account for sidebar width (w-64 = 16rem = 256px) */
+      margin-left: 0 !important;
+      /* Ensure table doesn't overflow into sidebar space */
+      max-width: calc(100vw - 16rem - 2rem) !important;
+    }
+    
+    /* ID column positioning - stay within content area */
+    .data-table-id-header,
+    .data-table-id-cell {
+      /* Don't stick to viewport left, stick to content area left */
+      left: 0 !important;
+    }
+  }
+  
+  /* New row styles */
+  .data-table-new-row .data-table-id-cell {
+    background-color: rgb(240 253 244) !important;
+  }
+  
+  /* Hover effects that maintain proper layering */
+  .data-table-row:hover .data-table-cell {
+    background-color: rgb(239 246 255) !important;
+  }
+  
+  .data-table-row:hover .data-table-id-cell {
+    background-color: rgb(219 234 254) !important;
+  }
+  
+  /* Ensure scrollable area respects sidebar */
+  .data-table-scroll-container {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  
+  /* Additional safeguard: Ensure no table element goes above 35 */
+  table, thead, tbody, tr, th, td {
+    z-index: auto !important;
+  }
+  
+  /* Only our specific classes get higher z-index */
+  .data-table-id-header,
+  .data-table-id-cell,
+  .data-table-header,
+  .column-dropdown {
+    /* z-index values already set above */
+  }
 `;
 
-// Inject styles
+// Inject styles (update the existing style injection)
 if (typeof document !== 'undefined') {
+  // Remove existing style if it exists
+  const existingStyle = document.getElementById('data-management-styles');
+  if (existingStyle) {
+    existingStyle.remove();
+  }
+  
   const styleSheet = document.createElement('style');
+  styleSheet.id = 'data-management-styles';
   styleSheet.textContent = customStyles;
   document.head.appendChild(styleSheet);
 }
@@ -38,44 +159,30 @@ function ColumnHeader({ columnName, onHide, showDropdown, onToggleDropdown }) {
   }, [showDropdown, columnName, onToggleDropdown]);
 
   return (
-    <div className="flex items-center justify-between group">
-      <div className="truncate flex-1" title={columnName}>
-        {columnName}
-      </div>
-      <div className="relative ml-1" ref={dropdownRef}>
+    <div className="relative">
+      <div className="flex items-center justify-between">
+        <span className="truncate">{columnName}</span>
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleDropdown(columnName, !showDropdown);
-          }}
-          className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-600 transition-all"
-          title="Column options"
+          onClick={() => onToggleDropdown(columnName, !showDropdown)}
+          className="ml-1 p-1 hover:bg-gray-200 rounded transition-colors"
         >
-          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 6L6 10l4 4 4-4-4-4z"/>
-          </svg>
+          <ChevronDownIcon className="h-3 w-3" />
         </button>
-        
-        {showDropdown && (
-          <div className="absolute right-0 top-6 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-            <div className="py-1">
-              <button
-                onClick={() => onHide(columnName)}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L12 12m-2.122-2.122L7.758 7.758M12 12l2.122-2.122m0 0L16.242 7.758M12 12l-2.122 2.122" />
-                </svg>
-                <span>Hide field</span>
-              </button>
-              <div className="border-t border-gray-100 my-1"></div>
-              <div className="px-4 py-2 text-xs text-gray-500">
-                Field type: Text
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+      
+      {showDropdown && (
+        <div className="column-dropdown absolute right-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg">
+          <button
+            onClick={() => {
+              onHide(columnName);
+              onToggleDropdown(columnName, false);
+            }}
+            className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
+          >
+            Hide Column
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -391,24 +498,49 @@ export default function DataManagement() {
 
   // Handle direct cell edit and auto-save
   const handleCellEdit = async (rowId, column, value, originalValue) => {
-    // Skip if value hasn't changed
-    if (value === originalValue) return;
-    
+    // Prevent saving if the value hasn't changed
+    if (String(value) === String(originalValue)) {
+      showToastNotification('No changes detected, save skipped.', 'info');
+      return;
+    }
+
     try {
       const docRef = doc(db, activeCollection, rowId);
-      await updateDoc(docRef, { [column]: value });
-      // Update local data
-      setData(prevData => 
-        prevData.map(item => 
-          item.id === rowId ? { ...item, [column]: value } : item
+      
+      // --- CORE FIX: Fetch the latest document data before updating ---
+      const docSnap = await getDoc(docRef);
+      let fullDocData = {};
+      if (docSnap.exists()) {
+        fullDocData = docSnap.data();
+      } else {
+        // Fallback for new rows that might not be in DB yet but exist in state
+        const stateItem = data.find(item => item.id === rowId);
+        if (stateItem) {
+          fullDocData = { ...stateItem };
+        }
+      }
+      
+      // Merge the specific field update into the full document data
+      const updatePayload = {
+        ...fullDocData,
+        [column]: value,
+        updatedAt: new Date()
+      };
+      
+      await updateDoc(docRef, updatePayload);
+      // --- END CORE FIX ---
+
+      // Update local state
+      setData(currentData =>
+        currentData.map(row =>
+          row.id === rowId ? { ...row, [column]: value } : row
         )
       );
-      showToastNotification('Updated successfully! ✅', 'success');
+
+      showToastNotification(`Successfully updated ${column} for record ${rowId.substring(0, 6)}...`);
     } catch (error) {
-      console.error('Error updating document: ', error);
-      showToastNotification('Error updating: ' + error.message, 'error');
-      // Revert the change in UI if needed
-      fetchData(activeCollection);
+      console.error('Error updating document:', error);
+      showToastNotification(`Error updating record: ${error.message}`, 'error');
     }
   };
 
@@ -616,8 +748,22 @@ export default function DataManagement() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  // Add style injection on component mount
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = customStyles;
+    document.head.appendChild(styleElement);
+    
+    return () => {
+      // Cleanup on unmount
+      if (document.head.contains(styleElement)) {
+        document.head.removeChild(styleElement);
+      }
+    };
+  }, []);
+
   return (
-    <div className="max-w-full mx-auto px-2 sm:px-4 py-4 sm:py-8">
+    <div className="data-table-container min-h-screen bg-gray-50 py-4 px-2 sm:px-4 lg:px-8">
       {/* Toast Notification - Mobile Responsive */}
       {showToast && (
         <div className={`fixed top-4 right-2 left-2 sm:left-auto sm:right-4 z-50 p-3 sm:p-4 rounded-lg shadow-lg transition-all duration-300 ${
@@ -971,8 +1117,6 @@ Jane Smith,jane@example.com,XYZ Inc,60000
         </div>
       )}
 
-
-
       {/* Loading */}
       {loading && (
         <div className="text-center py-8">
@@ -988,7 +1132,7 @@ Jane Smith,jane@example.com,XYZ Inc,60000
         </div>
       )}
 
-            {/* Hidden Columns Indicator - Desktop Only */}
+      {/* Hidden Columns Indicator - Desktop Only */}
       {!loading && !error && hiddenColumns.size > 0 && (
         <div className="mb-3 relative hidden sm:block">
           <div className="bg-orange-100 border-l-4 border-orange-500 p-3 rounded">
@@ -1103,19 +1247,20 @@ Jane Smith,jane@example.com,XYZ Inc,60000
         )}
       </div>
 
-      {/* Desktop: Table View */}
+      {/* Desktop: Table View - FINAL VERSION */}
       <div className="hidden sm:block">
         {!loading && !error && (
           <div className="bg-white shadow-lg overflow-hidden rounded-lg border relative">
-            <div className="overflow-x-auto max-h-[70vh]">
+            <div className="data-table-scroll-container overflow-x-auto max-h-[70vh] scrollbar-hide">
               <table className="w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50 sticky top-0 z-5">
+                {/* Table structure remains the same with proper CSS classes */}
+                <thead className="bg-gray-50 data-table-header">
                   <tr>
-                    <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-gray-50 z-6 w-24 min-w-[6rem] border-r-2 border-blue-200 shadow-sm">
+                    <th className="data-table-id-header px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24 min-w-[6rem] border-r-2 border-blue-200">
                       📌 ID
                     </th>
                     {getVisibleColumns().map(column => (
-                      <th key={column} className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[8rem] max-w-[12rem]">
+                      <th key={column} className="data-table-header px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[8rem] max-w-[12rem] relative">
                         <ColumnHeader 
                           columnName={column}
                           onHide={hideColumn}
@@ -1130,21 +1275,21 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                         />
                       </th>
                     ))}
-                    <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16 min-w-[4rem]">
+                    <th className="data-table-header px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16 min-w-[4rem]">
                       Del
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredData.map((item) => (
-                    <tr key={item.id} className="hover:bg-blue-50 group">
-                      <td className="px-2 py-1 text-xs text-gray-600 font-mono sticky left-0 bg-white group-hover:bg-blue-50 border-r-2 border-blue-200 z-5 shadow-sm">
+                    <tr key={item.id} className="data-table-row hover:bg-blue-50 group">
+                      <td className="data-table-id-cell group-hover:data-table-id-cell-hover px-2 py-1 text-xs text-gray-600 font-mono w-24 min-w-[6rem] border-r-2 border-blue-200">
                         <div className="truncate" title={item.id}>
                           {item.id.substring(0, 8)}...
                         </div>
                       </td>
                       {getVisibleColumns().map(column => (
-                        <td key={column} className="px-2 py-1 text-sm relative group/cell max-w-[12rem]">
+                        <td key={column} className="data-table-cell px-2 py-1 text-sm relative group/cell max-w-[12rem]">
                           <EditableCell
                             value={item[column]}
                             onSave={(newValue) => handleCellEdit(item.id, column, newValue, item[column])}
@@ -1152,26 +1297,28 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                           />
                         </td>
                       ))}
-                      <td className="px-2 py-1 text-sm text-center">
+                      <td className="data-table-cell px-2 py-1 text-center">
                         <button
                           onClick={() => handleDeleteRecord(item.id)}
-                          className="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-50"
+                          className="text-red-400 hover:text-red-600 p-1 rounded-full hover:bg-red-50 transition-colors"
                           title="Delete record"
                         >
-                          🗑️
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                         </button>
                       </td>
                     </tr>
                   ))}
                   
-                  {/* Desktop New Row */}
+                  {/* FIXED: Add new row */}
                   {showNewRow && (
-                    <tr className="bg-green-50 border-2 border-green-200">
-                      <td className="px-2 py-1 text-xs text-gray-400 font-mono sticky left-0 bg-green-50 border-r-2 border-green-300 z-5 shadow-sm">
-                        <span className="italic">new</span>
+                    <tr className="data-table-row data-table-new-row bg-green-50 border-2 border-green-200">
+                      <td className="data-table-id-cell px-2 py-1 text-xs text-green-600 font-mono border-r-2 border-green-200">
+                        <div className="text-center">NEW</div>
                       </td>
                       {getVisibleColumns().map(column => (
-                        <td key={column} className="px-2 py-1 text-sm max-w-[12rem]">
+                        <td key={column} className="data-table-cell px-2 py-1">
                           <input
                             type="text"
                             value={newRow[column] || ''}
@@ -1180,24 +1327,15 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                               [column]: e.target.value
                             })}
                             placeholder={`Enter ${column}`}
-                            className="w-full p-1 border border-green-300 bg-white focus:ring-1 focus:ring-green-500 rounded text-sm"
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handleAddNewRow();
-                              }
-                              if (e.key === 'Escape') {
-                                setShowNewRow(false);
-                                setNewRow({});
-                              }
-                            }}
+                            className="w-full p-1 border border-green-300 rounded text-sm focus:ring-1 focus:ring-green-500 bg-white"
                           />
                         </td>
                       ))}
-                      <td className="px-2 py-1 text-sm text-center">
-                        <div className="flex space-x-1 justify-center">
+                      <td className="data-table-cell px-2 py-1 text-center">
+                        <div className="flex space-x-1">
                           <button
                             onClick={handleAddNewRow}
-                            className="text-green-600 hover:text-green-800 p-1 rounded hover:bg-green-100"
+                            className="text-green-600 hover:text-green-800 text-xs bg-green-100 px-2 py-1 rounded transition-colors"
                             title="Save new record"
                           >
                             ✅
@@ -1207,10 +1345,10 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                               setShowNewRow(false);
                               setNewRow({});
                             }}
-                            className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100"
+                            className="text-gray-400 hover:text-gray-600 text-xs bg-gray-100 px-2 py-1 rounded transition-colors"
                             title="Cancel"
                           >
-                            ✖️
+                            ❌
                           </button>
                         </div>
                       </td>

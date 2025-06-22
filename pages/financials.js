@@ -1,491 +1,327 @@
 import { useState, useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { 
-  CurrencyDollarIcon, 
-  ClockIcon, 
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
+  ArrowUpIcon, 
+  ArrowDownIcon,
+  CurrencyDollarIcon,
+  BuildingOfficeIcon,
   UserGroupIcon,
-  BanknotesIcon
+  DocumentChartBarIcon,
 } from '@heroicons/react/24/outline';
-import { format } from 'date-fns';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-export default function Financials() {
+const StatCard = ({ title, value, change, changeType }) => (
+  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{title}</p>
+        <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{value}</p>
+      </div>
+      {change && (
+        <div className={`flex items-center text-sm font-semibold ${changeType === 'increase' ? 'text-green-500' : 'text-red-500'}`}>
+          {changeType === 'increase' ? <ArrowUpIcon className="h-4 w-4" /> : <ArrowDownIcon className="h-4 w-4" />}
+          <span className="ml-1">{change}</span>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+const FinancialsPage = () => {
   const [loading, setLoading] = useState(true);
-  const [financialRecords, setFinancialRecords] = useState([]);
-  const [actionableRecords, setActionableRecords] = useState([]);
-  const [error, setError] = useState(null);
-  const [updatingStatus, setUpdatingStatus] = useState({});
-  
-  // Real financial summary from actual data
-  const [financialSummary, setFinancialSummary] = useState({
-    totalMonthlyRevenue: 0,
-    totalYearlyRevenue: 0,
-    totalOverdueAmount: 0,
-    totalPendingAmount: 0,
-    totalActiveEmployees: 0,
-    overdueCount: 0,
-    pendingCount: 0,
-    currentCount: 0
-  });
+  const [currentMonthStats, setCurrentMonthStats] = useState({});
+  const [propertySummary, setPropertySummary] = useState([]);
+  const [monthlyTrends, setMonthlyTrends] = useState([]);
+  const [historicalData, setHistoricalData] = useState([]);
+  const [housedEmployees, setHousedEmployees] = useState([]);
 
   useEffect(() => {
-    fetchFinancialData();
-  }, []);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [invoicesSnapshot, propertiesSnapshot, employeesSnapshot] = await Promise.all([
+          getDocs(collection(db, 'invoices')),
+          getDocs(collection(db, 'properties')),
+          getDocs(collection(db, 'employees')),
+        ]);
 
-  const fetchFinancialData = async () => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      // Fetch financial records
-      const financialSnapshot = await getDocs(collection(db, 'financial_records'));
-      const financialList = financialSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+        const invoices = invoicesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const properties = propertiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const employees = employeesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      // Calculate current status for each record
-      const updatedRecords = financialList.map(record => {
-        const currentStatus = calculateCurrentStatus(record);
-        return { ...record, ...currentStatus };
-      });
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth();
 
-      // Filter actionable records (overdue and pending payments)
-      const actionable = updatedRecords.filter(record => 
-        record.status === 'overdue' || record.status === 'due_soon' || record.status === 'pending'
-      );
+        // 1. Current Month KPI Stats
+        const currentMonthInvoices = invoices.filter(inv => {
+          const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
+          return issueDate.getFullYear() === currentYear && issueDate.getMonth() === currentMonth;
+        });
 
-      setFinancialRecords(updatedRecords);
-      setActionableRecords(actionable);
-      
-      // Calculate real summary from actual data
-      const summary = calculateRealSummary(updatedRecords);
-      setFinancialSummary(summary);
-      
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching financial data:', error);
-      setError('Failed to load financial data. Please check your connection and try again.');
-      setLoading(false);
-    }
-  };
-
-  const calculateCurrentStatus = (record) => {
-    const today = new Date();
-    const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
-    if (!record.rentEnd) {
-      return {
-        status: 'pending',
-        isOverdue: false,
-        needsNotification: false,
-        daysUntilDue: null
-      };
-    }
-
-    const rentEnd = record.rentEnd.toDate ? record.rentEnd.toDate() : new Date(record.rentEnd);
-    const rentEndMidnight = new Date(rentEnd.getFullYear(), rentEnd.getMonth(), rentEnd.getDate());
-    
-    const timeDiff = rentEndMidnight - todayMidnight;
-    const daysUntilDue = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-    
-    const notificationDate = new Date(rentEnd);
-    notificationDate.setDate(notificationDate.getDate() - 14);
-    const notificationMidnight = new Date(notificationDate.getFullYear(), notificationDate.getMonth(), notificationDate.getDate());
-    
-    const isOverdue = todayMidnight > rentEndMidnight;
-    const needsNotification = todayMidnight >= notificationMidnight && todayMidnight <= rentEndMidnight;
-    
-    let status = 'current';
-    if (isOverdue) {
-      status = 'overdue';
-    } else if (needsNotification) {
-      status = 'due_soon';
-    }
-    
-    return {
-      status,
-      isOverdue,
-      needsNotification,
-      daysUntilDue,
-      notificationDate
-    };
-  };
-
-  const calculateRealSummary = (records) => {
-    let summary = {
-      totalMonthlyRevenue: 0,
-      totalYearlyRevenue: 0,
-      totalOverdueAmount: 0,
-      totalPendingAmount: 0,
-      totalActiveEmployees: 0,
-      overdueCount: 0,
-      pendingCount: 0,
-      currentCount: 0
-    };
-
-    records.forEach(record => {
-      if (record.monthlyRent > 0) {
-        summary.totalActiveEmployees++;
-        summary.totalMonthlyRevenue += record.monthlyRent;
+        const housedEmployeesData = employees.filter(emp => emp.status === 'housed');
+        setHousedEmployees(housedEmployeesData);
         
-        const amountDue = record.totalAmountDue || (record.monthlyRent * (record.paymentFrequency || 1));
+        const theoreticalRevenue = housedEmployeesData.reduce((acc, emp) => {
+            // Ensure rent is treated as a number, fallback to 0 if invalid
+            return acc + (parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0);
+        }, 0);
+
+        const rentCollected = currentMonthInvoices
+          .filter(inv => inv.status === 'paid')
+          .reduce((acc, inv) => acc + (parseFloat(inv.amount) || 0), 0);
         
-        switch (record.status) {
-          case 'overdue':
-            summary.overdueCount++;
-            summary.totalOverdueAmount += amountDue;
-            break;
-          case 'due_soon':
-          case 'pending':
-            summary.pendingCount++;
-            summary.totalPendingAmount += amountDue;
-            break;
-          case 'current':
-            summary.currentCount++;
-            break;
+        const totalRentalCost = properties.reduce((acc, prop) => acc + (parseFloat(prop.cost) || 0), 0);
+        const otherCosts = 0; // Placeholder for other costs, set to 0 for now
+
+        setCurrentMonthStats({
+          theoreticalRevenue: `HK$${theoreticalRevenue.toLocaleString()}`,
+          rentCollected: `HK$${rentCollected.toLocaleString()}`,
+          totalRentalCost: `HK$${totalRentalCost.toLocaleString()}`,
+          otherCosts: `HK$${otherCosts.toLocaleString()}`,
+        });
+
+        // 2. Property-wise Summary
+        const summary = properties.map(prop => {
+          const propHousedEmployees = employees.filter(emp => emp.assigned_property_id === prop.id && emp.status === 'housed');
+          
+          const propTheoreticalRevenue = propHousedEmployees.reduce((acc, emp) => {
+            return acc + (parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0);
+          }, 0);
+
+          const propEmployeeIds = employees.filter(e => e.assigned_property_id === prop.id).map(e => e.id);
+          const propInvoices = invoices.filter(inv => 
+            (inv.employee_id && propEmployeeIds.includes(inv.employee_id))
+          );
+
+          const propActualRevenue = propInvoices
+            .filter(i => i.status === 'paid')
+            .reduce((acc, i) => acc + (parseFloat(i.amount) || 0), 0);
+          
+          const propCost = parseFloat(prop.cost) || 0;
+          const actualProfit = propActualRevenue - propCost;
+
+          const occupancyRate = prop.capacity > 0 ? ((prop.occupancy / prop.capacity) * 100).toFixed(1) : 0;
+          
+          return {
+            id: prop.id,
+            name: prop.name,
+            cost: propCost,
+            theoreticalRevenue: propTheoreticalRevenue,
+            actualRevenue: propActualRevenue,
+            profit: actualProfit,
+            occupancy: `${prop.occupancy}/${prop.capacity} (${occupancyRate}%)`,
+          };
+        });
+        setPropertySummary(summary);
+        
+        // 3. Monthly Trends & Historical Data
+        // Calculate historical data for the last 6 months
+        const history = [];
+        const monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
+        const today = new Date();
+
+        const totalMonthlyCost = properties.reduce((acc, prop) => acc + (parseFloat(prop.cost) || 0), 0);
+
+        for (let i = 5; i >= 0; i--) {
+            const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+            const year = date.getFullYear();
+            const month = date.getMonth();
+
+            const monthInvoices = invoices.filter(inv => {
+                const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
+                if (isNaN(issueDate.getTime())) return false;
+                return issueDate.getFullYear() === year && issueDate.getMonth() === month;
+            });
+
+            const rentCollected = monthInvoices
+                .filter(inv => inv.status === 'paid')
+                .reduce((acc, inv) => acc + (parseFloat(inv.amount) || 0), 0);
+            
+            // Note: Employee count is a snapshot of who had checked in by that month.
+            // This assumes a 'checkInDate' field exists on employee documents.
+            const employeeCount = employees.filter(emp => {
+                const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
+                if (!checkInDate || isNaN(checkInDate.getTime())) return false; 
+                return checkInDate <= date;
+            }).length;
+
+            const pnl = rentCollected - totalMonthlyCost;
+
+            history.push({
+                month: `${year} ${monthNames[month]}`,
+                rentCollected: `HK$${rentCollected.toLocaleString()}`,
+                totalCosts: `HK$${totalMonthlyCost.toLocaleString()}`,
+                pnl: pnl,
+                employees: employeeCount,
+                properties: properties.length 
+            });
         }
+        setHistoricalData(history.reverse());
+        
+        const trends = history.map(h => ({
+          name: h.month.split(' ')[1], // e.g., "一月"
+          PNL: h.pnl,
+          Employees: h.employees,
+          Properties: h.properties
+        })).reverse(); // reverse back for chart order
+        setMonthlyTrends(trends);
+
+      } catch (error) {
+        console.error("Error fetching financial data:", error);
+      } finally {
+        setLoading(false);
       }
-    });
+    };
 
-    summary.totalYearlyRevenue = summary.totalMonthlyRevenue * 12;
-    return summary;
-  };
-
-  const handleStatusUpdate = async (recordId, newStatus) => {
-    setUpdatingStatus(prev => ({ ...prev, [recordId]: true }));
-    
-    try {
-      const recordRef = doc(db, 'financial_records', recordId);
-      const updateData = {
-        status: newStatus,
-        lastUpdated: new Date()
-      };
-
-      if (newStatus === 'current') {
-        updateData.paidDate = new Date();
-      }
-
-      await updateDoc(recordRef, updateData);
-      
-      // Refresh data after update
-      await fetchFinancialData();
-      
-    } catch (error) {
-      console.error('Error updating status:', error);
-    } finally {
-      setUpdatingStatus(prev => ({ ...prev, [recordId]: false }));
-    }
-  };
-
-  const formatDate = (date) => {
-    if (!date) return 'N/A';
-    try {
-      const d = date.toDate ? date.toDate() : new Date(date);
-      return format(d, 'yyyy-MM-dd');
-    } catch {
-      return 'Invalid Date';
-    }
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('zh-TW', {
-      style: 'currency',
-      currency: 'TWD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount || 0);
-  };
-
-  const getStatusBadge = (status, daysUntilDue) => {
-    switch (status) {
-      case 'overdue':
-        return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400">
-            <ExclamationTriangleIcon className="w-3 h-3 mr-1" />
-            逾期
-          </span>
-        );
-      case 'due_soon':
-        return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">
-            <ClockIcon className="w-3 h-3 mr-1" />
-            即將到期 ({daysUntilDue}天)
-          </span>
-        );
-      case 'pending':
-        return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400">
-            <ClockIcon className="w-3 h-3 mr-1" />
-            待處理
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
-            <CheckCircleIcon className="w-3 h-3 mr-1" />
-            正常
-          </span>
-        );
-    }
-  };
+    fetchData();
+  }, []);
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-24 bg-gray-200 rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-          <div className="flex">
-            <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
-                載入錯誤
-              </h3>
-              <p className="mt-2 text-sm text-red-700 dark:text-red-300">
-                {error}
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">財務管理</h1>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          租金收入總覽和付款狀態管理
-        </p>
-      </div>
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">財務儀表板</h1>
+          <p className="text-md text-gray-500 dark:text-gray-400 mt-1">
+            當前月份現金流、物業表現及每月趨勢分析
+          </p>
+        </header>
 
-      {/* Section 1: Rental Related Summary */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">租金財務總覽</h2>
-        
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Total Monthly Revenue */}
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <CurrencyDollarIcon className="h-6 w-6 text-green-400" />
+        {/* KPI Cards */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard title="總應收租金 (理論)" value={currentMonthStats.theoreticalRevenue} />
+          <StatCard title="總實收租金 (實際)" value={currentMonthStats.rentCollected} />
+          <StatCard title="總物業成本" value={currentMonthStats.totalRentalCost} />
+          <StatCard title="其他成本" value={currentMonthStats.otherCosts} />
+        </section>
+
+        {/* Charts and Property Summary */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">每月趨勢</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={monthlyTrends}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(128, 128, 128, 0.3)" />
+                <XAxis dataKey="name" stroke="#9ca3af" />
+                <YAxis yAxisId="left" stroke="#9ca3af" />
+                <YAxis yAxisId="right" orientation="right" stroke="#9ca3af" />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', border: 'none', borderRadius: '0.5rem' }} 
+                  labelStyle={{ color: '#f3f4f6' }}
+                />
+                <Legend />
+                <Line yAxisId="left" type="monotone" dataKey="PNL" stroke="#8884d8" strokeWidth={2} name="每月損益 (PNL)" />
+                <Line yAxisId="right" type="monotone" dataKey="Employees" stroke="#82ca9d" strokeWidth={2} name="員工人數" />
+                <Line yAxisId="right" type="monotone" dataKey="Properties" stroke="#ffc658" strokeWidth={2} name="物業數量" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">核心指標</h2>
+            <div className="space-y-4">
+               <div className="flex items-center">
+                <BuildingOfficeIcon className="h-8 w-8 text-blue-500" />
+                <div className="ml-4">
+                  <p className="text-sm text-gray-500">總物業數</p>
+                  <p className="text-2xl font-bold">{propertySummary.length}</p>
                 </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                      月租金收入
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900 dark:text-white">
-                      {formatCurrency(financialSummary.totalMonthlyRevenue)}
-                    </dd>
-                  </dl>
+              </div>
+              <div className="flex items-center">
+                <UserGroupIcon className="h-8 w-8 text-green-500" />
+                <div className="ml-4">
+                  <p className="text-sm text-gray-500">總員工人數 (已入住房) </p>
+                  <p className="text-2xl font-bold">{housedEmployees.length}</p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <DocumentChartBarIcon className="h-8 w-8 text-yellow-500" />
+                <div className="ml-4">
+                  <p className="text-sm text-gray-500">平均損益 (六個月)</p>
+                  <p className="text-2xl font-bold">HK${(monthlyTrends.reduce((acc, t) => acc + t.PNL, 0) / monthlyTrends.length).toFixed(0)}</p>
                 </div>
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Total Yearly Revenue */}
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <BanknotesIcon className="h-6 w-6 text-blue-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                      年租金收入
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900 dark:text-white">
-                      {formatCurrency(financialSummary.totalYearlyRevenue)}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
+        {/* Property-wise Financial Summary */}
+        <section className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 mb-8">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">各物業財務摘要</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">物業</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">每月成本</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總收入 (理論)</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總收入 (實際)</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">淨利潤/虧損 (實際)</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">入住率</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  {propertySummary.map((prop) => (
+                    <tr key={prop.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{prop.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-500">HK${(prop.cost || 0).toLocaleString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-500">HK${(prop.theoreticalRevenue || 0).toLocaleString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">HK${(prop.actualRevenue || 0).toLocaleString()}</td>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${(prop.profit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        HK${(prop.profit || 0).toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{prop.occupancy}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
+        </section>
 
-          {/* Overdue Amount */}
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                      逾期金額 ({financialSummary.overdueCount}筆)
-                    </dt>
-                    <dd className="text-lg font-medium text-red-600 dark:text-red-400">
-                      {formatCurrency(financialSummary.totalOverdueAmount)}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
+        {/* Historical Data Table */}
+        <section className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">每月快照</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">月份</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總實收租金</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總成本</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">每月損益 (PNL)</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">員工人數</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">物業數量</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  {historicalData.map((item) => (
+                    <tr key={item.month}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{item.month}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.rentCollected}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.totalCosts}</td>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${item.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        HK${item.pnl.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.employees}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.properties}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-
-          {/* Pending Amount */}
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <ClockIcon className="h-6 w-6 text-yellow-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                      待收金額 ({financialSummary.pendingCount}筆)
-                    </dt>
-                    <dd className="text-lg font-medium text-yellow-600 dark:text-yellow-400">
-                      {formatCurrency(financialSummary.totalPendingAmount)}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Active Employees */}
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <UserGroupIcon className="h-6 w-6 text-blue-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                      活躍租客
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900 dark:text-white">
-                      {financialSummary.totalActiveEmployees}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Current/Paid Count */}
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <CheckCircleIcon className="h-6 w-6 text-green-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                      已付款租客
-                    </dt>
-                    <dd className="text-lg font-medium text-green-600 dark:text-green-400">
-                      {financialSummary.currentCount}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Section 2: Overdue & Pending Payments Management */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            逾期和待收付款管理
-          </h2>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {actionableRecords.length} 筆需要處理
-          </span>
-        </div>
-
-        {actionableRecords.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 text-center">
-            <CheckCircleIcon className="mx-auto h-12 w-12 text-green-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">全部付款正常</h3>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              目前沒有逾期或待處理的付款記錄
-            </p>
-          </div>
-        ) : (
-          <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-              {actionableRecords.map((record) => (
-                <li key={record.id}>
-                  <div className="px-4 py-4 sm:px-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">
-                            {record.employeeName}
-                          </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            合約: {record.contractNumber}
-                          </p>
-                        </div>
-                        <div>
-                          {getStatusBadge(record.status, record.daysUntilDue)}
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">
-                            {formatCurrency(record.totalAmountDue || (record.monthlyRent * (record.paymentFrequency || 1)))}
-                          </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            到期: {formatDate(record.rentEnd)}
-                          </p>
-                        </div>
-                        
-                        <div className="flex space-x-2">
-                          <select
-                            value={record.status}
-                            onChange={(e) => handleStatusUpdate(record.id, e.target.value)}
-                            disabled={updatingStatus[record.id]}
-                            className="text-sm border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-                          >
-                            <option value="pending">待處理</option>
-                            <option value="due_soon">即將到期</option>
-                            <option value="overdue">逾期</option>
-                            <option value="current">已付款</option>
-                          </select>
-                          
-                          {updatingStatus[record.id] && (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        </section>
       </div>
     </div>
   );
-}
+};
+
+export default FinancialsPage;

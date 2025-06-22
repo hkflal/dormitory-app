@@ -58,6 +58,15 @@ const AccountEditModal = ({ isOpen, onClose, accountInfo, onSave }) => {
         return unitPrice * employees * period;
     };
 
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('zh-HK', {
+            style: 'currency',
+            currency: 'HKD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        }).format(amount || 0);
+    };
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="編輯帳戶資訊">
             <form onSubmit={handleSubmit} className="space-y-4">

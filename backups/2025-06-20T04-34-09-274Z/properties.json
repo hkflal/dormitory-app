@@ -1,0 +1,740 @@
+[
+  {
+    "id": "2sJbqAf7yyD96UJ1L9FT",
+    "createdAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 156000000
+    },
+    "status": "active",
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "remarks": "",
+    "address": "铜锣湾 宝明大厦 富明街2-6號 4楼F室",
+    "name": "宝明",
+    "location": "铜锣湾",
+    "target_gender_type": "male",
+    "monthlyRent": 3500,
+    "genderTypes": [
+      "male"
+    ],
+    "capacity": "12",
+    "expectedDate": "2025-01-01",
+    "cost": "16000",
+    "occupancy": 9,
+    "occupiedRooms": 3,
+    "totalRooms": 3,
+    "rooms": [
+      {
+        "capacity": 4,
+        "room_name": "Room-A",
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ],
+        "selectedEmployees": []
+      },
+      {
+        "room_name": "Room-B",
+        "amenities": [],
+        "selectedEmployees": [],
+        "capacity": 4
+      },
+      {
+        "capacity": 4,
+        "amenities": [],
+        "room_name": "Room-C"
+      }
+    ],
+    "updatedAt": {
+      "_seconds": 1750068194,
+      "_nanoseconds": 369000000
+    }
+  },
+  {
+    "id": "2zuSQWkW1oR6872ut8i1",
+    "status": "active",
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "createdAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 529000000
+    },
+    "name": "宝明2号",
+    "target_gender_type": "female",
+    "remarks": "",
+    "genderTypes": [
+      "Female"
+    ],
+    "address": "铜锣湾 宝明大厦 富明街2-6號 4楼E室",
+    "location": "铜锣湾",
+    "monthlyRent": 3500,
+    "occupancy": 12,
+    "occupiedRooms": 1,
+    "capacity": 12,
+    "totalRooms": 3,
+    "rooms": [
+      {
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ],
+        "room_name": "\"Room-A",
+        "capacity": 4
+      },
+      {
+        "room_name": "Room-B",
+        "capacity": 4,
+        "amenities": []
+      },
+      {
+        "capacity": 4,
+        "amenities": [],
+        "room_name": "Room-C",
+        "selectedEmployees": []
+      }
+    ],
+    "updatedAt": {
+      "_seconds": 1749324425,
+      "_nanoseconds": 687000000
+    },
+    "expectedDate": "2025-01-01",
+    "cost": "16000"
+  },
+  {
+    "id": "5hiu1CqyGB6iXM6Xhr6i",
+    "rooms": [
+      {
+        "room_name": "\"Room-A",
+        "capacity": 3,
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ]
+      }
+    ],
+    "monthlyRent": 3500,
+    "totalRooms": 1,
+    "status": "active",
+    "name": "文英楼",
+    "remarks": "",
+    "location": "九龙油麻地文英街13號",
+    "capacity": 10,
+    "address": "九龙油麻地文英街13號 文英樓中座 10/F No.13",
+    "genderTypes": [
+      "Male"
+    ],
+    "createdAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 862000000
+    },
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "updatedAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 862000000
+    },
+    "target_gender_type": "male",
+    "occupancy": 10,
+    "occupiedRooms": 1,
+    "expectedDate": "2025-01-01",
+    "cost": "18000"
+  },
+  {
+    "id": "94ZIdGFZWjeimv4yDV5Q",
+    "genderTypes": [
+      "Male"
+    ],
+    "location": "佐敦文汇街2-24號",
+    "name": "文华楼",
+    "status": "active",
+    "cost": 18000,
+    "monthlyRent": 3500,
+    "address": "佐敦文汇街2-24號 文华樓后座 1/F No.21",
+    "createdAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 792000000
+    },
+    "target_gender_type": "male",
+    "remarks": "",
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "occupancy": 12,
+    "occupiedRooms": 1,
+    "rooms": [
+      {
+        "capacity": 3,
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ],
+        "room_name": "\"Room-A"
+      },
+      {
+        "capacity": 6,
+        "amenities": [],
+        "room_name": "Room-B"
+      }
+    ],
+    "totalRooms": 2,
+    "updatedAt": {
+      "_seconds": 1749270039,
+      "_nanoseconds": 42000000
+    },
+    "capacity": "12",
+    "expectedDate": "2025-01-01"
+  },
+  {
+    "id": "CGNGF26ECM1pbQmfjfbG",
+    "remarks": "",
+    "name": "通菜街",
+    "createdAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 27000000
+    },
+    "location": "旺角通菜街72-82號1F（2樓）",
+    "totalRooms": 1,
+    "rooms": [
+      {
+        "room_name": "\"Room-A",
+        "capacity": 3,
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ]
+      }
+    ],
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "address": "旺角通菜街72-82號1F（2樓）",
+    "status": "active",
+    "target_gender_type": "male",
+    "monthlyRent": 3500,
+    "capacity": 16,
+    "occupancy": 15,
+    "occupiedRooms": 1,
+    "genderTypes": [
+      "male"
+    ],
+    "expectedDate": "2025-01-01",
+    "updatedAt": {
+      "_seconds": 1749494666,
+      "_nanoseconds": 601000000
+    },
+    "cost": "20000"
+  },
+  {
+    "id": "DHZ97KCR2axnXk5mthUf",
+    "target_gender_type": "female",
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "status": "active",
+    "totalRooms": 1,
+    "address": "九龙弥敦道760号 东海大厦 9楼23室",
+    "name": "东海",
+    "cost": 18000,
+    "monthlyRent": 3500,
+    "rooms": [
+      {
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ],
+        "room_name": "\"Room-A",
+        "capacity": 3
+      }
+    ],
+    "updatedAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 103000000
+    },
+    "location": "九龙弥敦道760号",
+    "genderTypes": [
+      "Female"
+    ],
+    "remarks": "",
+    "createdAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 103000000
+    },
+    "capacity": 12,
+    "occupancy": 12,
+    "occupiedRooms": 1,
+    "expectedDate": "2025-01-01"
+  },
+  {
+    "id": "MN5cocc57gPGiNOHV2IG",
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "monthlyRent": 3500,
+    "location": "油麻地碧街46號",
+    "updatedAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 695000000
+    },
+    "rooms": [
+      {
+        "room_name": "\"Room-A",
+        "capacity": 3,
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ]
+      }
+    ],
+    "name": "祥兴",
+    "capacity": 10,
+    "remarks": "",
+    "totalRooms": 1,
+    "createdAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 695000000
+    },
+    "target_gender_type": "male",
+    "status": "active",
+    "address": "油麻地碧街46號 祥兴大厦 11/F No.6",
+    "genderTypes": [
+      "Male"
+    ],
+    "occupancy": 10,
+    "occupiedRooms": 1,
+    "expectedDate": "2025-01-01",
+    "cost": "15000"
+  },
+  {
+    "id": "QrBnKWzGLNS7oMH3lILF",
+    "name": "有利大廈",
+    "address": "彌敦道",
+    "location": "佐敦",
+    "rooms": [
+      {
+        "room_name": "Room-A",
+        "capacity": 6
+      },
+      {
+        "room_name": "Room-B",
+        "capacity": 6
+      },
+      {
+        "room_name": "Room-C",
+        "capacity": 2
+      }
+    ],
+    "capacity": 14,
+    "occupancy": 0,
+    "totalRooms": 3,
+    "occupiedRooms": 0,
+    "genderTypes": [
+      "Female"
+    ],
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "createdAt": {
+      "_seconds": 1750067747,
+      "_nanoseconds": 247000000
+    },
+    "expectedDate": "2025-07-15",
+    "updatedAt": {
+      "_seconds": 1750067797,
+      "_nanoseconds": 125000000
+    },
+    "todos": [
+      {
+        "text": "床下單",
+        "completed": false,
+        "expectedDate": "2025-06-18",
+        "createdAt": {
+          "_seconds": 1750067862,
+          "_nanoseconds": 631000000
+        }
+      },
+      {
+        "text": "家私到貨",
+        "completed": false,
+        "expectedDate": "2025-06-30",
+        "createdAt": {
+          "_seconds": 1750067872,
+          "_nanoseconds": 854000000
+        }
+      }
+    ],
+    "cost": "19000",
+    "target_gender_type": "female",
+    "status": "pending",
+    "monthlyRent": "3500"
+  },
+  {
+    "id": "X0TnOJyJJZUYlmLvIRq4",
+    "createdAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 975000000
+    },
+    "monthlyRent": 3500,
+    "location": "旺角西洋菜南街166號7F/8樓",
+    "name": "唐七",
+    "rooms": [
+      {
+        "capacity": 3,
+        "room_name": "\"Room-A",
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ]
+      }
+    ],
+    "totalRooms": 1,
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "remarks": "",
+    "status": "active",
+    "genderTypes": [
+      "Female"
+    ],
+    "capacity": 12,
+    "address": "旺角西洋菜南街166號7F/8樓",
+    "target_gender_type": "female",
+    "updatedAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 975000000
+    },
+    "occupancy": 12,
+    "occupiedRooms": 1,
+    "expectedDate": "2025-01-01",
+    "cost": "20000"
+  },
+  {
+    "id": "Yn497dTfvKpGnLm3MDQW",
+    "target_gender_type": "female",
+    "totalRooms": 1,
+    "genderTypes": [
+      "Female"
+    ],
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "rooms": [
+      {
+        "room_name": "\"Room-A",
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ],
+        "capacity": 3
+      }
+    ],
+    "name": "耀基",
+    "capacity": 16,
+    "location": "尖沙咀柯士甸道106號",
+    "status": "active",
+    "updatedAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 184000000
+    },
+    "remarks": "Room-D\"",
+    "monthlyRent": 3500,
+    "createdAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 184000000
+    },
+    "address": "尖沙咀柯士甸道106號 耀基大厦6A",
+    "occupancy": 16,
+    "occupiedRooms": 1,
+    "expectedDate": "2025-01-01",
+    "cost": "24500"
+  },
+  {
+    "id": "Zk0KLYQVa4jvWUqWNnZw",
+    "expectedDate": "2025-06-21",
+    "location": "旺角亞皆老街56-62號",
+    "remarks": "",
+    "status": "active",
+    "genderTypes": [
+      "Male"
+    ],
+    "target_gender_type": "male",
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "updatedAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 129000000
+    },
+    "address": "旺角亞皆老街56-62號 利安大厦 3/F No.62 (Flat A)",
+    "totalRooms": 1,
+    "capacity": 12,
+    "rooms": [
+      {
+        "capacity": 3,
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ],
+        "room_name": "\"Room-A"
+      }
+    ],
+    "name": "利安",
+    "createdAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 129000000
+    },
+    "monthlyRent": 3500,
+    "occupancy": 12,
+    "occupiedRooms": 1,
+    "cost": "15500"
+  },
+  {
+    "id": "dteUeT0gFnRAkudoaQIk",
+    "monthlyRent": 3500,
+    "createdAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 931000000
+    },
+    "target_gender_type": "male",
+    "address": "旺角彌敦道607號 16樓 1607室",
+    "remarks": "Room-D\"",
+    "location": "旺角彌敦道607號",
+    "name": "新興",
+    "rooms": [
+      {
+        "capacity": 3,
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ],
+        "room_name": "\"Room-A"
+      }
+    ],
+    "totalRooms": 1,
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "capacity": "15",
+    "genderTypes": [
+      "male"
+    ],
+    "expectedDate": "2025-07-10",
+    "status": "pending",
+    "cost": "22000",
+    "todos": [
+      {
+        "completed": false,
+        "text": "buy furnitures",
+        "expectedDate": "2025-06-18",
+        "createdAt": {
+          "_seconds": 1750003121,
+          "_nanoseconds": 941000000
+        }
+      },
+      {
+        "text": "買家私",
+        "completed": false,
+        "expectedDate": "2025-06-20",
+        "createdAt": {
+          "_seconds": 1750057419,
+          "_nanoseconds": 888000000
+        }
+      }
+    ],
+    "occupiedRooms": 3,
+    "updatedAt": {
+      "_seconds": 1750058020,
+      "_nanoseconds": 490000000
+    },
+    "occupancy": "0"
+  },
+  {
+    "id": "psJDFyaHEYCBGtF7pFJP",
+    "name": "陶德",
+    "address": "旺角彌敦道646號 陶德大廈 14/F No.646",
+    "monthlyRent": 3500,
+    "totalRooms": 1,
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "target_gender_type": "male",
+    "status": "active",
+    "capacity": 12,
+    "location": "旺角彌敦道646號",
+    "rooms": [
+      {
+        "capacity": 3,
+        "room_name": "\"Room-A",
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ]
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 650000000
+    },
+    "remarks": "",
+    "genderTypes": [
+      "Male"
+    ],
+    "occupancy": 13,
+    "occupiedRooms": 2,
+    "updatedAt": {
+      "_seconds": 1750007484,
+      "_nanoseconds": 293000000
+    },
+    "expectedDate": "2025-01-01",
+    "cost": "24500"
+  },
+  {
+    "id": "uEfoZEnGbKZVfTXk4D38",
+    "monthlyRent": 3500,
+    "address": "佐敦文苑街2-24號 文苑樓中座 8/F No.14",
+    "name": "文苑楼",
+    "capacity": 10,
+    "rooms": [
+      {
+        "capacity": 3,
+        "room_name": "\"Room-A",
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ]
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 723000000
+    },
+    "genderTypes": [
+      "Female"
+    ],
+    "target_gender_type": "female",
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "remarks": "",
+    "totalRooms": 1,
+    "updatedAt": {
+      "_seconds": 1749087298,
+      "_nanoseconds": 723000000
+    },
+    "cost": 18000,
+    "status": "active",
+    "location": "佐敦文苑街2-24號",
+    "occupancy": 10,
+    "occupiedRooms": 1,
+    "expectedDate": "2025-01-01"
+  },
+  {
+    "id": "voDpQHBqtkbGvZVbN30n",
+    "location": "旺角彌敦道737-741C號金輪大廈13C",
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "rooms": [
+      {
+        "room_name": "\"Room-A",
+        "capacity": 3,
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ]
+      }
+    ],
+    "target_gender_type": "female",
+    "capacity": 22,
+    "createdAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 76000000
+    },
+    "remarks": "Room-D\"",
+    "name": "金轮",
+    "totalRooms": 1,
+    "address": "旺角彌敦道737-741C號金輪大廈13C",
+    "monthlyRent": 3500,
+    "status": "active",
+    "occupancy": 21,
+    "occupiedRooms": 1,
+    "genderTypes": [
+      "female"
+    ],
+    "expectedDate": "2025-06-01",
+    "updatedAt": {
+      "_seconds": 1749494632,
+      "_nanoseconds": 17000000
+    },
+    "cost": "32000"
+  },
+  {
+    "id": "x99th3TFvmJnw7NZvjw0",
+    "location": "旺角西洋菜南街14-24號榮華大樓",
+    "address": "旺角西洋菜南街14-24號榮華大樓 3樓 22C / No.22",
+    "remarks": "",
+    "status": "active",
+    "target_gender_type": "male",
+    "amenities": [
+      "WiFi",
+      "Laundry"
+    ],
+    "createdAt": {
+      "_seconds": 1749087299,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "name": "荣华",
+    "cost": 18000,
+    "occupancy": 12,
+    "occupiedRooms": 1,
+    "genderTypes": [
+      "male"
+    ],
+    "expectedDate": "2025-01-01",
+    "rooms": [
+      {
+        "capacity": 3,
+        "room_name": "\"Room-A",
+        "amenities": [
+          "WiFi",
+          "Air Conditioning"
+        ]
+      },
+      {
+        "capacity": 4,
+        "amenities": [],
+        "selectedEmployees": [
+          "590h0uyygQOSkeArKHfh",
+          "Bx3FkoyF2EQM8ye8wJVH",
+          "IKGc4BxiNKjTOU5HpFBY",
+          "IGVjEWcfg3BdLjQHmfv3"
+        ],
+        "room_name": "Room-B"
+      }
+    ],
+    "totalRooms": 2,
+    "updatedAt": {
+      "_seconds": 1749667401,
+      "_nanoseconds": 890000000
+    },
+    "capacity": "12"
+  }
+]

@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, writeBatch, query, where } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, writeBatch, query, where, onSnapshot } from 'firebase/firestore';
+import { db, storage } from '../../lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { PlusIcon, ArrowDownTrayIcon, PencilIcon, TrashIcon, ArrowPathIcon, ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { PlusIcon, ArrowDownTrayIcon, PencilIcon, TrashIcon, ArrowPathIcon, ArrowLeftIcon, ArrowUpOnSquareIcon, LinkIcon } from '@heroicons/react/24/solid';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import AddInvoiceModal from '../../components/AddInvoiceModal';
 import AccountEditModal from '../../components/AccountEditModal';
@@ -32,6 +33,8 @@ const InvoiceDetailPage = () => {
         frequency: 1,
         notes: ''
     });
+    const [generationStatus, setGenerationStatus] = useState({}); // Track generation status per invoice
+    const [uploadingReceipt, setUploadingReceipt] = useState(null);
 
     // Function to generate next invoice number
     const generateNextInvoiceNumber = async (contractNumber, type = 'Z') => {
@@ -141,6 +144,55 @@ const InvoiceDetailPage = () => {
         fetchContractInvoices();
     }, [fetchContractInvoices]);
 
+    // Enhanced real-time listener with generation status tracking
+    useEffect(() => {
+        if (!currentUser || !ctr) return;
+
+        const invoicesQuery = query(
+            collection(db, 'invoices'),
+            where('contract_number', '==', ctr)
+        );
+
+        // Set up real-time listener
+        const unsubscribe = onSnapshot(invoicesQuery, (snapshot) => {
+            const invoicesData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            // Sort in JavaScript
+            invoicesData.sort((a, b) => {
+                const dateA = a.created_at?.toDate?.() || new Date(a.created_at || 0);
+                const dateB = b.created_at?.toDate?.() || new Date(b.created_at || 0);
+                return dateB - dateA;
+            });
+
+            // Check for newly generated DOCX files
+            invoicesData.forEach(invoice => {
+                if (invoice.docx_url && generationStatus[invoice.id] === 'generating') {
+                    // Show success notification
+                    setInfoModalMessage(`發票 ${invoice.invoice_number} 的 DOCX 文件已生成完成！`);
+                    setShowInfoModal(true);
+                    
+                    // Clear generation status
+                    setGenerationStatus(prev => {
+                        const updated = { ...prev };
+                        delete updated[invoice.id];
+                        return updated;
+                    });
+                }
+            });
+
+            setInvoices(invoicesData);
+            setLoading(false);
+        }, (error) => {
+            console.error('Real-time listener error:', error);
+            setLoading(false);
+        });
+
+        return () => unsubscribe(); // Cleanup listener
+    }, [currentUser, ctr, generationStatus]);
+
     const getStatusLabel = (status) => {
         switch (status) {
             case 'paid': return '已付款';
@@ -180,47 +232,32 @@ const InvoiceDetailPage = () => {
     };
 
     const handleDownloadInvoice = async (invoice) => {
-        if (!invoice || generatingPdf === invoice.id) return;
-        if (invoice.status === 'newly_signed') {
-            setInfoModalMessage('This is a newly signed contract. Please generate the first invoice using the "Generate First Invoice" button before downloading.');
-            setShowInfoModal(true);
-            return;
-        }
-        // If docxUrl exists, download the DOCX directly
-        if (invoice.docxUrl) {
-            const a = document.createElement('a');
-            a.href = invoice.docxUrl;
-            a.download = `${invoice.invoice_number}.docx`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            return;
-        }
-        setGeneratingPdf(invoice.id);
         try {
-            // Use the Firebase Function via the rewrite configured in firebase.json
-            const response = await fetch(`/api/generate-invoice-pdf?invoiceId=${invoice.id}`);
-            if (!response.ok) {
-                const errorText = await response.text();
-                try {
-                    const errorJson = JSON.parse(errorText);
-                    throw new Error(errorJson.message || 'Failed to download invoice');
-                } catch (e) {
-                    throw new Error(`Failed to download invoice: ${errorText}`);
+            // Check both field names for backward compatibility
+            const docxUrl = invoice.docx_url || invoice.docxUrl;
+            
+            if (!docxUrl) {
+                // Trigger manual generation if no DOCX exists
+                setGeneratingPdf(invoice.id);
+                
+                const response = await fetch('/api/generate-invoice-docx-manual', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ invoiceId: invoice.id })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.docxUrl) {
+                        window.open(result.docxUrl, '_blank');
+                    }
                 }
+            } else {
+                // Direct download
+                window.open(docxUrl, '_blank');
             }
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${invoice.invoice_number}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error('Error downloading invoice:', error);
-            alert(`無法下載發票: ${error.message}`);
+            console.error('Download error:', error);
         } finally {
             setGeneratingPdf(null);
         }
@@ -301,10 +338,17 @@ const InvoiceDetailPage = () => {
         return unitPrice * employees * period;
     };
 
+    // Enhanced InvoiceCard component with generation status
     const InvoiceCard = ({ invoice }) => {
         const totalPrice = calculateTotal(invoice.amount, invoice.n_employees, invoice.frequency);
+        const isGenerating = generationStatus[invoice.id] === 'generating';
         
-        // Compact horizontal card for all invoices - keeping exact same design as main page
+        // Check both field names for backward compatibility
+        const hasDocx = (invoice.docx_url && invoice.docx_url.trim() !== '') || 
+                       (invoice.docxUrl && invoice.docxUrl.trim() !== '');
+        
+        const generationFailed = invoice.docx_generation_status === 'failed';
+        
         return (
             <div className="px-3 py-2 my-1 bg-white rounded shadow-sm dark:bg-gray-800 flex items-center min-h-[56px]">
                 <div className="flex-1 grid grid-cols-6 gap-2 items-center">
@@ -335,22 +379,74 @@ const InvoiceDetailPage = () => {
                     <span className="text-xs text-gray-500 dark:text-gray-400">{formatDate(invoice.start_date)} ~ {formatDate(invoice.end_date)}</span>
                     <span>{getStatusBadge(invoice.status)}</span>
                 </div>
-                <div className="flex items-center space-x-1 ml-2">
-                    <button onClick={() => handleDownloadInvoice(invoice)} disabled={generatingPdf === invoice.id} className="p-1 text-green-600 hover:text-green-900 disabled:opacity-50" title={invoice.docxUrl ? '下載DOCX' : '下載PDF'}>
-                        {generatingPdf === invoice.id ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : <ArrowDownTrayIcon className="h-4 w-4" />}
-                    </button>
-                    <select value={invoice.status} onChange={(e) => handleStatusChange(invoice.id, e.target.value)} disabled={updatingStatus[invoice.id]}
-                        className="text-xs border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white">
-                        <option value="pending">待付款</option>
-                        <option value="paid">已付款</option>
-                        <option value="overdue">逾期</option>
-                    </select>
-                    <button onClick={() => openEditModal(invoice)} className="p-1 text-primary-600 hover:text-primary-900" title="編輯">
-                        <PencilIcon className="h-4 w-4" />
-                    </button>
-                    <button onClick={() => handleDeleteInvoice(invoice.id)} className="p-1 text-red-600 hover:text-red-900" title="刪除">
-                        <TrashIcon className="h-4 w-4" />
-                    </button>
+                <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center space-x-2">
+                        {/* Status badge */}
+                        {getStatusBadge(invoice.status)}
+                        
+                        {/* Generation status indicator */}
+                        {isGenerating && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                <ArrowPathIcon className="w-3 h-3 mr-1 animate-spin" />
+                                生成中...
+                            </span>
+                        )}
+                        
+                        {generationFailed && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                生成失敗
+                            </span>
+                        )}
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 ml-2">
+                        <button 
+                            onClick={() => handleDownloadInvoice(invoice)} 
+                            disabled={generatingPdf === invoice.id || generationStatus[invoice.id] === 'generating'}
+                            className="p-1 text-green-600 hover:text-green-900 disabled:opacity-50" 
+                            title={invoice.docx_url ? '下載DOCX' : '生成並下載DOCX'}
+                        >
+                            {(generatingPdf === invoice.id || generationStatus[invoice.id] === 'generating') ? 
+                                <ArrowPathIcon className="h-4 w-4 animate-spin" /> : 
+                                <ArrowDownTrayIcon className="h-4 w-4" />
+                            }
+                        </button>
+                        {invoice.receiptUrl ? (
+                            <a href={invoice.receiptUrl} target="_blank" rel="noopener noreferrer" className="p-1 text-teal-600 hover:text-teal-900" title="查看收據">
+                                <LinkIcon className="h-4 w-4"/>
+                            </a>
+                        ) : (
+                            <>
+                                <input
+                                    type="file"
+                                    id={`upload-${invoice.id}`}
+                                    className="hidden"
+                                    onChange={(e) => handleUploadReceipt(invoice.id, e.target.files[0])}
+                                    accept="image/*"
+                                />
+                                <button
+                                    onClick={() => document.getElementById(`upload-${invoice.id}`).click()}
+                                    disabled={uploadingReceipt === invoice.id}
+                                    className="p-1 text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                                    title="上傳收據"
+                                >
+                                    {uploadingReceipt === invoice.id ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : <ArrowUpOnSquareIcon className="h-4 w-4" />}
+                                </button>
+                            </>
+                        )}
+                        <select value={invoice.status} onChange={(e) => handleStatusChange(invoice.id, e.target.value)} disabled={updatingStatus[invoice.id]}
+                            className="text-xs border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white">
+                            <option value="pending">待付款</option>
+                            <option value="paid">已付款</option>
+                            <option value="overdue">逾期</option>
+                        </select>
+                        <button onClick={() => openEditModal(invoice)} className="p-1 text-primary-600 hover:text-primary-900" title="編輯">
+                            <PencilIcon className="h-4 w-4" />
+                        </button>
+                        <button onClick={() => handleDeleteInvoice(invoice.id)} className="p-1 text-red-600 hover:text-red-900" title="刪除">
+                            <TrashIcon className="h-4 w-4" />
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -444,6 +540,66 @@ const InvoiceDetailPage = () => {
             console.error('Error updating account information:', error);
             setInfoModalMessage('更新帳戶資訊時發生錯誤');
             setShowInfoModal(true);
+        }
+    };
+
+    // Enhanced add invoice handler
+    const handleAddInvoice = async (invoiceData) => {
+        try {
+            // Add invoice to Firestore
+            const docRef = await addDoc(collection(db, 'invoices'), {
+                ...invoiceData,
+                created_at: new Date(),
+                updated_at: new Date(),
+                docx_generation_status: 'pending' // Initial status
+            });
+
+            // Track generation status
+            setGenerationStatus(prev => ({
+                ...prev,
+                [docRef.id]: 'generating'
+            }));
+
+            // Show immediate feedback
+            setInfoModalMessage('發票已創建，正在生成 DOCX 文件...');
+            setShowInfoModal(true);
+
+            // The real-time listener will automatically update when DOCX is ready
+            
+        } catch (error) {
+            console.error('Error adding invoice:', error);
+            setInfoModalMessage(`創建發票時出錯: ${error.message}`);
+            setShowInfoModal(true);
+        }
+    };
+
+    const handleUploadReceipt = async (invoiceId, file) => {
+        if (!currentUser) {
+            alert("Please log in to upload receipts.");
+            return;
+        }
+        if (!file) return;
+
+        setUploadingReceipt(invoiceId);
+        try {
+            const storageRef = ref(storage, `receipts/${invoiceId}/${file.name}`);
+            const uploadResult = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(uploadResult.ref);
+
+            const invoiceRef = doc(db, 'invoices', invoiceId);
+            await updateDoc(invoiceRef, {
+                receiptUrl: downloadURL
+            });
+            
+            // The real-time listener will handle the UI update
+            setInfoModalMessage('收據上傳成功！');
+            setShowInfoModal(true);
+
+        } catch (error) {
+            console.error("Error uploading receipt: ", error);
+            alert("Upload failed. Please try again.");
+        } finally {
+            setUploadingReceipt(null);
         }
     };
 
@@ -632,17 +788,24 @@ const InvoiceDetailPage = () => {
             {showAddModal && (
                 <AddInvoiceModal
                     isOpen={showAddModal}
-                    onClose={() => setShowAddModal(false)}
-                    onSave={fetchContractInvoices}
+                    onClose={() => {
+                        setShowAddModal(false);
+                        setEditingInvoice(null);
+                    }}
+                    onSave={handleAddInvoice} // Use enhanced handler
                     invoiceData={editingInvoice}
+                    isDepositInvoice={false}
                 />
             )}
 
             {showDepositModal && (
                 <AddInvoiceModal
                     isOpen={showDepositModal}
-                    onClose={() => setShowDepositModal(false)}
-                    onSave={fetchContractInvoices}
+                    onClose={() => {
+                        setShowDepositModal(false);
+                        setEditingInvoice(null);
+                    }}
+                    onSave={handleAddInvoice} // Use enhanced handler
                     invoiceData={editingInvoice}
                     isDepositInvoice={true}
                 />

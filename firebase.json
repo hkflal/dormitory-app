@@ -8,12 +8,20 @@
     ],
     "rewrites": [
       {
-        "source": "/api/generate-invoice-pdf",
-        "function": "generateInvoicePDF"
+        "source": "/api/generate-invoice-docx-manual",
+        "function": "generateInvoiceDocxManual"
+      },
+      {
+        "source": "/api/regenerate-invoice-docx",
+        "function": "regenerateInvoiceDocx"
       },
       {
         "source": "/api/process-invoice-data",
         "function": "processInvoiceData"
+      },
+      {
+        "source": "/api/health-check",
+        "function": "healthCheck"
       },
       {
         "source": "**",
@@ -42,5 +50,8 @@
     "location": "asia-east2",
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }

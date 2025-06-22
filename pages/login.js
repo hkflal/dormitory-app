@@ -27,7 +27,20 @@ export default function Login() {
       await login(email, password);
       router.push('/');
     } catch (error) {
-      setError('Failed to sign in. Please check your credentials.');
+      // More specific error messages
+      let errorMessage = 'Failed to sign in. Please check your credentials.';
+      
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No account found with this email address.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address format.';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed attempts. Please try again later.';
+      }
+      
+      setError(errorMessage);
       console.error('Login error:', error);
     }
     
@@ -39,10 +52,10 @@ export default function Login() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Dormitory Manager
+            港舍宿舍管理系統
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in to your admin account
+            請使用您的帳戶登入系統
           </p>
         </div>
         
@@ -56,7 +69,7 @@ export default function Login() {
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+                電子郵件
               </label>
               <input
                 id="email"
@@ -64,7 +77,7 @@ export default function Login() {
                 type="email"
                 required
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="kazaffong@hkflal.com"
+                placeholder="your.email@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -72,7 +85,7 @@ export default function Login() {
             
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+                密碼
               </label>
               <input
                 id="password"
@@ -80,7 +93,7 @@ export default function Login() {
                 type="password"
                 required
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder="請輸入密碼"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -93,13 +106,12 @@ export default function Login() {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? '登入中...' : '登入'}
             </button>
           </div>
           
-          <div className="text-center text-sm text-gray-500">
-            <p>Admin credentials:</p>
-            <p>kazaffong@hkflal.com</p>
+          <div className="text-center text-xs text-gray-500">
+            <p>使用 Firebase 驗證的有效帳戶登入</p>
           </div>
         </form>
       </div>

@@ -1,0 +1,4634 @@
+[
+  {
+    "id": "00kV75Ba4IYypIwNjlO3",
+    "rentEnd": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "employeeName": "陈莉",
+    "employeeId": "QO0sPbhPp2hVAR9U1AVw",
+    "daysUntilDue": 19,
+    "contractNumber": "D10102",
+    "rentStart": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1749916800,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "onboardingDate": {
+      "_seconds": 1727625600,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "needsNotification": false,
+    "isOverdue": false,
+    "totalAmountDue": 10500,
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 48000000
+    },
+    "monthlyRent": 3500,
+    "recentInvoice": ""
+  },
+  {
+    "id": "0ccsam4duErhgnMxWkKK",
+    "rentEnd": null,
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 844000000
+    },
+    "needsNotification": false,
+    "rentStart": null,
+    "monthlyRent": 3500,
+    "contractNumber": "D10151",
+    "status": "pending",
+    "employeeName": "陈达辉",
+    "employeeId": "Q6KUf4UHbHZEgJDl6dtN",
+    "onboardingDate": null,
+    "paymentFrequency": 1,
+    "recentInvoice": "",
+    "totalAmountDue": 3500,
+    "isOverdue": false,
+    "daysUntilDue": null
+  },
+  {
+    "id": "110Is8G3OEVIjSx45PVZ",
+    "notificationDate": {
+      "_seconds": 1751040000,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 32,
+    "paymentFrequency": 3,
+    "onboardingDate": {
+      "_seconds": 1736697600,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "recentInvoice": "",
+    "employeeName": "黄伟梅",
+    "lastUpdated": {
+      "_seconds": 1749490384,
+      "_nanoseconds": 743000000
+    },
+    "status": "current",
+    "rentEnd": {
+      "_seconds": 1752249600,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1744473600,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "employeeId": "nh7EqK6qdSl2FyLqBbJ4",
+    "contractNumber": "D10120",
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "1aT3HnyGe89ELQRrdzpN",
+    "onboardingDate": {
+      "_seconds": 1730131200,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 48,
+    "paymentFrequency": 3,
+    "status": "current",
+    "rentEnd": {
+      "_seconds": 1753632000,
+      "_nanoseconds": 0
+    },
+    "employeeName": "温清秀",
+    "notificationDate": {
+      "_seconds": 1752422400,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "contractNumber": "D10106",
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 120000000
+    },
+    "needsNotification": false,
+    "recentInvoice": "",
+    "monthlyRent": 3500,
+    "employeeId": "vdayhDCpWfMtGWuRQ9p5",
+    "totalAmountDue": 10500,
+    "rentStart": {
+      "_seconds": 1745856000,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "1kwy6dGxAUsTaeugYQaX",
+    "isOverdue": false,
+    "notificationDate": {
+      "_seconds": 1753372800,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10102",
+    "recentInvoice": "",
+    "status": "current",
+    "rentEnd": {
+      "_seconds": 1754582400,
+      "_nanoseconds": 0
+    },
+    "employeeId": "fXAle9gwVTsgx8ctlyvG",
+    "onboardingDate": {
+      "_seconds": 1723132800,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "daysUntilDue": 59,
+    "needsNotification": false,
+    "lastUpdated": {
+      "_seconds": 1749490384,
+      "_nanoseconds": 648000000
+    },
+    "monthlyRent": 3500,
+    "employeeName": "黄东妮",
+    "totalAmountDue": 10500,
+    "rentStart": {
+      "_seconds": 1746720000,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "1mnpI4ntZLEPso04dFIR",
+    "recentInvoice": "",
+    "status": "current",
+    "rentStart": {
+      "_seconds": 1749657600,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 93,
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 700000000
+    },
+    "employeeId": "wf9jICtbrlf1OjNb9vJb",
+    "contractNumber": "D10114",
+    "rentEnd": {
+      "_seconds": 1757520000,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "employeeName": "伍诺琦",
+    "onboardingDate": {
+      "_seconds": 1741708800,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "notificationDate": {
+      "_seconds": 1756310400,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "1xfz62zMazMNDltuoMVn",
+    "needsNotification": false,
+    "rentEnd": null,
+    "isOverdue": false,
+    "recentInvoice": "",
+    "employeeName": "吳燕",
+    "rentStart": null,
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 423000000
+    },
+    "onboardingDate": null,
+    "contractNumber": "D10167",
+    "employeeId": "2Zhl5PYPUfDVdQgMntKM",
+    "monthlyRent": 3500,
+    "daysUntilDue": null,
+    "totalAmountDue": 10500,
+    "status": "pending"
+  },
+  {
+    "id": "2gIKBlPhWfnMS1aoZIZk",
+    "status": "pending",
+    "employeeId": "lfnHVDPFlDJJWTbExVY7",
+    "isOverdue": false,
+    "employeeName": "黃銳明",
+    "rentEnd": null,
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "rentStart": null,
+    "needsNotification": false,
+    "paymentFrequency": 3,
+    "totalAmountDue": 10500,
+    "monthlyRent": 3500,
+    "contractNumber": "D10167",
+    "recentInvoice": "",
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 114000000
+    }
+  },
+  {
+    "id": "2kX8CjXxRwPppPchHB2J",
+    "rentEnd": {
+      "_seconds": 1754150400,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "status": "current",
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 306000000
+    },
+    "needsNotification": false,
+    "daysUntilDue": 54,
+    "onboardingDate": {
+      "_seconds": 1738598400,
+      "_nanoseconds": 0
+    },
+    "employeeName": "邓北生",
+    "recentInvoice": "",
+    "contractNumber": "D10127",
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "employeeId": "meC3KOqSWHrqp05QCeC3",
+    "rentStart": {
+      "_seconds": 1746288000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1752940800,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "2m9kZBBgkkrOXRNbrZZ6",
+    "rentEnd": null,
+    "employeeName": "黄健生",
+    "recentInvoice": "",
+    "employeeId": "AZOsVcRTR3kkMmTYleto",
+    "needsNotification": false,
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 950000000
+    },
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "paymentFrequency": 1,
+    "isOverdue": false,
+    "contractNumber": "D10165",
+    "totalAmountDue": 3500,
+    "rentStart": null,
+    "status": "pending"
+  },
+  {
+    "id": "37qUOMR8Gsqk4fbUW5Ss",
+    "recentInvoice": "",
+    "employeeName": "葉杰文",
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "totalAmountDue": 10500,
+    "needsNotification": false,
+    "contractNumber": "D10167",
+    "employeeId": "acmp1dkoGSbPr2TVknef",
+    "status": "pending",
+    "onboardingDate": null,
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 277000000
+    },
+    "rentStart": null,
+    "rentEnd": null,
+    "paymentFrequency": 3
+  },
+  {
+    "id": "3tNZIME7VWgMf2wGDZsO",
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 863000000
+    },
+    "isOverdue": false,
+    "status": "pending",
+    "employeeName": "邓伟诺",
+    "totalAmountDue": 3500,
+    "employeeId": "igLcprDe7XFRIfvXCWBM",
+    "paymentFrequency": 1,
+    "contractNumber": "D10155",
+    "recentInvoice": "",
+    "rentEnd": null,
+    "monthlyRent": 3500,
+    "rentStart": null,
+    "daysUntilDue": null,
+    "needsNotification": false,
+    "onboardingDate": null
+  },
+  {
+    "id": "4BTfew9tovFIxFKrzsz5",
+    "employeeId": "6xIEeUtrddGPjTvUkYfj",
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 608000000
+    },
+    "onboardingDate": null,
+    "needsNotification": false,
+    "contractNumber": "D10167",
+    "totalAmountDue": 10500,
+    "rentStart": null,
+    "paymentFrequency": 3,
+    "isOverdue": false,
+    "daysUntilDue": null,
+    "employeeName": "王成龍",
+    "status": "pending",
+    "rentEnd": null,
+    "recentInvoice": ""
+  },
+  {
+    "id": "4GCzlIR9VckJLtCnpttY",
+    "needsNotification": false,
+    "rentStart": {
+      "_seconds": 1746979200,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1723392000,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "employeeName": "谭嘉欣",
+    "recentInvoice": "",
+    "contractNumber": "D10102",
+    "lastUpdated": {
+      "_seconds": 1749490384,
+      "_nanoseconds": 570000000
+    },
+    "status": "current",
+    "notificationDate": {
+      "_seconds": 1753632000,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "employeeId": "tkyYvYtb8O7Zto4goTU1",
+    "paymentFrequency": 3,
+    "rentEnd": {
+      "_seconds": 1754841600,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 62
+  },
+  {
+    "id": "4Pls3FQ5Y3wUXhwkhv1t",
+    "recentInvoice": "",
+    "daysUntilDue": 75,
+    "onboardingDate": {
+      "_seconds": 1732464000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "isOverdue": false,
+    "paymentFrequency": 3,
+    "totalAmountDue": 10500,
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 168000000
+    },
+    "rentEnd": {
+      "_seconds": 1755964800,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "employeeName": "黎燕芳",
+    "contractNumber": "D10116",
+    "monthlyRent": 3500,
+    "rentStart": {
+      "_seconds": 1748102400,
+      "_nanoseconds": 0
+    },
+    "employeeId": "z3uhgcpK1OiIh3WTi6IQ"
+  },
+  {
+    "id": "4g1Xn4hwWUKdlTwnPjsh",
+    "isOverdue": false,
+    "notificationDate": {
+      "_seconds": 1752681600,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "contractNumber": "D10109",
+    "onboardingDate": {
+      "_seconds": 1730217600,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "employeeId": "oydpe1BOlqid0HWa8PTi",
+    "rentStart": {
+      "_seconds": 1746028800,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "employeeName": "刘银平",
+    "status": "current",
+    "daysUntilDue": 51,
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 42000000
+    },
+    "totalAmountDue": 10500,
+    "recentInvoice": ""
+  },
+  {
+    "id": "4i6f7Hnqn3l6PkuYuwmK",
+    "employeeName": "叶清林",
+    "monthlyRent": 3500,
+    "status": "current",
+    "needsNotification": false,
+    "rentStart": {
+      "_seconds": 1748966400,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10143",
+    "daysUntilDue": 85,
+    "employeeId": "eh3sCnPt0OUVa9yC1gYs",
+    "onboardingDate": null,
+    "rentEnd": {
+      "_seconds": 1756828800,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 177000000
+    },
+    "isOverdue": false,
+    "recentInvoice": "",
+    "totalAmountDue": 10500,
+    "notificationDate": {
+      "_seconds": 1755619200,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "4nFsh7xKhLPyCmklE5Uf",
+    "employeeId": "iUJcNcYCCm53a4KgaJ0w",
+    "monthlyRent": 3500,
+    "contractNumber": "D10104",
+    "rentStart": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1731600000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "paymentFrequency": 3,
+    "daysUntilDue": 65,
+    "isOverdue": false,
+    "status": "current",
+    "rentEnd": {
+      "_seconds": 1755100800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 988000000
+    },
+    "needsNotification": false,
+    "recentInvoice": "",
+    "employeeName": "周培金"
+  },
+  {
+    "id": "4ws2jlaCiwPCo0xvvcKS",
+    "monthlyRent": 3500,
+    "contractNumber": "D10124",
+    "onboardingDate": {
+      "_seconds": 1735488000,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "daysUntilDue": 19,
+    "paymentFrequency": 3,
+    "employeeId": "mA6aFnWZ1IAhHsdIZAAz",
+    "employeeName": "马明令",
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 799000000
+    },
+    "recentInvoice": "",
+    "notificationDate": {
+      "_seconds": 1749916800,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "isOverdue": false,
+    "status": "current"
+  },
+  {
+    "id": "57SBdgoyB4JGQtu0coNz",
+    "rentEnd": {
+      "_seconds": 1754236800,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 1,
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 432000000
+    },
+    "notificationDate": {
+      "_seconds": 1753027200,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 3500,
+    "status": "current",
+    "contractNumber": "D10101",
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "rentStart": {
+      "_seconds": 1751644800,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 55,
+    "isOverdue": false,
+    "onboardingDate": {
+      "_seconds": 1725465600,
+      "_nanoseconds": 0
+    },
+    "employeeId": "xFy7UDnzEJPOxtlGVkAE",
+    "recentInvoice": "",
+    "employeeName": "吴俊毅"
+  },
+  {
+    "id": "5VHjaARBGi1kjTLQQvxK",
+    "monthlyRent": 3500,
+    "employeeId": "s3ISAHqQjXtZFXlqKZv6",
+    "daysUntilDue": null,
+    "paymentFrequency": 1,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 543000000
+    },
+    "status": "pending",
+    "rentEnd": null,
+    "needsNotification": false,
+    "employeeName": "杨志辉",
+    "onboardingDate": null,
+    "contractNumber": "D10158",
+    "totalAmountDue": 3500,
+    "isOverdue": false,
+    "rentStart": null,
+    "recentInvoice": ""
+  },
+  {
+    "id": "6M2fLRAQzvll9gGYKpps",
+    "rentEnd": null,
+    "status": "pending",
+    "contractNumber": "D10167",
+    "totalAmountDue": 10500,
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "recentInvoice": "",
+    "isOverdue": false,
+    "employeeName": "朱美林",
+    "monthlyRent": 3500,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 543000000
+    },
+    "employeeId": "r8y1LDQAw6oWElQODuan",
+    "paymentFrequency": 3,
+    "needsNotification": false
+  },
+  {
+    "id": "6WqHS4xpl48gvfrvIRaQ",
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 926000000
+    },
+    "paymentFrequency": 3,
+    "employeeName": "李天杰",
+    "needsNotification": false,
+    "onboardingDate": {
+      "_seconds": 1731600000,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10104",
+    "daysUntilDue": 65,
+    "isOverdue": false,
+    "rentEnd": {
+      "_seconds": 1755100800,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "status": "current",
+    "employeeId": "vtnXP56spr0LmdhXcA0q",
+    "notificationDate": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "monthlyRent": 3500,
+    "rentStart": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "7jnI0KU8vuWvifvdXxIN",
+    "rentStart": null,
+    "paymentFrequency": 1,
+    "employeeId": "IilvjH6rEUDSi1v5QH6C",
+    "totalAmountDue": 3500,
+    "employeeName": "朱保臻",
+    "rentEnd": null,
+    "recentInvoice": "",
+    "daysUntilDue": null,
+    "contractNumber": "D10140",
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 495000000
+    },
+    "onboardingDate": null,
+    "status": "pending"
+  },
+  {
+    "id": "7zoT3Rg4xb4sKOTHYwgq",
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "isOverdue": false,
+    "recentInvoice": "",
+    "totalAmountDue": 3500,
+    "status": "pending",
+    "needsNotification": false,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 761000000
+    },
+    "employeeName": "司徒嘉愉",
+    "contractNumber": "D10159",
+    "rentEnd": null,
+    "paymentFrequency": 1,
+    "monthlyRent": 3500,
+    "employeeId": "9EsfgPi22qB01BFfEFS2"
+  },
+  {
+    "id": "879ZuRkYDr3idON0x2il",
+    "daysUntilDue": 65,
+    "notificationDate": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "paymentFrequency": 3,
+    "rentStart": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1755100800,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1731600000,
+      "_nanoseconds": 0
+    },
+    "employeeName": "胡飞",
+    "needsNotification": false,
+    "employeeId": "Bx3FkoyF2EQM8ye8wJVH",
+    "recentInvoice": "",
+    "contractNumber": "D10104",
+    "totalAmountDue": 10500,
+    "status": "current",
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 720000000
+    },
+    "monthlyRent": 3500
+  },
+  {
+    "id": "8QzwbpaI7932ZQfhEvx6",
+    "rentEnd": null,
+    "onboardingDate": null,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 227000000
+    },
+    "rentStart": null,
+    "employeeName": "董興濤",
+    "paymentFrequency": 3,
+    "isOverdue": false,
+    "status": "pending",
+    "recentInvoice": "",
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "contractNumber": "D10148",
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "employeeId": "Daf91k4BRPlZSF2qRFa2"
+  },
+  {
+    "id": "8kleVJBwE1mZisq4gZhG",
+    "isOverdue": false,
+    "monthlyRent": 3500,
+    "notificationDate": {
+      "_seconds": 1752940800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 243000000
+    },
+    "employeeId": "A8AbDKQn8uq33dsdBERb",
+    "status": "current",
+    "contractNumber": "D10127",
+    "onboardingDate": {
+      "_seconds": 1738598400,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "employeeName": "叶思劲",
+    "totalAmountDue": 10500,
+    "needsNotification": false,
+    "daysUntilDue": 54,
+    "rentEnd": {
+      "_seconds": 1754150400,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1746288000,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3
+  },
+  {
+    "id": "9FpOYIKxaSV8CBbDDzpH",
+    "monthlyRent": 3500,
+    "onboardingDate": {
+      "_seconds": 1734019200,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "employeeName": "王煜燃",
+    "notificationDate": {
+      "_seconds": 1751040000,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 1,
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 986000000
+    },
+    "isOverdue": false,
+    "recentInvoice": "",
+    "employeeId": "xn79jGmVD0H1q77vF7OS",
+    "status": "current",
+    "daysUntilDue": 32,
+    "rentEnd": {
+      "_seconds": 1752249600,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1749744000,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10121",
+    "totalAmountDue": 3500
+  },
+  {
+    "id": "AC1PH3WDks4IQt6eeWIB",
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 622000000
+    },
+    "employeeId": "NaAC8VGi4sC7moMIX0n5",
+    "daysUntilDue": 26,
+    "rentStart": {
+      "_seconds": 1749225600,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1751731200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10136",
+    "onboardingDate": {
+      "_seconds": 1740931200,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 1,
+    "needsNotification": false,
+    "recentInvoice": "",
+    "monthlyRent": 3500,
+    "status": "current",
+    "employeeName": "梁智恒",
+    "totalAmountDue": 3500,
+    "isOverdue": false,
+    "notificationDate": {
+      "_seconds": 1750521600,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "ACw50062yetXCG9yIxKo",
+    "status": "pending",
+    "rentStart": null,
+    "paymentFrequency": 3,
+    "onboardingDate": null,
+    "recentInvoice": "",
+    "employeeId": "fYYQLH096rcetoXfwHFy",
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 612000000
+    },
+    "daysUntilDue": null,
+    "totalAmountDue": 10500,
+    "contractNumber": "D10167",
+    "needsNotification": false,
+    "isOverdue": false,
+    "rentEnd": null,
+    "employeeName": "陳潔玲"
+  },
+  {
+    "id": "AXKHGHP6GE6NsQd7MWHp",
+    "employeeId": "R43WOkxjZxqfAScW6krC",
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 184000000
+    },
+    "rentStart": {
+      "_seconds": 1750953600,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "employeeName": "黄悅婷",
+    "notificationDate": {
+      "_seconds": 1752249600,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 1,
+    "daysUntilDue": 46,
+    "contractNumber": "D10101",
+    "rentEnd": {
+      "_seconds": 1753459200,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "totalAmountDue": 3500,
+    "onboardingDate": {
+      "_seconds": 1727366400,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": ""
+  },
+  {
+    "id": "AcYfsdiNrT9Jh3rihLTw",
+    "rentStart": null,
+    "status": "pending",
+    "contractNumber": "D10143",
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 860000000
+    },
+    "employeeId": "lgNXeuFQaVq9AsrWj2Z6",
+    "monthlyRent": 3500,
+    "paymentFrequency": 3,
+    "recentInvoice": "",
+    "isOverdue": false,
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "daysUntilDue": null,
+    "employeeName": "羅海寧",
+    "onboardingDate": null,
+    "rentEnd": null
+  },
+  {
+    "id": "AeOQi3ou3X0zVGE7vRGz",
+    "daysUntilDue": 82,
+    "rentStart": {
+      "_seconds": 1748707200,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1725120000,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "recentInvoice": "",
+    "monthlyRent": 3500,
+    "status": "current",
+    "contractNumber": "D10103",
+    "notificationDate": {
+      "_seconds": 1755360000,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "employeeName": "陈超文",
+    "employeeId": "iyAFdDNllJlbEzepeJP9",
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 569000000
+    },
+    "totalAmountDue": 10500,
+    "paymentFrequency": 3,
+    "rentEnd": {
+      "_seconds": 1756569600,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "Bpe16lDZwgdU2S6f5ifw",
+    "employeeName": "陳伯輝",
+    "rentEnd": null,
+    "employeeId": "dFyinVpK0Ehf0jWDaMg9",
+    "contractNumber": "D10167",
+    "isOverdue": false,
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "rentStart": null,
+    "daysUntilDue": null,
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 340000000
+    },
+    "onboardingDate": null,
+    "recentInvoice": "",
+    "status": "pending",
+    "paymentFrequency": 3,
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "BsuiY2Db0MwwJG7ekswT",
+    "rentStart": null,
+    "isOverdue": false,
+    "employeeId": "DCmB1bu48S3Pskk7asAE",
+    "contractNumber": "D10161",
+    "onboardingDate": null,
+    "employeeName": "李耀辉",
+    "totalAmountDue": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 298000000
+    },
+    "daysUntilDue": null,
+    "needsNotification": false,
+    "recentInvoice": "",
+    "monthlyRent": 3500,
+    "paymentFrequency": 1,
+    "rentEnd": null,
+    "status": "pending"
+  },
+  {
+    "id": "BvkNVvlwRk8Fjs2p1CKv",
+    "status": "pending",
+    "totalAmountDue": 10500,
+    "needsNotification": false,
+    "employeeId": "icOJjJn0Ivh4UwdwGCXO",
+    "isOverdue": false,
+    "monthlyRent": 3500,
+    "recentInvoice": "",
+    "rentEnd": null,
+    "paymentFrequency": 3,
+    "employeeName": "龔麗君",
+    "daysUntilDue": null,
+    "onboardingDate": null,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 486000000
+    },
+    "contractNumber": "D10167"
+  },
+  {
+    "id": "C7WAcvVb1HZHcTL7UVap",
+    "monthlyRent": 3500,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 371000000
+    },
+    "paymentFrequency": 1,
+    "employeeName": "馬鳳儀",
+    "daysUntilDue": null,
+    "contractNumber": "D10160",
+    "onboardingDate": null,
+    "totalAmountDue": 3500,
+    "isOverdue": false,
+    "employeeId": "3nSeLUBwKqS2j6DPcUk9",
+    "rentEnd": null,
+    "recentInvoice": "",
+    "status": "pending",
+    "needsNotification": false
+  },
+  {
+    "id": "CHhFfeCT4sGfAdvoRfhl",
+    "status": "pending",
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 198000000
+    },
+    "employeeName": "容俊贤",
+    "employeeId": "aYDVILwN7CpkUlKosJ7j",
+    "paymentFrequency": 1,
+    "monthlyRent": 3500,
+    "onboardingDate": null,
+    "recentInvoice": "",
+    "rentEnd": null,
+    "needsNotification": false,
+    "contractNumber": "D10150",
+    "isOverdue": false,
+    "totalAmountDue": 3500,
+    "rentStart": null,
+    "daysUntilDue": null
+  },
+  {
+    "id": "CiURFATO1jMuVcsanfQK",
+    "status": "current",
+    "paymentFrequency": 3,
+    "notificationDate": {
+      "_seconds": 1749916800,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "rentStart": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "employeeName": "关泳琳",
+    "recentInvoice": "",
+    "rentEnd": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10124",
+    "daysUntilDue": 19,
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 380000000
+    },
+    "onboardingDate": {
+      "_seconds": 1735488000,
+      "_nanoseconds": 0
+    },
+    "employeeId": "LK3xjDXmnwH88VPIglqO",
+    "isOverdue": false
+  },
+  {
+    "id": "DbDKUJQBp7EPtbNl3PQg",
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 542000000
+    },
+    "monthlyRent": 3500,
+    "rentStart": null,
+    "employeeName": "李連杰",
+    "status": "pending",
+    "needsNotification": false,
+    "employeeId": "aspi8fYrDFUUBNFgPhv9",
+    "rentEnd": null,
+    "contractNumber": "D10167",
+    "isOverdue": false,
+    "daysUntilDue": null,
+    "totalAmountDue": 10500,
+    "onboardingDate": null,
+    "recentInvoice": "",
+    "paymentFrequency": 3
+  },
+  {
+    "id": "Dhn20DWHJ1io9fFyXlgs",
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 389000000
+    },
+    "employeeId": "McGafaXCV8qcP0yk3PRQ",
+    "daysUntilDue": 36,
+    "rentStart": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1752595200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10134",
+    "onboardingDate": {
+      "_seconds": 1737043200,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 1,
+    "recentInvoice": "",
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "status": "current",
+    "employeeName": "林曼茵",
+    "totalAmountDue": 3500,
+    "isOverdue": false,
+    "notificationDate": {
+      "_seconds": 1751385600,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "E6tCokWk3U0veg3ZiMeR",
+    "onboardingDate": null,
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 888000000
+    },
+    "daysUntilDue": null,
+    "rentEnd": null,
+    "status": "pending",
+    "employeeId": "s4i76G3O7XHdlB2HzYDO",
+    "employeeName": "钟金材",
+    "monthlyRent": 3500,
+    "paymentFrequency": 1,
+    "recentInvoice": "",
+    "rentStart": null,
+    "contractNumber": "D10162",
+    "isOverdue": false,
+    "totalAmountDue": 3500,
+    "needsNotification": false
+  },
+  {
+    "id": "Ez30Y8MQxj0wdC19UUnp",
+    "paymentFrequency": 3,
+    "contractNumber": "D10128",
+    "notificationDate": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "onboardingDate": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 726000000
+    },
+    "employeeId": "jEsFjhjCL2YGmID14T5q",
+    "rentEnd": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 33,
+    "monthlyRent": 3500,
+    "needsNotification": false,
+    "employeeName": "张晓冰",
+    "rentStart": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "isOverdue": false
+  },
+  {
+    "id": "FRxu6Yqy0JyG8jM4uRdV",
+    "rentStart": null,
+    "rentEnd": null,
+    "isOverdue": false,
+    "employeeId": "puCXqnYaC49aHPx2NWVj",
+    "needsNotification": false,
+    "onboardingDate": null,
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 650000000
+    },
+    "contractNumber": "D10159",
+    "employeeName": "罗源长",
+    "recentInvoice": "",
+    "status": "pending",
+    "monthlyRent": 3500,
+    "totalAmountDue": 3500,
+    "daysUntilDue": null,
+    "paymentFrequency": 1
+  },
+  {
+    "id": "GN6FrfDyZ2Z0ZRNYRtsr",
+    "status": "current",
+    "employeeName": "范晓玲",
+    "paymentFrequency": 3,
+    "onboardingDate": {
+      "_seconds": 1739721600,
+      "_nanoseconds": 0
+    },
+    "employeeId": "KqD0vg0tq7JlkvBJlGMd",
+    "daysUntilDue": 67,
+    "needsNotification": false,
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 452000000
+    },
+    "recentInvoice": "",
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "isOverdue": false,
+    "notificationDate": {
+      "_seconds": 1754064000,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1747411200,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1755273600,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10137"
+  },
+  {
+    "id": "Gq2DqaQbUEO12J1kGKKu",
+    "employeeId": "ZFH2suBXsvpamvZjxPQ0",
+    "employeeName": "武天赐",
+    "notificationDate": {
+      "_seconds": 1753545600,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1731254400,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "recentInvoice": "",
+    "status": "current",
+    "isOverdue": false,
+    "daysUntilDue": 61,
+    "monthlyRent": 3500,
+    "contractNumber": "D10104",
+    "paymentFrequency": 3,
+    "rentStart": {
+      "_seconds": 1746892800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 52000000
+    },
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "HE2AVzxUaq6k5n9HFwe8",
+    "monthlyRent": 3500,
+    "recentInvoice": "",
+    "notificationDate": {
+      "_seconds": 1752940800,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1754150400,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 54,
+    "employeeName": "伍金霞",
+    "contractNumber": "D10132",
+    "status": "current",
+    "onboardingDate": {
+      "_seconds": 1738598400,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "rentStart": {
+      "_seconds": 1746288000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 832000000
+    },
+    "needsNotification": false,
+    "employeeId": "fsqvDEQHWQjRCuskxW3Y",
+    "paymentFrequency": 3,
+    "isOverdue": false
+  },
+  {
+    "id": "HFo2umaAATbxTEzcOG2x",
+    "recentInvoice": "",
+    "daysUntilDue": null,
+    "employeeName": "郭梓豪",
+    "employeeId": "CHhXpJuqH1srSvYCnYiz",
+    "paymentFrequency": 3,
+    "totalAmountDue": 10500,
+    "isOverdue": false,
+    "contractNumber": "D10167",
+    "rentEnd": null,
+    "status": "pending",
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 56000000
+    },
+    "rentStart": null,
+    "onboardingDate": null,
+    "needsNotification": false,
+    "monthlyRent": 3500
+  },
+  {
+    "id": "HmAyfu6GhMNnS666XqUf",
+    "recentInvoice": "",
+    "onboardingDate": null,
+    "totalAmountDue": 3500,
+    "isOverdue": false,
+    "contractNumber": "D10154",
+    "employeeName": "毛曉雯",
+    "employeeId": "QVIntrRGopb0eX2Oim2F",
+    "rentEnd": null,
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 684000000
+    },
+    "daysUntilDue": null,
+    "paymentFrequency": 1,
+    "status": "pending"
+  },
+  {
+    "id": "ID0vi5y2HjpyWgtEAC92",
+    "paymentFrequency": 3,
+    "isOverdue": false,
+    "needsNotification": false,
+    "contractNumber": "D10123",
+    "notificationDate": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 837000000
+    },
+    "employeeId": "Oep3Ys0tKJAST9JwpDzH",
+    "rentEnd": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 21,
+    "employeeName": "张金华",
+    "status": "current",
+    "totalAmountDue": 10500,
+    "rentStart": {
+      "_seconds": 1743523200,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "onboardingDate": {
+      "_seconds": 1704124800,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "JQL87KrvhmudPBDwdOHo",
+    "onboardingDate": {
+      "_seconds": 1745251200,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 11,
+    "rentEnd": {
+      "_seconds": 1750435200,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "paymentFrequency": 1,
+    "employeeId": "9lzc1df95mfjGWdNba5C",
+    "contractNumber": "D10141",
+    "rentStart": {
+      "_seconds": 1747843200,
+      "_nanoseconds": 0
+    },
+    "employeeName": "周清莲",
+    "totalAmountDue": 3500,
+    "recentInvoice": "",
+    "status": "due_soon",
+    "isOverdue": false,
+    "needsNotification": true,
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 538000000
+    },
+    "notificationDate": {
+      "_seconds": 1749225600,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "K5KyqNSUS73e2vKAy1cW",
+    "paymentFrequency": 1,
+    "recentInvoice": "",
+    "employeeName": "李永超",
+    "totalAmountDue": 3500,
+    "rentEnd": null,
+    "monthlyRent": 3500,
+    "contractNumber": "D10162",
+    "daysUntilDue": null,
+    "employeeId": "ixHdIY9uL6PE3yanZKkz",
+    "status": "pending",
+    "onboardingDate": null,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 166000000
+    },
+    "isOverdue": false,
+    "needsNotification": false,
+    "rentStart": null
+  },
+  {
+    "id": "KHiONw2g9IytMGsQAmNm",
+    "totalAmountDue": 3500,
+    "paymentFrequency": 1,
+    "employeeName": "周国利",
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 588000000
+    },
+    "recentInvoice": "",
+    "needsNotification": false,
+    "rentStart": null,
+    "status": "pending",
+    "rentEnd": null,
+    "contractNumber": "D10159",
+    "employeeId": "KBvglSXfSDvBzf1Wdr3D",
+    "isOverdue": false,
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "monthlyRent": 3500
+  },
+  {
+    "id": "KpmKQlOs32V1vd9DkMgD",
+    "rentEnd": null,
+    "recentInvoice": "",
+    "paymentFrequency": 1,
+    "employeeName": "周晓雅",
+    "monthlyRent": 3500,
+    "employeeId": "EioXEULg2ILatMnlG4fq",
+    "daysUntilDue": null,
+    "isOverdue": false,
+    "contractNumber": "D00000",
+    "totalAmountDue": 3500,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 602000000
+    },
+    "needsNotification": false,
+    "onboardingDate": null,
+    "status": "pending"
+  },
+  {
+    "id": "KqxBziusedXLZGRnfUo6",
+    "lastUpdated": {
+      "_seconds": 1749490384,
+      "_nanoseconds": 911000000
+    },
+    "recentInvoice": "",
+    "paymentFrequency": 3,
+    "status": "current",
+    "rentStart": {
+      "_seconds": 1748707200,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "employeeName": "孔梅花",
+    "employeeId": "0TketFMgQOmgLEDjpiJN",
+    "contractNumber": "D10116",
+    "notificationDate": {
+      "_seconds": 1755360000,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1732809600,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 82,
+    "isOverdue": false,
+    "rentEnd": {
+      "_seconds": 1756569600,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false
+  },
+  {
+    "id": "LIdic2Ifg7MGIs4dBB0j",
+    "employeeId": "XEWTTE2VnRh4h7vTzWvE",
+    "rentStart": {
+      "_seconds": 1748793600,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 671000000
+    },
+    "monthlyRent": 3500,
+    "notificationDate": {
+      "_seconds": 1755446400,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "onboardingDate": null,
+    "daysUntilDue": 83,
+    "paymentFrequency": 3,
+    "recentInvoice": "",
+    "totalAmountDue": 10500,
+    "contractNumber": "D10145",
+    "status": "current",
+    "rentEnd": {
+      "_seconds": 1756656000,
+      "_nanoseconds": 0
+    },
+    "employeeName": "吴伟池",
+    "isOverdue": false
+  },
+  {
+    "id": "M8wQgQjXiVcFXbh8gKOA",
+    "contractNumber": "D10128",
+    "notificationDate": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 33,
+    "rentEnd": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "employeeName": "叶洁慧",
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 655000000
+    },
+    "paymentFrequency": 3,
+    "needsNotification": false,
+    "status": "current",
+    "employeeId": "UoVgjGEv1iKgfe62mxB2",
+    "isOverdue": false,
+    "recentInvoice": ""
+  },
+  {
+    "id": "MM4LjSYXTWejIzEKQJKJ",
+    "monthlyRent": 3500,
+    "onboardingDate": {
+      "_seconds": 1730044800,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 3500,
+    "employeeId": "h28sHnQfTXtnEdDlsIh0",
+    "status": "current",
+    "contractNumber": "D10101",
+    "paymentFrequency": 1,
+    "notificationDate": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 562000000
+    },
+    "recentInvoice": "",
+    "rentStart": {
+      "_seconds": 1751040000,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 47,
+    "employeeName": "曾金花",
+    "needsNotification": false,
+    "rentEnd": {
+      "_seconds": 1753545600,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "MmmVxSftyDbpWNhSSrNX",
+    "daysUntilDue": null,
+    "employeeName": "陈凯忠",
+    "rentStart": null,
+    "status": "pending",
+    "paymentFrequency": 1,
+    "recentInvoice": "",
+    "contractNumber": "D10158",
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 920000000
+    },
+    "employeeId": "Ne5FzvUOR11yI6EIJGH2",
+    "rentEnd": null,
+    "isOverdue": false,
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "onboardingDate": null,
+    "totalAmountDue": 3500
+  },
+  {
+    "id": "N21For7b7Cdrx56Ryjys",
+    "isOverdue": false,
+    "notificationDate": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "employeeName": "熊家文",
+    "recentInvoice": "",
+    "needsNotification": false,
+    "rentEnd": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 59000000
+    },
+    "daysUntilDue": 33,
+    "employeeId": "Xhoo2FQefJKA52rb9Ifr",
+    "status": "current",
+    "onboardingDate": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "contractNumber": "D10128",
+    "rentStart": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "monthlyRent": 3500
+  },
+  {
+    "id": "NeguFwzR1jdZ760vjoIn",
+    "rentStart": {
+      "_seconds": 1746892800,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "status": "current",
+    "isOverdue": false,
+    "employeeId": "c1QGqIOBpaHQ9hLtWR85",
+    "recentInvoice": "",
+    "rentEnd": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1731254400,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10116",
+    "daysUntilDue": 61,
+    "needsNotification": false,
+    "notificationDate": {
+      "_seconds": 1753545600,
+      "_nanoseconds": 0
+    },
+    "employeeName": "张瑜美",
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 111000000
+    },
+    "monthlyRent": 3500
+  },
+  {
+    "id": "NfMc7sYVn27SgNJ57l9J",
+    "rentStart": null,
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 108000000
+    },
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "employeeId": "NkxSYDRUdJAZclglx4ci",
+    "recentInvoice": "",
+    "status": "pending",
+    "paymentFrequency": 1,
+    "rentEnd": null,
+    "monthlyRent": 3500,
+    "totalAmountDue": 3500,
+    "contractNumber": "D10161",
+    "employeeName": "冯文康",
+    "needsNotification": false
+  },
+  {
+    "id": "Ns5mVtKQdbTDNfCSbA7u",
+    "employeeId": "b03KYtSfVC4ng1iNdRwq",
+    "totalAmountDue": 3500,
+    "needsNotification": false,
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 559000000
+    },
+    "rentStart": {
+      "_seconds": 1748880000,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1751385600,
+      "_nanoseconds": 0
+    },
+    "employeeName": "黄家海",
+    "paymentFrequency": 1,
+    "notificationDate": {
+      "_seconds": 1750176000,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "daysUntilDue": 22,
+    "onboardingDate": {
+      "_seconds": 1738857600,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "contractNumber": "D10136",
+    "recentInvoice": "",
+    "status": "current"
+  },
+  {
+    "id": "NtR5ccXdC9IQAVmYRs6y",
+    "employeeId": "8WEvRew72yFqXPkseJ88",
+    "daysUntilDue": 33,
+    "needsNotification": false,
+    "paymentFrequency": 3,
+    "onboardingDate": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "totalAmountDue": 10500,
+    "isOverdue": false,
+    "employeeName": "曾春芳",
+    "rentEnd": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10128",
+    "monthlyRent": 3500,
+    "notificationDate": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 917000000
+    },
+    "rentStart": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": ""
+  },
+  {
+    "id": "OEH2nlqYN2eoD4FcexfZ",
+    "employeeId": "nLphOcm8WGQoGaSrOKTR",
+    "rentEnd": null,
+    "onboardingDate": null,
+    "needsNotification": false,
+    "paymentFrequency": 1,
+    "isOverdue": false,
+    "rentStart": null,
+    "recentInvoice": "",
+    "employeeName": "黄金坚",
+    "monthlyRent": 3500,
+    "totalAmountDue": 3500,
+    "status": "pending",
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 234000000
+    },
+    "contractNumber": "D10163",
+    "daysUntilDue": null
+  },
+  {
+    "id": "OOMl4RszJOZ1DSZvefa0",
+    "employeeName": "黄晓潜",
+    "isOverdue": false,
+    "status": "pending",
+    "employeeId": "hUHGbG7iBxICsKgzYdd8",
+    "daysUntilDue": null,
+    "rentEnd": null,
+    "contractNumber": "D10155",
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "totalAmountDue": 3500,
+    "paymentFrequency": 1,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 290000000
+    },
+    "recentInvoice": "",
+    "onboardingDate": null
+  },
+  {
+    "id": "Q0dTk6ITDlAXcwd6kVX9",
+    "employeeId": "tIL98EFz3Byf5zO2UdBS",
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "notificationDate": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1748707200,
+      "_nanoseconds": 0
+    },
+    "employeeName": "吴尚彬",
+    "recentInvoice": "",
+    "contractNumber": "D10122",
+    "isOverdue": false,
+    "rentEnd": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 926000000
+    },
+    "status": "current",
+    "daysUntilDue": 21,
+    "onboardingDate": {
+      "_seconds": 1735574400,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "paymentFrequency": 3
+  },
+  {
+    "id": "QdZSGdsPR9bL17VvMpW8",
+    "notificationDate": {
+      "_seconds": 1751990400,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "status": "current",
+    "recentInvoice": "",
+    "isOverdue": false,
+    "employeeId": "x2qLMdgUEz4pbF9K4BsS",
+    "contractNumber": "D10139",
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "rentStart": {
+      "_seconds": 1745424000,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "employeeName": "胡艳媚",
+    "daysUntilDue": 43,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 248000000
+    },
+    "rentEnd": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1745424000,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "R2VTaqh9368zW1qDVhzl",
+    "monthlyRent": 3500,
+    "employeeId": "bB1UZAtznJg5K7aGP409",
+    "employeeName": "王勇",
+    "daysUntilDue": null,
+    "totalAmountDue": 10500,
+    "rentEnd": null,
+    "isOverdue": false,
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 430000000
+    },
+    "recentInvoice": "",
+    "status": "pending",
+    "rentStart": null,
+    "contractNumber": "D10167",
+    "needsNotification": false,
+    "onboardingDate": null
+  },
+  {
+    "id": "R9kwyhirwnPmpZKYczVX",
+    "rentStart": {
+      "_seconds": 1743523200,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1704124800,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "rentEnd": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "notificationDate": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "employeeName": "高芬兰",
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 774000000
+    },
+    "status": "current",
+    "employeeId": "LBlQD4FZC1Eo1jQjyPCg",
+    "daysUntilDue": 21,
+    "contractNumber": "D10123"
+  },
+  {
+    "id": "Sph4Rk76763f6SlqM26E",
+    "recentInvoice": "",
+    "totalAmountDue": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 974000000
+    },
+    "onboardingDate": {
+      "_seconds": 1739548800,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "employeeName": "苏媚",
+    "rentEnd": {
+      "_seconds": 1749830400,
+      "_nanoseconds": 0
+    },
+    "employeeId": "LILBmuYrbBqKz6TLbD1T",
+    "notificationDate": {
+      "_seconds": 1748620800,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10138",
+    "needsNotification": true,
+    "monthlyRent": 3500,
+    "paymentFrequency": 1,
+    "rentStart": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "status": "due_soon",
+    "daysUntilDue": 4
+  },
+  {
+    "id": "T1pSjI467BLvCjmYYvL6",
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 185000000
+    },
+    "isOverdue": false,
+    "onboardingDate": {
+      "_seconds": 1745856000,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1753632000,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "contractNumber": "D10139",
+    "recentInvoice": "",
+    "monthlyRent": 3500,
+    "daysUntilDue": 48,
+    "notificationDate": {
+      "_seconds": 1752422400,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1745856000,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "status": "current",
+    "employeeName": "胡艳娟",
+    "employeeId": "mlKyJoMJjpjKqWJkCBSi",
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "T6vAq2AoFvPFGQSvfwNC",
+    "totalAmountDue": 3500,
+    "contractNumber": "D10162",
+    "isOverdue": false,
+    "onboardingDate": null,
+    "monthlyRent": 3500,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 824000000
+    },
+    "recentInvoice": "",
+    "status": "pending",
+    "needsNotification": false,
+    "paymentFrequency": 1,
+    "employeeName": "黄汉林",
+    "employeeId": "E4Vk9qioDHOV4ZmrhCFF",
+    "rentEnd": null,
+    "daysUntilDue": null
+  },
+  {
+    "id": "V0S5D8yb70oEXrffmWPJ",
+    "onboardingDate": {
+      "_seconds": 1735747200,
+      "_nanoseconds": 0
+    },
+    "employeeId": "nD4ABl7ulXf5ZNBxlGHu",
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 567000000
+    },
+    "paymentFrequency": 3,
+    "rentStart": {
+      "_seconds": 1743523200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10118",
+    "isOverdue": false,
+    "recentInvoice": "",
+    "status": "current",
+    "notificationDate": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "monthlyRent": 3500,
+    "daysUntilDue": 21,
+    "employeeName": "谭荣娥",
+    "rentEnd": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false
+  },
+  {
+    "id": "Vg9py0aUzk9ob9mZKQ1B",
+    "contractNumber": "D10102",
+    "notificationDate": {
+      "_seconds": 1753632000,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "onboardingDate": {
+      "_seconds": 1723392000,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "daysUntilDue": 62,
+    "totalAmountDue": 10500,
+    "paymentFrequency": 3,
+    "needsNotification": false,
+    "employeeName": "谭洁敏",
+    "rentEnd": {
+      "_seconds": 1754841600,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490384,
+      "_nanoseconds": 452000000
+    },
+    "recentInvoice": "",
+    "rentStart": {
+      "_seconds": 1746979200,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "employeeId": "kcfJcuB9sJLT6WQP8Qyh"
+  },
+  {
+    "id": "Vgh1vNF7Gqth05SqOwJo",
+    "employeeId": "Oo6KVhtWadMkrJO9ZbWb",
+    "onboardingDate": null,
+    "recentInvoice": "",
+    "daysUntilDue": null,
+    "rentEnd": null,
+    "status": "pending",
+    "isOverdue": false,
+    "contractNumber": "D10143",
+    "rentStart": null,
+    "employeeName": "馮玉麗",
+    "paymentFrequency": 3,
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 437000000
+    }
+  },
+  {
+    "id": "VqlrTWj5bAthNGhKCx96",
+    "status": "current",
+    "recentInvoice": "",
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "contractNumber": "D10104",
+    "rentEnd": {
+      "_seconds": 1755100800,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 65,
+    "paymentFrequency": 3,
+    "onboardingDate": {
+      "_seconds": 1731600000,
+      "_nanoseconds": 0
+    },
+    "employeeId": "590h0uyygQOSkeArKHfh",
+    "rentStart": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 862000000
+    },
+    "notificationDate": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "employeeName": "王子杰"
+  },
+  {
+    "id": "W4LsgIoO1GJ6hvU0YuFB",
+    "daysUntilDue": null,
+    "status": "pending",
+    "employeeName": "李雪萍",
+    "recentInvoice": "",
+    "employeeId": "mAtNMHDaikTWhhVxJagB",
+    "totalAmountDue": 10500,
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "rentStart": null,
+    "contractNumber": "D10167",
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 803000000
+    },
+    "needsNotification": false,
+    "rentEnd": null,
+    "onboardingDate": null,
+    "paymentFrequency": 3
+  },
+  {
+    "id": "WUARZEbprBCah4HwnnIT",
+    "onboardingDate": null,
+    "needsNotification": false,
+    "isOverdue": false,
+    "rentStart": null,
+    "monthlyRent": 3500,
+    "employeeName": "李錦坤",
+    "totalAmountDue": 10500,
+    "rentEnd": null,
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 163000000
+    },
+    "recentInvoice": "",
+    "contractNumber": "D10148",
+    "status": "pending",
+    "daysUntilDue": null,
+    "employeeId": "tCncrYlAGdZe6a2NtXBA"
+  },
+  {
+    "id": "Wq7lqeXj2hwKQ0fR8e0T",
+    "rentStart": null,
+    "needsNotification": false,
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 918000000
+    },
+    "onboardingDate": null,
+    "status": "pending",
+    "employeeId": "gMMnOE8mHJuOtEknKf6A",
+    "employeeName": "沈七林",
+    "isOverdue": false,
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "recentInvoice": "",
+    "contractNumber": "D10143",
+    "rentEnd": null,
+    "paymentFrequency": 3
+  },
+  {
+    "id": "WqcYvLnkzcfSauZRjP65",
+    "daysUntilDue": null,
+    "paymentFrequency": 3,
+    "employeeId": "Hbq1LMyjIOMgzyoU8nLH",
+    "contractNumber": "D10167",
+    "rentEnd": null,
+    "recentInvoice": "",
+    "status": "pending",
+    "onboardingDate": null,
+    "monthlyRent": 3500,
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "employeeName": "何國安",
+    "isOverdue": false,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 214000000
+    }
+  },
+  {
+    "id": "Wv4s4H1XpjHeSQjn8g6C",
+    "recentInvoice": "",
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "contractNumber": "D10159",
+    "monthlyRent": 3500,
+    "totalAmountDue": 3500,
+    "status": "pending",
+    "rentStart": null,
+    "needsNotification": false,
+    "rentEnd": null,
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 975000000
+    },
+    "isOverdue": false,
+    "paymentFrequency": 1,
+    "employeeId": "Ve22KmmC7vBBl6nuAitS",
+    "employeeName": "陳燕"
+  },
+  {
+    "id": "WvZjAdTxcGJufMxsSUXb",
+    "contractNumber": "D10104",
+    "status": "current",
+    "paymentFrequency": 3,
+    "onboardingDate": {
+      "_seconds": 1731600000,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 65,
+    "recentInvoice": "",
+    "isOverdue": false,
+    "monthlyRent": 3500,
+    "needsNotification": false,
+    "rentEnd": {
+      "_seconds": 1755100800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 625000000
+    },
+    "rentStart": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "notificationDate": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "employeeName": "朱昌华",
+    "employeeId": "IKGc4BxiNKjTOU5HpFBY"
+  },
+  {
+    "id": "X048QZA0j5y0CbYzNYk7",
+    "employeeName": "苏金珠",
+    "recentInvoice": "",
+    "monthlyRent": 3500,
+    "daysUntilDue": 19,
+    "status": "current",
+    "rentEnd": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "employeeId": "rmQN1bLJ5RHdsWemDAvo",
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 444000000
+    },
+    "totalAmountDue": 10500,
+    "notificationDate": {
+      "_seconds": 1749916800,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "contractNumber": "D10124",
+    "rentStart": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "isOverdue": false,
+    "onboardingDate": {
+      "_seconds": 1735488000,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "XK8Bz0gOWoNsJna5Abs1",
+    "notificationDate": {
+      "_seconds": 1749916800,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "daysUntilDue": 19,
+    "isOverdue": false,
+    "employeeName": "李锦宁",
+    "needsNotification": false,
+    "rentEnd": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "status": "current",
+    "rentStart": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 131000000
+    },
+    "totalAmountDue": 10500,
+    "paymentFrequency": 3,
+    "contractNumber": "D10124",
+    "employeeId": "hiplwTt0eMmLWqRiKtZD",
+    "onboardingDate": {
+      "_seconds": 1735488000,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "XeNgR35N0fTVvhMj45Gi",
+    "onboardingDate": {
+      "_seconds": 1731600000,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "daysUntilDue": 65,
+    "notificationDate": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "recentInvoice": "",
+    "paymentFrequency": 3,
+    "rentEnd": {
+      "_seconds": 1755100800,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1747238400,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "employeeId": "IGVjEWcfg3BdLjQHmfv3",
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 546000000
+    },
+    "status": "current",
+    "contractNumber": "D10104",
+    "employeeName": "李東霏"
+  },
+  {
+    "id": "XuRVH5jZiKFEFQPpuwUx",
+    "paymentFrequency": 3,
+    "totalAmountDue": 10500,
+    "rentEnd": null,
+    "contractNumber": "D10167",
+    "isOverdue": false,
+    "needsNotification": false,
+    "employeeId": "iWhnCD18o4H9E6B542Dk",
+    "monthlyRent": 3500,
+    "recentInvoice": "",
+    "status": "pending",
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 119000000
+    },
+    "rentStart": null,
+    "employeeName": "許雲英",
+    "onboardingDate": null,
+    "daysUntilDue": null
+  },
+  {
+    "id": "YRcPaoQRw4KnrQKkCDMo",
+    "monthlyRent": 3500,
+    "employeeId": "XWp22PwWNLmaV12KpuWR",
+    "rentEnd": null,
+    "recentInvoice": "",
+    "totalAmountDue": 3500,
+    "paymentFrequency": 1,
+    "employeeName": "张小伟",
+    "needsNotification": false,
+    "contractNumber": "D10153",
+    "rentStart": null,
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "isOverdue": false,
+    "status": "pending",
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 732000000
+    }
+  },
+  {
+    "id": "YSgSgbhF5yK2yMPjjfJQ",
+    "totalAmountDue": 10500,
+    "paymentFrequency": 3,
+    "needsNotification": false,
+    "employeeName": "叶王英",
+    "status": "current",
+    "rentStart": {
+      "_seconds": 1748707200,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "lastUpdated": {
+      "_seconds": 1749490384,
+      "_nanoseconds": 980000000
+    },
+    "notificationDate": {
+      "_seconds": 1755360000,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 82,
+    "rentEnd": {
+      "_seconds": 1756569600,
+      "_nanoseconds": 0
+    },
+    "employeeId": "AhbZumxX2oG1sO0xqiRh",
+    "contractNumber": "D10109",
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "onboardingDate": {
+      "_seconds": 1732809600,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "YgW241NmiJJ8FB8We0ps",
+    "daysUntilDue": 43,
+    "paymentFrequency": 3,
+    "status": "current",
+    "recentInvoice": "",
+    "needsNotification": false,
+    "rentEnd": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1751990400,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1745424000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 717000000
+    },
+    "employeeId": "msmFP2b1vLEd2SjGnjOT",
+    "contractNumber": "D10139",
+    "isOverdue": false,
+    "employeeName": "董德荣",
+    "monthlyRent": 3500,
+    "rentStart": {
+      "_seconds": 1745424000,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "ZE75pYi4IgziZD0WFeP2",
+    "totalAmountDue": 3500,
+    "recentInvoice": "",
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 627000000
+    },
+    "status": "pending",
+    "rentStart": null,
+    "employeeId": "InQDHpigg2k5RnZhrEgI",
+    "employeeName": "陈燕",
+    "contractNumber": "D10159",
+    "onboardingDate": null,
+    "isOverdue": false,
+    "daysUntilDue": null,
+    "needsNotification": false,
+    "paymentFrequency": 1,
+    "rentEnd": null,
+    "monthlyRent": 3500
+  },
+  {
+    "id": "ZYwWFgJWSxbj52fvgz0k",
+    "totalAmountDue": 3500,
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 564000000
+    },
+    "recentInvoice": "",
+    "paymentFrequency": 1,
+    "status": "pending",
+    "onboardingDate": null,
+    "employeeId": "gtxKax4pSd29EUumVbNM",
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "contractNumber": "D10155",
+    "employeeName": "陳遠容",
+    "rentStart": null,
+    "rentEnd": null,
+    "needsNotification": false
+  },
+  {
+    "id": "ZwncxGJKlHaAXXY0Xj8z",
+    "rentStart": null,
+    "contractNumber": "D10143",
+    "employeeId": "okyH5EzVugHvL1UNKouI",
+    "employeeName": "張浩林",
+    "status": "pending",
+    "daysUntilDue": null,
+    "recentInvoice": "",
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 668000000
+    },
+    "paymentFrequency": 3,
+    "rentEnd": null,
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "onboardingDate": null,
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "a8MgpmUQAFa7MpvJalrh",
+    "isOverdue": false,
+    "employeeId": "xENgk1u3mHIMIad45TRn",
+    "status": "current",
+    "rentEnd": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "rentStart": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "daysUntilDue": 33,
+    "onboardingDate": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "contractNumber": "D10128",
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 790000000
+    },
+    "employeeName": "许水云",
+    "notificationDate": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "recentInvoice": ""
+  },
+  {
+    "id": "aT4mVoif2TuBRFePjDLK",
+    "paymentFrequency": 1,
+    "onboardingDate": {
+      "_seconds": 1742486400,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1750435200,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1751731200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10141",
+    "totalAmountDue": 3500,
+    "employeeId": "byh2ybcLTR4yHv0ep4Bx",
+    "status": "current",
+    "rentEnd": {
+      "_seconds": 1752940800,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 40,
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "recentInvoice": "",
+    "employeeName": "陈爱珍",
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 910000000
+    }
+  },
+  {
+    "id": "aYexQ5kfFdDNudtyBRaK",
+    "contractNumber": "D10139",
+    "rentStart": {
+      "_seconds": 1746547200,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "paymentFrequency": 3,
+    "daysUntilDue": 57,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 311000000
+    },
+    "employeeName": "董意开",
+    "recentInvoice": "",
+    "rentEnd": {
+      "_seconds": 1754409600,
+      "_nanoseconds": 0
+    },
+    "employeeId": "Eq6q08iOwHcMysz9SjOf",
+    "status": "current",
+    "totalAmountDue": 10500,
+    "notificationDate": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "needsNotification": false,
+    "onboardingDate": {
+      "_seconds": 1746547200,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "b8GO6R0u2ng4mhT5LRt6",
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 240000000
+    },
+    "recentInvoice": "",
+    "employeeId": "pRMDUtQnE4KX27qWdbYg",
+    "contractNumber": "D10167",
+    "employeeName": "鄧榮基",
+    "status": "pending",
+    "rentStart": null,
+    "paymentFrequency": 3,
+    "onboardingDate": null,
+    "rentEnd": null,
+    "isOverdue": false,
+    "needsNotification": false,
+    "daysUntilDue": null,
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "b9ojeVwowlUtx87zv6u7",
+    "status": "pending",
+    "employeeName": "何尤靚",
+    "onboardingDate": null,
+    "rentStart": null,
+    "needsNotification": false,
+    "employeeId": "G0uWsJYhxhMWnPknLOKh",
+    "recentInvoice": "",
+    "daysUntilDue": null,
+    "paymentFrequency": 3,
+    "isOverdue": false,
+    "contractNumber": "D10143",
+    "rentEnd": null,
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 816000000
+    },
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "bKC7mNicd2u7iUcSvTrU",
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "daysUntilDue": 43,
+    "rentStart": {
+      "_seconds": 1745424000,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "rentEnd": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1751990400,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "employeeName": "楊玉妃",
+    "employeeId": "lrbennx3DxwW8ACmZGTx",
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 100000000
+    },
+    "onboardingDate": {
+      "_seconds": 1737648000,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "monthlyRent": 3500,
+    "contractNumber": "D10129",
+    "recentInvoice": ""
+  },
+  {
+    "id": "bVaMbnSV8LRnpIJfqjRk",
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "contractNumber": "D10143",
+    "monthlyRent": 3500,
+    "employeeName": "陈芹娜",
+    "recentInvoice": "",
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "employeeId": "QbeRGTqRFA78bQW38M4A",
+    "rentEnd": null,
+    "paymentFrequency": 3,
+    "rentStart": null,
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 929000000
+    },
+    "status": "pending"
+  },
+  {
+    "id": "bZkCvaLp4FocSvxZ3wc3",
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 749000000
+    },
+    "recentInvoice": "",
+    "totalAmountDue": 10500,
+    "paymentFrequency": 3,
+    "employeeName": "谢远光",
+    "rentStart": null,
+    "daysUntilDue": null,
+    "isOverdue": false,
+    "onboardingDate": null,
+    "monthlyRent": 3500,
+    "employeeId": "UDArC4HSs0OjdRjkcUzi",
+    "contractNumber": "D10140",
+    "status": "pending",
+    "rentEnd": null,
+    "needsNotification": false
+  },
+  {
+    "id": "c20OVKLhlNAC4LjWQjvU",
+    "onboardingDate": null,
+    "needsNotification": false,
+    "recentInvoice": "",
+    "employeeName": "王金權",
+    "monthlyRent": 3500,
+    "daysUntilDue": null,
+    "employeeId": "Xbr2Dbfxil1H3IcUsLz6",
+    "paymentFrequency": 1,
+    "rentEnd": null,
+    "totalAmountDue": 3500,
+    "status": "pending",
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 704000000
+    },
+    "rentStart": null,
+    "contractNumber": "D10159"
+  },
+  {
+    "id": "cSdXbpJhVHHl7YoVSiLQ",
+    "notificationDate": {
+      "_seconds": 1752422400,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "paymentFrequency": 3,
+    "rentEnd": {
+      "_seconds": 1753632000,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "recentInvoice": "",
+    "isOverdue": false,
+    "monthlyRent": 3500,
+    "rentStart": {
+      "_seconds": 1745856000,
+      "_nanoseconds": 0
+    },
+    "employeeId": "ekuC0kSre0Xep9ySyQLL",
+    "daysUntilDue": 48,
+    "needsNotification": false,
+    "employeeName": "蒙嘉敏",
+    "onboardingDate": {
+      "_seconds": 1730131200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10106",
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 57000000
+    }
+  },
+  {
+    "id": "ctLuczmx7zoqbqeL6m0u",
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 51000000
+    },
+    "isOverdue": false,
+    "needsNotification": false,
+    "employeeId": "H13dIk1uLeu9orgpU3LG",
+    "daysUntilDue": null,
+    "onboardingDate": null,
+    "rentStart": null,
+    "paymentFrequency": 3,
+    "status": "pending",
+    "employeeName": "唐海峰",
+    "rentEnd": null,
+    "contractNumber": "D10143",
+    "totalAmountDue": 10500,
+    "recentInvoice": "",
+    "monthlyRent": 3500
+  },
+  {
+    "id": "dISLvvzS1PAHHS2kREBj",
+    "employeeName": "赖勇强",
+    "onboardingDate": {
+      "_seconds": 1735488000,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "daysUntilDue": 19,
+    "status": "current",
+    "needsNotification": false,
+    "rentStart": {
+      "_seconds": 1743264000,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "paymentFrequency": 3,
+    "notificationDate": {
+      "_seconds": 1749916800,
+      "_nanoseconds": 0
+    },
+    "employeeId": "s0YXQ703MX68WSSeSH6o",
+    "totalAmountDue": 10500,
+    "contractNumber": "D10124",
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 890000000
+    },
+    "isOverdue": false
+  },
+  {
+    "id": "ddmUmJJRP1sIo848ym8w",
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 357000000
+    },
+    "rentEnd": {
+      "_seconds": 1751212800,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10103",
+    "needsNotification": false,
+    "daysUntilDue": 20,
+    "rentStart": {
+      "_seconds": 1743436800,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1727712000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1750003200,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "employeeId": "kHWYNNa3MscpjGw3k61e",
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "employeeName": "陈裕维",
+    "paymentFrequency": 3,
+    "totalAmountDue": 10500,
+    "recentInvoice": ""
+  },
+  {
+    "id": "e5mPGUEkzqddBJuPm46l",
+    "rentEnd": {
+      "_seconds": 1754150400,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "daysUntilDue": 54,
+    "paymentFrequency": 3,
+    "employeeId": "KW35g6qfNqFvZZnabSq5",
+    "onboardingDate": {
+      "_seconds": 1738598400,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "needsNotification": false,
+    "recentInvoice": "",
+    "contractNumber": "D10127",
+    "notificationDate": {
+      "_seconds": 1752940800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 326000000
+    },
+    "totalAmountDue": 10500,
+    "isOverdue": false,
+    "employeeName": "胡荧姬",
+    "rentStart": {
+      "_seconds": 1746288000,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "e7xjZEoyX9SIkgjMcl0N",
+    "contractNumber": "D10140",
+    "daysUntilDue": null,
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 685000000
+    },
+    "recentInvoice": "",
+    "status": "pending",
+    "employeeName": "张弛",
+    "onboardingDate": null,
+    "totalAmountDue": 10500,
+    "rentEnd": null,
+    "paymentFrequency": 3,
+    "isOverdue": false,
+    "employeeId": "26OwkBSRvzeQ6VAMDWdk",
+    "needsNotification": false,
+    "rentStart": null,
+    "monthlyRent": 3500
+  },
+  {
+    "id": "esLA8zw25Pyq4Efr02vq",
+    "rentStart": {
+      "_seconds": 1743436800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 932000000
+    },
+    "recentInvoice": "",
+    "paymentFrequency": 3,
+    "notificationDate": {
+      "_seconds": 1750003200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10106",
+    "onboardingDate": {
+      "_seconds": 1727712000,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 20,
+    "rentEnd": {
+      "_seconds": 1751212800,
+      "_nanoseconds": 0
+    },
+    "employeeName": "钟美媛",
+    "totalAmountDue": 10500,
+    "employeeId": "qOZtp7eVOgou5Hb2vAIS",
+    "isOverdue": false,
+    "needsNotification": false,
+    "status": "current",
+    "monthlyRent": 3500
+  },
+  {
+    "id": "f1lVxUCpEc4C6BrccCz7",
+    "rentStart": null,
+    "daysUntilDue": null,
+    "recentInvoice": "",
+    "needsNotification": false,
+    "status": "pending",
+    "isOverdue": false,
+    "rentEnd": null,
+    "totalAmountDue": 3500,
+    "paymentFrequency": 1,
+    "onboardingDate": null,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 353000000
+    },
+    "monthlyRent": 3500,
+    "contractNumber": "D10156",
+    "employeeId": "VIjv0vVcUYnA4kqCTr3m",
+    "employeeName": "陈悦江"
+  },
+  {
+    "id": "fVxiam1HHKvUe77iKmSa",
+    "onboardingDate": null,
+    "rentStart": {
+      "_seconds": 1748966400,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 866000000
+    },
+    "daysUntilDue": 85,
+    "rentEnd": {
+      "_seconds": 1756828800,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "needsNotification": false,
+    "recentInvoice": "",
+    "notificationDate": {
+      "_seconds": 1755619200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10143",
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "status": "current",
+    "employeeId": "XiRIZI5Pbue1fjvBvpEF",
+    "employeeName": "林群英",
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "fefTWvPmqJVEHwdXPNbP",
+    "employeeName": "朱雄孟",
+    "paymentFrequency": 1,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 45000000
+    },
+    "rentStart": null,
+    "onboardingDate": null,
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "totalAmountDue": 3500,
+    "status": "pending",
+    "employeeId": "uxGvuHefe2a4pEa2XXVi",
+    "isOverdue": false,
+    "daysUntilDue": null,
+    "contractNumber": "D10160",
+    "rentEnd": null,
+    "recentInvoice": ""
+  },
+  {
+    "id": "fjUjhS4Bf6i0CwaZDqMI",
+    "employeeName": "黎漢明",
+    "recentInvoice": "",
+    "rentStart": null,
+    "onboardingDate": null,
+    "needsNotification": false,
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 987000000
+    },
+    "monthlyRent": 3500,
+    "rentEnd": null,
+    "contractNumber": "D10143",
+    "daysUntilDue": null,
+    "status": "pending",
+    "employeeId": "893UxviY4Dn2i7A9IZn6",
+    "isOverdue": false,
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "gVNqp7U4E9nkTeEgfdTn",
+    "employeeName": "余碧颜",
+    "rentEnd": {
+      "_seconds": 1753891200,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "daysUntilDue": 51,
+    "rentStart": {
+      "_seconds": 1746028800,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1725724800,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "employeeId": "S5LiHmJyRDRt41cVBCG8",
+    "totalAmountDue": 10500,
+    "notificationDate": {
+      "_seconds": 1752681600,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10103",
+    "monthlyRent": 3500,
+    "needsNotification": false,
+    "recentInvoice": "",
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 238000000
+    },
+    "status": "current"
+  },
+  {
+    "id": "gbIwpAxad8t8Mj7enUwr",
+    "notificationDate": {
+      "_seconds": 1753545600,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "rentStart": {
+      "_seconds": 1746892800,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 317000000
+    },
+    "onboardingDate": {
+      "_seconds": 1731254400,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10104",
+    "employeeName": "陈佳宁",
+    "paymentFrequency": 3,
+    "daysUntilDue": 61,
+    "status": "current",
+    "isOverdue": false,
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "employeeId": "cxYyFCQwhXAooRxTTfeA"
+  },
+  {
+    "id": "gkmrmeDOoh11UFIrM4Qf",
+    "notificationDate": {
+      "_seconds": 1753372800,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 59,
+    "monthlyRent": 3500,
+    "employeeName": "江锦波",
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 511000000
+    },
+    "onboardingDate": {
+      "_seconds": 1728403200,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 1,
+    "rentStart": {
+      "_seconds": 1751990400,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 3500,
+    "status": "current",
+    "needsNotification": false,
+    "recentInvoice": "",
+    "contractNumber": "D10101",
+    "employeeId": "z8I1yj5RTT4ZGzrMEWuF",
+    "rentEnd": {
+      "_seconds": 1754582400,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "gxloxYyzlLndSgTokvID",
+    "daysUntilDue": 96,
+    "contractNumber": "D10116",
+    "recentInvoice": "",
+    "employeeId": "EXPDwxAP1E2qbvU1v4Q4",
+    "totalAmountDue": 10500,
+    "onboardingDate": {
+      "_seconds": 1734192000,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "notificationDate": {
+      "_seconds": 1756569600,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "paymentFrequency": 3,
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "rentEnd": {
+      "_seconds": 1757779200,
+      "_nanoseconds": 0
+    },
+    "employeeName": "吴春玉",
+    "rentStart": {
+      "_seconds": 1749916800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490384,
+      "_nanoseconds": 838000000
+    }
+  },
+  {
+    "id": "hB2i95hRzJHtfWTImlHu",
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 669000000
+    },
+    "employeeName": "梁建麗",
+    "status": "pending",
+    "isOverdue": false,
+    "contractNumber": "D10167",
+    "rentStart": null,
+    "rentEnd": null,
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "recentInvoice": "",
+    "needsNotification": false,
+    "employeeId": "7Jhpi7FRYlPD0yDHpqzD",
+    "totalAmountDue": 10500,
+    "onboardingDate": null,
+    "paymentFrequency": 3
+  },
+  {
+    "id": "hYKptfTNSIrAbKrt5Ndn",
+    "status": "pending",
+    "recentInvoice": "",
+    "contractNumber": "D10145",
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 734000000
+    },
+    "rentStart": null,
+    "rentEnd": null,
+    "employeeName": "黃隆佳",
+    "needsNotification": false,
+    "isOverdue": false,
+    "totalAmountDue": 10500,
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "employeeId": "WVAvdBhBzcuOvHGYkb8P",
+    "onboardingDate": null,
+    "paymentFrequency": 3
+  },
+  {
+    "id": "iTkKHIR4lMRvHvTpegmj",
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "paymentFrequency": 3,
+    "totalAmountDue": 10500,
+    "employeeId": "G2tSiWVFXdoXSCnJh2hK",
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 753000000
+    },
+    "contractNumber": "D10143",
+    "recentInvoice": "",
+    "daysUntilDue": null,
+    "employeeName": "张腾元",
+    "rentEnd": null,
+    "status": "pending",
+    "rentStart": null,
+    "onboardingDate": null
+  },
+  {
+    "id": "inZUzxacNWfE2ySLVpKR",
+    "daysUntilDue": 21,
+    "contractNumber": "D10123",
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 678000000
+    },
+    "monthlyRent": 3500,
+    "employeeName": "练有芳",
+    "needsNotification": false,
+    "recentInvoice": "",
+    "onboardingDate": {
+      "_seconds": 1704124800,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "status": "current",
+    "notificationDate": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1743523200,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "employeeId": "hxUOx5uKH7fgUrJyMGja"
+  },
+  {
+    "id": "ivdEtryAa9pKt6IiORYN",
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 626000000
+    },
+    "contractNumber": "D10141",
+    "employeeName": "陈笑英",
+    "totalAmountDue": 3500,
+    "needsNotification": false,
+    "rentStart": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1742140800,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "status": "current",
+    "isOverdue": false,
+    "notificationDate": {
+      "_seconds": 1751385600,
+      "_nanoseconds": 0
+    },
+    "employeeId": "rVhYznYOeGeqhiA65bp2",
+    "rentEnd": {
+      "_seconds": 1752595200,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 1,
+    "daysUntilDue": 36,
+    "recentInvoice": ""
+  },
+  {
+    "id": "j45xTySKhxbfLqbP23Xn",
+    "totalAmountDue": 3500,
+    "rentEnd": null,
+    "isOverdue": false,
+    "daysUntilDue": null,
+    "employeeId": "i8dVkbj25Dm9e2xEJ5TN",
+    "onboardingDate": null,
+    "contractNumber": "",
+    "status": "pending",
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 304000000
+    },
+    "monthlyRent": 3500,
+    "recentInvoice": "",
+    "paymentFrequency": 1,
+    "needsNotification": false,
+    "employeeName": "林展榮",
+    "rentStart": null
+  },
+  {
+    "id": "j5uVukBRQw9zDbmi8dvm",
+    "rentStart": null,
+    "paymentFrequency": 3,
+    "employeeName": "王松松",
+    "isOverdue": false,
+    "employeeId": "bmWqKOmL3eBqvbRAjTXB",
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 493000000
+    },
+    "status": "pending",
+    "totalAmountDue": 10500,
+    "recentInvoice": "",
+    "rentEnd": null,
+    "needsNotification": false,
+    "daysUntilDue": null,
+    "contractNumber": "D10167",
+    "monthlyRent": 3500,
+    "onboardingDate": null
+  },
+  {
+    "id": "jTpS1okJuluy6kcMEdCm",
+    "paymentFrequency": 3,
+    "rentStart": null,
+    "contractNumber": "D10143",
+    "daysUntilDue": null,
+    "status": "pending",
+    "employeeId": "n3tT5QZsIuvj9W3Zw4NJ",
+    "monthlyRent": 3500,
+    "employeeName": "徐永燕",
+    "recentInvoice": "",
+    "needsNotification": false,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 880000000
+    },
+    "onboardingDate": null,
+    "isOverdue": false,
+    "rentEnd": null,
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "jwSQFejGPq5oc54VYLcx",
+    "notificationDate": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10134",
+    "daysUntilDue": 33,
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 287000000
+    },
+    "totalAmountDue": 3500,
+    "employeeName": "罗伟健",
+    "rentEnd": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1749830400,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "needsNotification": false,
+    "status": "current",
+    "paymentFrequency": 1,
+    "employeeId": "XErZI4cxi0qUTAazTcNw",
+    "onboardingDate": {
+      "_seconds": 1739462400,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "monthlyRent": 3500
+  },
+  {
+    "id": "kdiJbMrS8mpqJyfT7IPl",
+    "totalAmountDue": 10500,
+    "paymentFrequency": 3,
+    "daysUntilDue": 33,
+    "contractNumber": "D10128",
+    "employeeName": "陳麗珠",
+    "rentStart": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "rentEnd": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 123000000
+    },
+    "recentInvoice": "",
+    "onboardingDate": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "needsNotification": false,
+    "employeeId": "IFgDp6X0nQr6lMF7ZcGJ",
+    "isOverdue": false
+  },
+  {
+    "id": "lOSX0fBjLth8fwMKXmY0",
+    "daysUntilDue": 61,
+    "onboardingDate": {
+      "_seconds": 1731168000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1753545600,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "contractNumber": "D10116",
+    "paymentFrequency": 3,
+    "employeeName": "胡秋明",
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 226000000
+    },
+    "needsNotification": false,
+    "rentStart": {
+      "_seconds": 1746892800,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "employeeId": "3OUHhVQslnx2OlFH801H",
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "lTqcyNNLpouGRvo7vI32",
+    "paymentFrequency": 3,
+    "rentStart": {
+      "_seconds": 1745424000,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "employeeId": "Mvem9ewjOiYcQwFvBpDv",
+    "contractNumber": "D10139",
+    "notificationDate": {
+      "_seconds": 1751990400,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 653000000
+    },
+    "recentInvoice": "",
+    "status": "current",
+    "onboardingDate": {
+      "_seconds": 1745424000,
+      "_nanoseconds": 0
+    },
+    "employeeName": "林健新",
+    "rentEnd": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 43,
+    "totalAmountDue": 10500,
+    "isOverdue": false
+  },
+  {
+    "id": "lZonfsmwYk9v3VmZ36zU",
+    "totalAmountDue": 3500,
+    "status": "pending",
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 982000000
+    },
+    "daysUntilDue": null,
+    "contractNumber": "D10158",
+    "paymentFrequency": 1,
+    "rentEnd": null,
+    "isOverdue": false,
+    "recentInvoice": "",
+    "employeeId": "T6b4xnGbNxgD1NLdYt7a",
+    "needsNotification": false,
+    "onboardingDate": null,
+    "rentStart": null,
+    "monthlyRent": 3500,
+    "employeeName": "邓飞凡"
+  },
+  {
+    "id": "lkbQ81HCs0fXOYMlx4re",
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 506000000
+    },
+    "isOverdue": false,
+    "recentInvoice": "",
+    "rentStart": {
+      "_seconds": 1743523200,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "rentEnd": {
+      "_seconds": 1751299200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10118",
+    "employeeName": "叶结华",
+    "needsNotification": false,
+    "onboardingDate": {
+      "_seconds": 1735747200,
+      "_nanoseconds": 0
+    },
+    "employeeId": "xTqeTVKmeqbjXekzIWHQ",
+    "paymentFrequency": 3,
+    "notificationDate": {
+      "_seconds": 1750089600,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 21,
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "lpKadh5x1qRSW0xRiC0E",
+    "monthlyRent": 3500,
+    "employeeName": "黄嘉和",
+    "recentInvoice": "",
+    "onboardingDate": {
+      "_seconds": 1745856000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1752422400,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1753632000,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "needsNotification": false,
+    "paymentFrequency": 3,
+    "rentStart": {
+      "_seconds": 1745856000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 827000000
+    },
+    "employeeId": "56Za6StiVLZalSli2ava",
+    "status": "current",
+    "daysUntilDue": 48,
+    "contractNumber": "D10139",
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "nwl3UkrwGPUMR1nmiV94",
+    "isOverdue": false,
+    "rentStart": null,
+    "recentInvoice": "",
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 739000000
+    },
+    "onboardingDate": null,
+    "monthlyRent": 3500,
+    "rentEnd": null,
+    "paymentFrequency": 3,
+    "totalAmountDue": 10500,
+    "needsNotification": false,
+    "employeeId": "TRk410pjpEutMTO9PTJZ",
+    "employeeName": "龐祖榮",
+    "contractNumber": "D10167",
+    "daysUntilDue": null,
+    "status": "pending"
+  },
+  {
+    "id": "oGxkUGApx2pB6pULSjjH",
+    "onboardingDate": null,
+    "needsNotification": false,
+    "isOverdue": false,
+    "rentStart": null,
+    "monthlyRent": 3500,
+    "employeeName": "唐文強",
+    "totalAmountDue": 10500,
+    "rentEnd": null,
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 605000000
+    },
+    "recentInvoice": "",
+    "contractNumber": "D10143",
+    "status": "pending",
+    "daysUntilDue": null,
+    "employeeId": "FzkMn25oMgKfbTtKLq3v"
+  },
+  {
+    "id": "oKQ1Gyy5xdj34lL1Lh8f",
+    "monthlyRent": 3500,
+    "totalAmountDue": 10500,
+    "onboardingDate": {
+      "_seconds": 1739203200,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "needsNotification": false,
+    "daysUntilDue": 61,
+    "paymentFrequency": 3,
+    "employeeName": "莫嘉強",
+    "isOverdue": false,
+    "rentEnd": {
+      "_seconds": 1754755200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10129",
+    "rentStart": {
+      "_seconds": 1746892800,
+      "_nanoseconds": 0
+    },
+    "employeeId": "WjynQSPNl0TsO4evIIvf",
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 432000000
+    },
+    "recentInvoice": "",
+    "notificationDate": {
+      "_seconds": 1753545600,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "oUVqhvZVsm7y2d1J4Wce",
+    "daysUntilDue": 33,
+    "totalAmountDue": 10500,
+    "onboardingDate": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "isOverdue": false,
+    "monthlyRent": 3500,
+    "contractNumber": "D10128",
+    "recentInvoice": "",
+    "paymentFrequency": 3,
+    "notificationDate": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "employeeName": "岑永梅",
+    "employeeId": "kJMjs51koesIpUOaUqMW",
+    "rentStart": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 980000000
+    }
+  },
+  {
+    "id": "osm93PyJI5o104JszqLt",
+    "monthlyRent": 3500,
+    "onboardingDate": {
+      "_seconds": 1738598400,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1754150400,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 369000000
+    },
+    "needsNotification": false,
+    "contractNumber": "D10127",
+    "employeeName": "张阳文",
+    "recentInvoice": "",
+    "employeeId": "DjfXVnBpExwWWa8NtWME",
+    "status": "current",
+    "isOverdue": false,
+    "rentStart": {
+      "_seconds": 1746288000,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1752940800,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 54,
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "p88CbpTt9FtOsHpgmx5Y",
+    "isOverdue": false,
+    "notificationDate": {
+      "_seconds": 1749225600,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 476000000
+    },
+    "totalAmountDue": 3500,
+    "employeeName": "陈梓梅",
+    "rentEnd": {
+      "_seconds": 1750435200,
+      "_nanoseconds": 0
+    },
+    "paymentFrequency": 1,
+    "employeeId": "4beOwgksKpQ50232Eaza",
+    "onboardingDate": {
+      "_seconds": 1745769600,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 11,
+    "rentStart": {
+      "_seconds": 1747843200,
+      "_nanoseconds": 0
+    },
+    "needsNotification": true,
+    "recentInvoice": "",
+    "contractNumber": "D10146",
+    "monthlyRent": 3500,
+    "status": "due_soon"
+  },
+  {
+    "id": "pU1bIFpNdQcrGWCbhI1C",
+    "employeeId": "inYwDhYPdSUlz5o3RcLH",
+    "employeeName": "伍贵洪",
+    "notificationDate": {
+      "_seconds": 1750435200,
+      "_nanoseconds": 0
+    },
+    "onboardingDate": {
+      "_seconds": 1736092800,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "rentEnd": {
+      "_seconds": 1751644800,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "status": "current",
+    "isOverdue": false,
+    "daysUntilDue": 25,
+    "monthlyRent": 3500,
+    "contractNumber": "D10130",
+    "paymentFrequency": 3,
+    "rentStart": {
+      "_seconds": 1743868800,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 420000000
+    },
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "pki26Yk1f9m13r4dSeBB",
+    "totalAmountDue": 10500,
+    "employeeName": "钟海俊",
+    "onboardingDate": {
+      "_seconds": 1740931200,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "notificationDate": {
+      "_seconds": 1750176000,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10122",
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 49000000
+    },
+    "isOverdue": false,
+    "needsNotification": false,
+    "rentStart": {
+      "_seconds": 1748880000,
+      "_nanoseconds": 0
+    },
+    "employeeId": "NfPjbJJCMDc2DvGuUIyh",
+    "monthlyRent": 3500,
+    "recentInvoice": "",
+    "daysUntilDue": 22,
+    "paymentFrequency": 3,
+    "rentEnd": {
+      "_seconds": 1751385600,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "q0m9cwmfa2b0BTKYXjU0",
+    "status": "pending",
+    "employeeName": "康少清",
+    "contractNumber": "D00000",
+    "rentEnd": null,
+    "isOverdue": false,
+    "recentInvoice": "",
+    "totalAmountDue": 10500,
+    "employeeId": "QC1ORixjagYSPRG8r18C",
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 262000000
+    },
+    "rentStart": null,
+    "needsNotification": false,
+    "paymentFrequency": 3,
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "onboardingDate": {
+      "_seconds": 1725811200,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "qQS9dwZICUygGmiwcjK1",
+    "needsNotification": false,
+    "recentInvoice": "",
+    "totalAmountDue": 3500,
+    "employeeName": "李乐彬",
+    "isOverdue": false,
+    "employeeId": "euraKey9hDzrFDLBptsk",
+    "paymentFrequency": 1,
+    "monthlyRent": 3500,
+    "contractNumber": "D10157",
+    "daysUntilDue": null,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 470000000
+    },
+    "rentEnd": null,
+    "status": "pending",
+    "onboardingDate": null,
+    "rentStart": null
+  },
+  {
+    "id": "qsypHjhJ06ETdO57Gcml",
+    "daysUntilDue": 84,
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 768000000
+    },
+    "rentEnd": {
+      "_seconds": 1756742400,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "status": "current",
+    "paymentFrequency": 3,
+    "monthlyRent": 3500,
+    "notificationDate": {
+      "_seconds": 1755532800,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "onboardingDate": {
+      "_seconds": 1740931200,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "contractNumber": "D10133",
+    "employeeId": "CXqVXZkqwbT4aiKSV7LS",
+    "rentStart": {
+      "_seconds": 1748880000,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "employeeName": "李铭欣"
+  },
+  {
+    "id": "sLfHZD81Z2TgAXmIQd0w",
+    "contractNumber": "D10167",
+    "paymentFrequency": 3,
+    "employeeName": "陳家良",
+    "daysUntilDue": null,
+    "isOverdue": false,
+    "status": "pending",
+    "employeeId": "WbIu2WTeV5WPdTCXaPYn",
+    "monthlyRent": 3500,
+    "needsNotification": false,
+    "rentStart": null,
+    "onboardingDate": null,
+    "rentEnd": null,
+    "totalAmountDue": 10500,
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 993000000
+    },
+    "recentInvoice": ""
+  },
+  {
+    "id": "sMa8aaB7NMpYC2FgI4sY",
+    "totalAmountDue": 10500,
+    "status": "pending",
+    "rentEnd": null,
+    "isOverdue": false,
+    "employeeName": "陳瑞儀",
+    "lastUpdated": {
+      "_seconds": 1749490393,
+      "_nanoseconds": 361000000
+    },
+    "monthlyRent": 3500,
+    "recentInvoice": "",
+    "contractNumber": "D10167",
+    "employeeId": "eFC9GKHNSMp4URUw0PTV",
+    "rentStart": null,
+    "paymentFrequency": 3,
+    "onboardingDate": null,
+    "daysUntilDue": null,
+    "needsNotification": false
+  },
+  {
+    "id": "sk2UI7yQiYNRID8g0kpj",
+    "rentEnd": null,
+    "rentStart": null,
+    "onboardingDate": null,
+    "totalAmountDue": 3500,
+    "paymentFrequency": 1,
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 501000000
+    },
+    "recentInvoice": "",
+    "employeeName": "劉美紅",
+    "isOverdue": false,
+    "status": "pending",
+    "needsNotification": false,
+    "monthlyRent": 3500,
+    "employeeId": "owRCIIuVHbquZ1aXSg46",
+    "daysUntilDue": null,
+    "contractNumber": "D10152"
+  },
+  {
+    "id": "tRlICg9fOjeCYJF9EIzz",
+    "isOverdue": false,
+    "employeeName": "何少芳",
+    "contractNumber": "D10106",
+    "notificationDate": {
+      "_seconds": 1752422400,
+      "_nanoseconds": 0
+    },
+    "recentInvoice": "",
+    "status": "current",
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 995000000
+    },
+    "onboardingDate": {
+      "_seconds": 1730131200,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "rentEnd": {
+      "_seconds": 1753632000,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "employeeId": "1z7W7eKR9xkEE17a05i3",
+    "paymentFrequency": 3,
+    "daysUntilDue": 48,
+    "rentStart": {
+      "_seconds": 1745856000,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "tbgubCw2A02bnN8hwCpu",
+    "totalAmountDue": 10500,
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "contractNumber": "D10143",
+    "onboardingDate": null,
+    "rentStart": null,
+    "rentEnd": null,
+    "paymentFrequency": 3,
+    "recentInvoice": "",
+    "employeeId": "GeHXRYl3FiFvCPGIeXq1",
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 487000000
+    },
+    "needsNotification": false,
+    "status": "pending",
+    "employeeName": "郭偉勝",
+    "isOverdue": false
+  },
+  {
+    "id": "tvp7mNj4On6N4XlcGJeq",
+    "monthlyRent": 3500,
+    "notificationDate": {
+      "_seconds": 1750867200,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10135",
+    "isOverdue": false,
+    "needsNotification": false,
+    "rentEnd": {
+      "_seconds": 1752076800,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 30,
+    "rentStart": {
+      "_seconds": 1745078400,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "lastUpdated": {
+      "_seconds": 1749490386,
+      "_nanoseconds": 290000000
+    },
+    "paymentFrequency": 3,
+    "recentInvoice": "",
+    "employeeName": "陈基发",
+    "employeeId": "4Ns7xeI5OqbFz7XNzo2f",
+    "onboardingDate": {
+      "_seconds": 1737302400,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500
+  },
+  {
+    "id": "uhZsPvdJctVXa1RmvSfG",
+    "employeeName": "潘建棋",
+    "status": "current",
+    "isOverdue": false,
+    "employeeId": "YNxp5Edbq824No8OFusd",
+    "notificationDate": {
+      "_seconds": 1754064000,
+      "_nanoseconds": 0
+    },
+    "rentStart": {
+      "_seconds": 1747411200,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 179000000
+    },
+    "daysUntilDue": 67,
+    "paymentFrequency": 3,
+    "monthlyRent": 3500,
+    "onboardingDate": {
+      "_seconds": 1739721600,
+      "_nanoseconds": 0
+    },
+    "needsNotification": false,
+    "recentInvoice": "",
+    "totalAmountDue": 10500,
+    "contractNumber": "D10131",
+    "rentEnd": {
+      "_seconds": 1755273600,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "vK2s4EgX11qb8oQynw5A",
+    "contractNumber": "D10143",
+    "employeeId": "ZkUW9ClFhsMfvMovWxea",
+    "monthlyRent": 3500,
+    "rentStart": null,
+    "totalAmountDue": 10500,
+    "daysUntilDue": null,
+    "needsNotification": false,
+    "employeeName": "梁建伟",
+    "status": "pending",
+    "onboardingDate": null,
+    "paymentFrequency": 3,
+    "recentInvoice": "",
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 403000000
+    },
+    "isOverdue": false,
+    "rentEnd": null
+  },
+  {
+    "id": "vagQWy9aqKt0iPpnqCPN",
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490388,
+      "_nanoseconds": 183000000
+    },
+    "rentStart": {
+      "_seconds": 1746460800,
+      "_nanoseconds": 0
+    },
+    "notificationDate": {
+      "_seconds": 1753113600,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "daysUntilDue": 56,
+    "isOverdue": false,
+    "employeeId": "yIjVtBZnaaozXwmMMeH4",
+    "needsNotification": false,
+    "onboardingDate": {
+      "_seconds": 1731772800,
+      "_nanoseconds": 0
+    },
+    "employeeName": "欧颖",
+    "monthlyRent": 3500,
+    "contractNumber": "D10106",
+    "totalAmountDue": 10500,
+    "recentInvoice": "",
+    "rentEnd": {
+      "_seconds": 1754323200,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "vlTvvmYSBjTrW5wpRP1C",
+    "paymentFrequency": 3,
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490385,
+      "_nanoseconds": 121000000
+    },
+    "notificationDate": {
+      "_seconds": 1757260800,
+      "_nanoseconds": 0
+    },
+    "isOverdue": false,
+    "employeeName": "林惠娟",
+    "recentInvoice": "",
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "employeeId": "8gowWOHNpyefgWz17QP4",
+    "status": "current",
+    "onboardingDate": {
+      "_seconds": 1734883200,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1758470400,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 104,
+    "rentStart": {
+      "_seconds": 1750608000,
+      "_nanoseconds": 0
+    },
+    "contractNumber": "D10116"
+  },
+  {
+    "id": "wcELotU7mcxlg6xQAM3f",
+    "status": "pending",
+    "rentStart": null,
+    "employeeName": "梁基志",
+    "employeeId": "PsvlXOalee1H80K6l008",
+    "totalAmountDue": 3500,
+    "recentInvoice": "",
+    "needsNotification": false,
+    "onboardingDate": null,
+    "rentEnd": null,
+    "paymentFrequency": 1,
+    "daysUntilDue": null,
+    "monthlyRent": 3500,
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490396,
+      "_nanoseconds": 13000000
+    },
+    "contractNumber": "D10166"
+  },
+  {
+    "id": "x9Abzg4OaYRqdCYALn8d",
+    "paymentFrequency": 3,
+    "contractNumber": "D10167",
+    "daysUntilDue": null,
+    "rentStart": null,
+    "totalAmountDue": 10500,
+    "needsNotification": false,
+    "employeeId": "uy78Ly1H3SiwS96yto9H",
+    "rentEnd": null,
+    "recentInvoice": "",
+    "isOverdue": false,
+    "onboardingDate": null,
+    "employeeName": "陽銘一",
+    "monthlyRent": 3500,
+    "status": "pending",
+    "lastUpdated": {
+      "_seconds": 1749490395,
+      "_nanoseconds": 367000000
+    }
+  },
+  {
+    "id": "xCiKcjWyU3iNpf4qc3yL",
+    "monthlyRent": 3500,
+    "rentStart": null,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 101000000
+    },
+    "isOverdue": false,
+    "onboardingDate": null,
+    "employeeId": "L3MbQYyPWpidvBWrrR5B",
+    "recentInvoice": "",
+    "rentEnd": null,
+    "totalAmountDue": 10500,
+    "daysUntilDue": null,
+    "status": "pending",
+    "contractNumber": "D10144",
+    "paymentFrequency": 3,
+    "needsNotification": false,
+    "employeeName": "林晋洋"
+  },
+  {
+    "id": "xSeQb0JEW4naSIfl2evB",
+    "daysUntilDue": null,
+    "recentInvoice": "",
+    "paymentFrequency": 3,
+    "totalAmountDue": 10500,
+    "employeeName": "卢锦行",
+    "rentEnd": null,
+    "monthlyRent": 3500,
+    "needsNotification": false,
+    "onboardingDate": null,
+    "employeeId": "FoQLrDsl5yefcF65ge8T",
+    "isOverdue": false,
+    "lastUpdated": {
+      "_seconds": 1749490394,
+      "_nanoseconds": 798000000
+    },
+    "contractNumber": "D10145",
+    "status": "pending",
+    "rentStart": null
+  },
+  {
+    "id": "xhgntibhvAY9PSYylN9b",
+    "status": "pending",
+    "onboardingDate": null,
+    "rentStart": null,
+    "daysUntilDue": null,
+    "rentEnd": null,
+    "needsNotification": false,
+    "contractNumber": "D10153",
+    "isOverdue": false,
+    "employeeName": "劳文钊",
+    "monthlyRent": 3500,
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 112000000
+    },
+    "paymentFrequency": 1,
+    "totalAmountDue": 3500,
+    "employeeId": "dbuVukB8tn16HoVwc4eK",
+    "recentInvoice": ""
+  },
+  {
+    "id": "y3GDEvRbjAd7MK1jFqu6",
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 810000000
+    },
+    "daysUntilDue": null,
+    "isOverdue": false,
+    "paymentFrequency": 1,
+    "rentEnd": null,
+    "onboardingDate": null,
+    "status": "pending",
+    "recentInvoice": "",
+    "contractNumber": "D10155",
+    "employeeId": "VH4sF7EuJWRLCuJFhinx",
+    "needsNotification": false,
+    "employeeName": "黄春松",
+    "totalAmountDue": 3500,
+    "rentStart": null,
+    "monthlyRent": 3500
+  },
+  {
+    "id": "yCsZNWrGpmgTj552G9hW",
+    "employeeName": "林丽芬",
+    "needsNotification": false,
+    "totalAmountDue": 10500,
+    "status": "current",
+    "contractNumber": "D10128",
+    "onboardingDate": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    },
+    "rentEnd": {
+      "_seconds": 1752336000,
+      "_nanoseconds": 0
+    },
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 854000000
+    },
+    "daysUntilDue": 33,
+    "paymentFrequency": 3,
+    "isOverdue": false,
+    "recentInvoice": "",
+    "notificationDate": {
+      "_seconds": 1751126400,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "employeeId": "g7ZFT1lrz28wcPXtAGaa",
+    "rentStart": {
+      "_seconds": 1744560000,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "z19LhKr2RFkzB3OeV2LY",
+    "paymentFrequency": 3,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 32000000
+    },
+    "daysUntilDue": null,
+    "onboardingDate": null,
+    "contractNumber": "D10144",
+    "totalAmountDue": 10500,
+    "monthlyRent": 3500,
+    "employeeName": "王爱民",
+    "isOverdue": false,
+    "rentEnd": null,
+    "status": "pending",
+    "recentInvoice": "",
+    "needsNotification": false,
+    "employeeId": "kkJUX9vQV18kRdUnWEpa",
+    "rentStart": null
+  },
+  {
+    "id": "zREACzmF2rvnguvmEMSv",
+    "daysUntilDue": null,
+    "rentStart": null,
+    "paymentFrequency": 3,
+    "isOverdue": false,
+    "recentInvoice": "",
+    "rentEnd": null,
+    "contractNumber": "D10143",
+    "totalAmountDue": 10500,
+    "needsNotification": false,
+    "employeeId": "BylEDt38BXSy6PKVVKSU",
+    "lastUpdated": {
+      "_seconds": 1749490391,
+      "_nanoseconds": 974000000
+    },
+    "onboardingDate": null,
+    "employeeName": "梁海金",
+    "status": "pending",
+    "monthlyRent": 3500
+  },
+  {
+    "id": "zRxoW0sMLYuzvhRvsjlw",
+    "recentInvoice": "",
+    "isOverdue": false,
+    "onboardingDate": null,
+    "needsNotification": false,
+    "lastUpdated": {
+      "_seconds": 1749490392,
+      "_nanoseconds": 416000000
+    },
+    "rentStart": null,
+    "rentEnd": null,
+    "daysUntilDue": null,
+    "totalAmountDue": 3500,
+    "status": "pending",
+    "employeeId": "1Ey1KsUCdRnZ7XOdYu2c",
+    "employeeName": "黄志肯",
+    "paymentFrequency": 1,
+    "contractNumber": "D10157",
+    "monthlyRent": 3500
+  },
+  {
+    "id": "zTkSUo2kW7T7dfzeBHKu",
+    "lastUpdated": {
+      "_seconds": 1749490390,
+      "_nanoseconds": 413000000
+    },
+    "recentInvoice": "",
+    "rentEnd": {
+      "_seconds": 1750953600,
+      "_nanoseconds": 0
+    },
+    "monthlyRent": 3500,
+    "paymentFrequency": 1,
+    "rentStart": {
+      "_seconds": 1748361600,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 3500,
+    "onboardingDate": {
+      "_seconds": 1745251200,
+      "_nanoseconds": 0
+    },
+    "status": "current",
+    "employeeId": "cNrX8ddTEs4YVGkZtClp",
+    "notificationDate": {
+      "_seconds": 1749744000,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 17,
+    "needsNotification": false,
+    "contractNumber": "D10146",
+    "employeeName": "黄兰香",
+    "isOverdue": false
+  },
+  {
+    "id": "zmfFmTJFfcGbX9J05wIH",
+    "onboardingDate": {
+      "_seconds": 1737561600,
+      "_nanoseconds": 0
+    },
+    "daysUntilDue": 43,
+    "status": "current",
+    "lastUpdated": {
+      "_seconds": 1749490389,
+      "_nanoseconds": 37000000
+    },
+    "recentInvoice": "",
+    "isOverdue": false,
+    "needsNotification": false,
+    "paymentFrequency": 3,
+    "contractNumber": "D10129",
+    "notificationDate": {
+      "_seconds": 1751990400,
+      "_nanoseconds": 0
+    },
+    "totalAmountDue": 10500,
+    "monthlyRent": 3500,
+    "rentStart": {
+      "_seconds": 1745337600,
+      "_nanoseconds": 0
+    },
+    "employeeName": "梁燕紅",
+    "employeeId": "DV3JgZFg2xj3Adn8fRAJ",
+    "rentEnd": {
+      "_seconds": 1753200000,
+      "_nanoseconds": 0
+    }
+  },
+  {
+    "id": "zs6TEdMvRuFuW6cPNOlI",
+    "paymentFrequency": 1,
+    "employeeId": "JcUgsYPyxmdSnPnn3R1F",
+    "lastUpdated": {
+      "_seconds": 1749490387,
+      "_nanoseconds": 226000000
+    },
+    "needsNotification": false,
+    "status": "pending",
+    "isOverdue": false,
+    "monthlyRent": 3500,
+    "daysUntilDue": null,
+    "onboardingDate": null,
+    "employeeName": "鄧翠瑤",
+    "contractNumber": "D10157",
+    "totalAmountDue": 3500,
+    "recentInvoice": "",
+    "rentEnd": null,
+    "rentStart": null
+  }
+]
