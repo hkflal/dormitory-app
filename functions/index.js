@@ -9,6 +9,10 @@ const { createReport } = require('docx-templates');
 
 admin.initializeApp();
 
+// Import and re-export the scheduled invoice generation function
+const { scheduledInvoiceGeneration } = require('./scheduled-invoice-generation');
+exports.scheduledInvoiceGeneration = scheduledInvoiceGeneration;
+
 // Set global options for all functions
 setGlobalOptions({ 
     maxInstances: 10,
@@ -148,16 +152,22 @@ exports.generateInvoiceDocxTrigger = onDocumentCreated('invoices/{invoiceId}', a
             docx_generation_started_at: admin.firestore.FieldValue.serverTimestamp()
         });
         
-        // Determine template type
+        // Determine template type - Use new templates from public directory
         const templateName = invoiceData.is_deposit ? 'deposit_template.docx' : 'invoice_template.docx';
-        const templatePath = path.join(__dirname, 'templates', templateName);
+        const templatePath = path.join(__dirname, '..', 'public', templateName);
         
-        console.log(`📄 Looking for template at: ${templatePath}`);
-        console.log(`📄 Template exists: ${fs.existsSync(templatePath)}`);
+        console.log(`📄 Auto-generation template selection:`, {
+            templateName,
+            templatePath,
+            templateExists: fs.existsSync(templatePath)
+        });
 
         if (!fs.existsSync(templatePath)) {
+            console.error(`❌ Template not found: ${templateName} at ${templatePath}`);
             throw new Error(`Template not found: ${templateName} at ${templatePath}`);
         }
+        
+        console.log(`✅ Using template for auto-generation: ${templatePath}`);
         
         // Generate DOCX
         const docxBuffer = await processDocxTemplate(templatePath, invoiceData);
@@ -232,11 +242,20 @@ exports.generateInvoiceDocxRegenerationTrigger = onDocumentUpdated('invoices/{in
         });
         
         const templateName = afterData.is_deposit ? 'deposit_template.docx' : 'invoice_template.docx';
-        const templatePath = path.join(__dirname, 'templates', templateName);
+        const templatePath = path.join(__dirname, '..', 'public', templateName);
+        
+        console.log(`📄 Regeneration template selection:`, {
+            templateName,
+            templatePath,
+            templateExists: fs.existsSync(templatePath)
+        });
         
         if (!fs.existsSync(templatePath)) {
+            console.error(`❌ Template not found: ${templateName} at ${templatePath}`);
             throw new Error(`Template not found: ${templateName} at ${templatePath}`);
         }
+        
+        console.log(`✅ Using template for regeneration: ${templatePath}`);
         
         const docxBuffer = await processDocxTemplate(templatePath, afterData);
         
@@ -296,14 +315,28 @@ exports.generateInvoiceDocxManual = onRequest(async (req, res) => {
 
             const invoiceData = invoiceDoc.data();
             console.log(`📄 Manual DOCX generation for: ${invoiceData.invoice_number}`);
+            console.log(`📄 Invoice data:`, {
+                is_deposit: invoiceData.is_deposit,
+                status: invoiceData.status,
+                template_type: invoiceData.template_type
+            });
             
-            // Determine template type
+            // Determine template type - Use new templates from public directory
             const templateName = invoiceData.is_deposit ? 'deposit_template.docx' : 'invoice_template.docx';
-            const templatePath = path.join(__dirname, 'templates', templateName);
+            const templatePath = path.join(__dirname, '..', 'public', templateName);
+            
+            console.log(`📄 Template selection:`, {
+                templateName,
+                templatePath,
+                templateExists: fs.existsSync(templatePath)
+            });
             
             if (!fs.existsSync(templatePath)) {
+                console.error(`❌ Template not found: ${templateName} at ${templatePath}`);
                 return res.status(404).json({ error: `Template not found: ${templateName}` });
             }
+            
+            console.log(`✅ Using template: ${templatePath}`);
             
             // Generate DOCX
             const docxBuffer = await processDocxTemplate(templatePath, invoiceData);
@@ -347,11 +380,18 @@ exports.regenerateInvoiceDocx = onRequest(async (req, res) => {
                     
                     const invoiceData = invoiceDoc.data();
                     
-                    // Generate DOCX using enhanced function
+                    // Generate DOCX using enhanced function - Use new templates from public directory
                     const templateName = invoiceData.is_deposit ? 'deposit_template.docx' : 'invoice_template.docx';
-                    const templatePath = path.join(__dirname, 'templates', templateName);
+                    const templatePath = path.join(__dirname, '..', 'public', templateName);
+                    
+                    console.log(`📄 Bulk regeneration template selection for ${invoiceData.invoice_number}:`, {
+                        templateName,
+                        templatePath,
+                        templateExists: fs.existsSync(templatePath)
+                    });
                     
                     if (!fs.existsSync(templatePath)) {
+                        console.error(`❌ Template not found: ${templateName} at ${templatePath}`);
                         results.push({
                             invoiceId,
                             success: false,
@@ -359,6 +399,8 @@ exports.regenerateInvoiceDocx = onRequest(async (req, res) => {
                         });
                         continue;
                     }
+                    
+                    console.log(`✅ Using template for bulk regeneration: ${templatePath}`);
                     
                     const docxBuffer = await processDocxTemplate(templatePath, invoiceData);
                     

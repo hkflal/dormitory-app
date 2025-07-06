@@ -43,6 +43,11 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
     n: 2 // Default deposit months for deposit invoices
   });
 
+  const [availableEmployees, setAvailableEmployees] = useState([]);
+  const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [loadingEmployees, setLoadingEmployees] = useState(false);
+  const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
+
   const isEditing = Boolean(invoiceData && invoiceData.id);
 
   // Function to generate next invoice number
@@ -112,6 +117,44 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
     }
   };
 
+  // Function to fetch employees based on contract number
+  const fetchEmployeesForContract = async (contractNumber) => {
+    if (!contractNumber.trim()) {
+      setAvailableEmployees([]);
+      return;
+    }
+
+    setLoadingEmployees(true);
+    try {
+      // Try multiple possible field names for contract number
+      const queries = [
+        query(collection(db, 'employees'), where('contract_number', '==', contractNumber)),
+        query(collection(db, 'employees'), where('activeCtr', '==', contractNumber)),
+        query(collection(db, 'employees'), where('contractNumber', '==', contractNumber))
+      ];
+
+      const results = await Promise.all(queries.map(q => getDocs(q)));
+      const employeesSet = new Set();
+      
+      results.forEach(snapshot => {
+        snapshot.docs.forEach(doc => {
+          const employee = { id: doc.id, ...doc.data() };
+          employeesSet.add(JSON.stringify(employee));
+        });
+      });
+
+      const employees = Array.from(employeesSet).map(emp => JSON.parse(emp));
+      console.log(`Found ${employees.length} employees for contract ${contractNumber}:`, employees);
+      
+      setAvailableEmployees(employees);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      setAvailableEmployees([]);
+    } finally {
+      setLoadingEmployees(false);
+    }
+  };
+
   useEffect(() => {
     const initializeForm = async () => {
       if (isEditing && invoiceData) {
@@ -175,7 +218,67 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Fetch employees when contract number changes
+    if (name === 'contract_number') {
+      fetchEmployeesForContract(value);
+    }
   };
+
+  // Fetch employees when contract number changes from external source
+  useEffect(() => {
+    if (formData.contract_number) {
+      fetchEmployeesForContract(formData.contract_number);
+    }
+  }, [formData.contract_number]);
+
+  // Auto-calculate total when amount, start_date, or end_date changes
+  useEffect(() => {
+    if (!isDepositInvoice && formData.amount && formData.start_date && formData.end_date) {
+      const frequency = calculateFrequency(formData.start_date, formData.end_date);
+      const calculatedTotal = parseFloat(formData.amount) * frequency;
+      setFormData(prev => ({ ...prev, total: calculatedTotal.toFixed(2) }));
+    }
+  }, [formData.amount, formData.start_date, formData.end_date, isDepositInvoice]);
+
+  // Handle employee selection
+  const handleEmployeeToggle = (employee) => {
+    const isSelected = selectedEmployees.some(emp => emp.id === employee.id);
+    let newSelectedEmployees;
+    
+    if (isSelected) {
+      newSelectedEmployees = selectedEmployees.filter(emp => emp.id !== employee.id);
+    } else {
+      newSelectedEmployees = [...selectedEmployees, employee];
+    }
+    
+    setSelectedEmployees(newSelectedEmployees);
+    
+    // Update the employee_names field
+    const employeeNames = newSelectedEmployees.map(emp => emp.name).join(', ');
+    setFormData(prev => ({ ...prev, employee_names: employeeNames }));
+  };
+
+  // Initialize selected employees when form data changes
+  useEffect(() => {
+    if (formData.employee_names && availableEmployees.length > 0) {
+      const namesList = formData.employee_names.split(',').map(name => name.trim());
+      const selected = availableEmployees.filter(emp => namesList.includes(emp.name));
+      setSelectedEmployees(selected);
+    }
+  }, [formData.employee_names, availableEmployees]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showEmployeeDropdown && !event.target.closest('.employee-dropdown-container')) {
+        setShowEmployeeDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showEmployeeDropdown]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -265,16 +368,107 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
         </div>
         
         <div>
-          <label htmlFor="employee_names" className="block text-sm font-medium text-gray-700 dark:text-gray-300">員工姓名 (用逗號分隔)</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            員工姓名 {selectedEmployees.length > 0 && <span className="text-green-600">({selectedEmployees.length}人已選擇)</span>}
+          </label>
+          
+          {/* Display selected employees */}
+          {selectedEmployees.length > 0 && (
+            <div className="mt-2 mb-2 flex flex-wrap gap-2">
+              {selectedEmployees.map(employee => (
+                <span 
+                  key={employee.id}
+                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                >
+                  {employee.name}
+                  <button
+                    type="button"
+                    onClick={() => handleEmployeeToggle(employee)}
+                    className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Contract number required message */}
+          {!formData.contract_number && (
+            <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">
+              請先輸入合約號碼以載入該合約的員工列表
+            </p>
+          )}
+
+          {/* Employee selection dropdown */}
+          {formData.contract_number && (
+            <div className="relative employee-dropdown-container">
+              <button
+                type="button"
+                onClick={() => setShowEmployeeDropdown(!showEmployeeDropdown)}
+                disabled={loadingEmployees}
+                className="mt-1 w-full flex justify-between items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-left focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  {loadingEmployees ? '載入中...' : 
+                   availableEmployees.length > 0 ? `點擊選擇員工 (${availableEmployees.length}人可選)` : 
+                   '此合約沒有找到員工'}
+                </span>
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Dropdown menu */}
+              {showEmployeeDropdown && availableEmployees.length > 0 && (
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto dark:bg-gray-700 dark:border-gray-600">
+                  {availableEmployees.map(employee => {
+                    const isSelected = selectedEmployees.some(emp => emp.id === employee.id);
+                    return (
+                      <div
+                        key={employee.id}
+                        className={`px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 ${
+                          isSelected ? 'bg-blue-50 dark:bg-blue-900' : ''
+                        }`}
+                        onClick={() => handleEmployeeToggle(employee)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => {}} // Handled by parent click
+                              className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                            />
+                            <div>
+                              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                {employee.name}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {employee.company} • {employee.gender === 'female' ? '女' : '男'}
+                              </p>
+                            </div>
+                          </div>
+                          {employee.assigned_property_id && (
+                            <span className="text-xs text-green-600 dark:text-green-400">
+                              已分配住宿
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Hidden input to maintain form validation */}
           <input 
-            type="text" 
+            type="hidden" 
             name="employee_names" 
-            id="employee_names" 
             value={formData.employee_names} 
-            onChange={handleChange} 
             required 
-            placeholder="例如: 陈裕维, 黄锡球"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
           />
         </div>
         
@@ -322,17 +516,25 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
           
           {!isDepositInvoice && (
             <div>
-              <label htmlFor="total" className="block text-sm font-medium text-gray-700 dark:text-gray-300">總計 (HK$)</label>
+              <label htmlFor="total" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                總計 (HK$)
+                <span className="text-xs text-gray-500 ml-1">(自動計算: 金額 × 租期)</span>
+              </label>
               <input 
                 type="number" 
                 name="total" 
                 id="total" 
                 value={formData.total} 
-                onChange={handleChange} 
+                readOnly
                 step="0.01"
-                placeholder="如未指定則與金額相同"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
+                placeholder="將根據金額和租期自動計算"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-50 dark:bg-gray-600 text-gray-700 dark:text-gray-300 sm:text-sm cursor-not-allowed" 
               />
+              {formData.amount && formData.start_date && formData.end_date && (
+                <p className="mt-1 text-xs text-gray-500">
+                  計算: {formData.amount} × {calculateFrequency(formData.start_date, formData.end_date)} = {formData.total}
+                </p>
+              )}
             </div>
           )}
         </div>

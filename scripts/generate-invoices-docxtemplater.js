@@ -18,6 +18,7 @@ admin.initializeApp({
 const db = admin.firestore();
 
 const TEMPLATE_PATH = path.join(__dirname, '../public/invoice_template.docx');
+const DEPOSIT_TEMPLATE_PATH = path.join(__dirname, '../public/deposit_template.docx');
 const OUTPUT_DIR = path.join(__dirname, '../generated_invoices');
 
 function formatNumber(num) {
@@ -99,8 +100,14 @@ async function main() {
       company,
     };
 
+    // Determine template type and load the correct template
+    const templatePath = invoice.is_deposit ? DEPOSIT_TEMPLATE_PATH : TEMPLATE_PATH;
+    const templateType = invoice.is_deposit ? 'deposit' : 'invoice';
+    
+    console.log(`📄 Processing ${invoice.invoice_number || invoice.id} - Type: ${templateType}, Template: ${templatePath}`);
+    
     // Load the docx file as binary
-    const content = fs.readFileSync(TEMPLATE_PATH, 'binary');
+    const content = fs.readFileSync(templatePath, 'binary');
     const zip = new PizZip(content);
     const doc = new Docxtemplater(zip, {
       paragraphLoop: true,

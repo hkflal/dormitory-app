@@ -16,7 +16,8 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-const TEMPLATE_PATH = path.join(__dirname, '../public/test.docx');
+const TEMPLATE_PATH = path.join(__dirname, '../public/invoice_template.docx');
+const DEPOSIT_TEMPLATE_PATH = path.join(__dirname, '../public/deposit_template.docx');
 const OUTPUT_DIR = path.join(__dirname, '../generated_invoices');
 
 async function main() {
@@ -57,8 +58,14 @@ async function main() {
       employee_names: Array.isArray(invoice.employee_names) ? invoice.employee_names.join(', ') : invoice.employee_names,
     };
 
+    // Determine template type and load the correct template
+    const templatePath = invoice.is_deposit ? DEPOSIT_TEMPLATE_PATH : TEMPLATE_PATH;
+    const templateType = invoice.is_deposit ? 'deposit' : 'invoice';
+    
+    console.log(`📄 Processing ${invoice.invoice_number || invoice.id} - Type: ${templateType}, Template: ${templatePath}`);
+    
     // Fill the docx template
-    const templateBuffer = fs.readFileSync(TEMPLATE_PATH);
+    const templateBuffer = fs.readFileSync(templatePath);
     const docxBuffer = await createReport({
       template: templateBuffer,
       data,

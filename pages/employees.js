@@ -41,7 +41,7 @@ export default function Employees() {
   // Form state for adding/editing employee
   const [employeeForm, setEmployeeForm] = useState({
     name: '',
-    arrival: '',
+    arrival_at: '',
     gender: 'male',
     company: '',
     assigned_property_id: '',
@@ -125,9 +125,8 @@ export default function Employees() {
           groupKey = getPropertyName(employee.assigned_property_id) || '未分配物業';
           break;
         case 'arrival':
-          if (employee.arrival) {
-            console.log('Processing employee:', employee.name, 'arrival:', employee.arrival, 'Type:', typeof employee.arrival);
-            const date = employee.arrival.toDate ? employee.arrival.toDate() : new Date(employee.arrival);
+          if (employee.arrival_at) {
+            const date = employee.arrival_at.toDate ? employee.arrival_at.toDate() : new Date(employee.arrival_at);
             groupKey = !isNaN(date) ? `${date.getFullYear()}年${date.getMonth() + 1}月` : '無效日期';
           } else {
             groupKey = '未指定到達日期';
@@ -150,7 +149,7 @@ export default function Employees() {
   const resetForm = () => {
     setEmployeeForm({
       name: '',
-      arrival: '',
+      arrival_at: '',
       gender: 'male',
       company: '',
       assigned_property_id: '',
@@ -169,8 +168,8 @@ export default function Employees() {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      if (data.arrival) {
-        data.arrival = new Date(data.arrival);
+      if (data.arrival_at) {
+        data.arrival_at = new Date(data.arrival_at);
       }
       const docRef = await addDoc(collection(db, 'employees'), data);
       await logEmployeeCreate(docRef.id, data);
@@ -189,8 +188,8 @@ export default function Employees() {
         ...employeeForm, 
         updatedAt: new Date() 
       };
-      if (updatedData.arrival) {
-        updatedData.arrival = new Date(updatedData.arrival);
+      if (updatedData.arrival_at) {
+        updatedData.arrival_at = new Date(updatedData.arrival_at);
       }
       await updateDoc(doc(db, 'employees', editingEmployee.id), updatedData);
       await logEmployeeUpdate(editingEmployee.id, editingEmployee, updatedData);
@@ -215,11 +214,11 @@ export default function Employees() {
   };
 
   const openEditModal = (employee) => {
-    const arrivalDate = employee.arrival?.toDate ? employee.arrival.toDate() : new Date(employee.arrival);
+    const arrivalDate = employee.arrival_at?.toDate ? employee.arrival_at.toDate() : new Date(employee.arrival_at);
     setEditingEmployee(employee);
     setEmployeeForm({
       name: employee.name || '',
-      arrival: employee.arrival && !isNaN(arrivalDate) ? arrivalDate.toISOString().split('T')[0] : '',
+      arrival_at: employee.arrival_at && !isNaN(arrivalDate) ? arrivalDate.toISOString().split('T')[0] : '',
       gender: employee.gender || 'male',
       company: employee.company || '',
       assigned_property_id: employee.assigned_property_id || '',
@@ -319,15 +318,15 @@ export default function Employees() {
                             employee.gender === 'female' ? 'border-pink-300 dark:border-pink-500 shadow-lg shadow-pink-200 dark:shadow-pink-800' : 
                             'border-blue-300 dark:border-blue-500 shadow-lg shadow-blue-200 dark:shadow-blue-800'
                           }`}>
-                            {employee.id}
+                            {employee.uid || employee.id}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap"><div className="text-sm text-gray-500 dark:text-gray-400">{employee.company || 'N/A'}</div></td>
                         <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(employee.status)}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{getPropertyName(employee.assigned_property_id) || '未分配'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                          {employee.arrival ? 
-                            (employee.arrival.toDate ? employee.arrival.toDate().toLocaleDateString() : new Date(employee.arrival).toLocaleDateString())
+                          {employee.arrival_at ? 
+                            (employee.arrival_at.toDate ? employee.arrival_at.toDate().toLocaleDateString() : new Date(employee.arrival_at).toLocaleDateString())
                             : 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -399,8 +398,8 @@ function EmployeeForm({ employeeForm, setEmployeeForm, onSubmit, onCancel, submi
           <input type="text" id="contact_info" value={employeeForm.contact_info} onChange={handleInputChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600"/>
         </div>
         <div>
-          <label htmlFor="arrival" className="block text-sm font-medium text-gray-700 dark:text-gray-300">入職日期</label>
-          <input type="date" id="arrival" value={employeeForm.arrival} onChange={handleInputChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600"/>
+          <label htmlFor="arrival_at" className="block text-sm font-medium text-gray-700 dark:text-gray-300">入職日期</label>
+          <input type="date" id="arrival_at" value={employeeForm.arrival_at} onChange={handleInputChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600"/>
         </div>
         <div className="sm:col-span-2">
           <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300">備註</label>

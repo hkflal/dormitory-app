@@ -546,16 +546,35 @@ export default function DataManagement() {
 
   // Handle new row creation
   const handleAddNewRow = async () => {
-    if (Object.keys(newRow).length === 0) {
+    // Check if at least one field has meaningful content
+    const hasContent = Object.values(newRow).some(value => 
+      value !== null && value !== undefined && String(value).trim() !== ''
+    );
+    
+    if (!hasContent) {
       showToastNotification('Please fill in at least one field', 'warning');
       return;
     }
 
     try {
-      const docRef = await addDoc(collection(db, activeCollection), newRow);
+      console.log('Adding new row to collection:', activeCollection);
+      console.log('New row data:', newRow);
+      
+      // Add timestamp fields
+      const docData = {
+        ...newRow,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      const docRef = await addDoc(collection(db, activeCollection), docData);
       console.log('Added document with ID: ', docRef.id);
+      
+      // Clear form and hide new row
       setNewRow({});
       setShowNewRow(false);
+      
+      // Refresh data
       await fetchData(activeCollection);
       showToastNotification('Record added successfully! 🎉');
     } catch (error) {
@@ -909,7 +928,10 @@ Jane Smith,jane@example.com,XYZ Inc,60000
         {/* Mobile: Priority Actions */}
         <div className="flex flex-wrap gap-2 sm:hidden">
           <button
-            onClick={() => setShowNewRow(!showNewRow)}
+            onClick={() => {
+              console.log('Mobile Add button clicked, current showNewRow:', showNewRow);
+              setShowNewRow(!showNewRow);
+            }}
             className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700"
           >
             ➕ Add
@@ -951,7 +973,10 @@ Jane Smith,jane@example.com,XYZ Inc,60000
           </button>
 
           <button
-            onClick={() => setShowNewRow(!showNewRow)}
+            onClick={() => {
+              console.log('Desktop Add New button clicked, current showNewRow:', showNewRow);
+              setShowNewRow(!showNewRow);
+            }}
             className="inline-flex items-center px-3 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700"
           >
             ➕ Add New
@@ -1179,6 +1204,7 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                   <h3 className="text-lg font-medium text-green-800">➕ Add New Record</h3>
                   <button
                     onClick={() => {
+                      console.log('Mobile cancel button clicked');
                       setShowNewRow(false);
                       setNewRow({});
                     }}
@@ -1187,6 +1213,10 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                     ✖️
                   </button>
                 </div>
+                {/* Debug info */}
+                <div className="mb-2 text-xs text-gray-600 bg-gray-100 p-2 rounded">
+                  Debug: showNewRow={showNewRow.toString()}, newRow keys: {Object.keys(newRow).join(', ') || 'none'}
+                </div>
                 <div className="space-y-3">
                   {getVisibleColumns().slice(0, 4).map(column => (
                     <div key={column}>
@@ -1194,17 +1224,24 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                       <input
                         type="text"
                         value={newRow[column] || ''}
-                        onChange={(e) => setNewRow({
-                          ...newRow,
-                          [column]: e.target.value
-                        })}
+                        onChange={(e) => {
+                          console.log(`Mobile input changed for ${column}:`, e.target.value);
+                          setNewRow({
+                            ...newRow,
+                            [column]: e.target.value
+                          });
+                        }}
                         placeholder={`Enter ${column}`}
                         className="w-full p-2 border border-green-300 rounded text-sm focus:ring-1 focus:ring-green-500"
                       />
                     </div>
                   ))}
                   <button
-                    onClick={handleAddNewRow}
+                    onClick={() => {
+                      console.log('Mobile Save Record button clicked');
+                      console.log('Current newRow data:', newRow);
+                      handleAddNewRow();
+                    }}
                     className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                   >
                     ✅ Save Record
@@ -1316,16 +1353,22 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                     <tr className="data-table-row data-table-new-row bg-green-50 border-2 border-green-200">
                       <td className="data-table-id-cell px-2 py-1 text-xs text-green-600 font-mono border-r-2 border-green-200">
                         <div className="text-center">NEW</div>
+                        <div className="text-xs text-gray-500 mt-1" title={`newRow keys: ${Object.keys(newRow).join(', ')}`}>
+                          {Object.keys(newRow).length} fields
+                        </div>
                       </td>
                       {getVisibleColumns().map(column => (
                         <td key={column} className="data-table-cell px-2 py-1">
                           <input
                             type="text"
                             value={newRow[column] || ''}
-                            onChange={(e) => setNewRow({
-                              ...newRow,
-                              [column]: e.target.value
-                            })}
+                            onChange={(e) => {
+                              console.log(`Desktop input changed for ${column}:`, e.target.value);
+                              setNewRow({
+                                ...newRow,
+                                [column]: e.target.value
+                              });
+                            }}
                             placeholder={`Enter ${column}`}
                             className="w-full p-1 border border-green-300 rounded text-sm focus:ring-1 focus:ring-green-500 bg-white"
                           />
@@ -1334,7 +1377,11 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                       <td className="data-table-cell px-2 py-1 text-center">
                         <div className="flex space-x-1">
                           <button
-                            onClick={handleAddNewRow}
+                            onClick={() => {
+                              console.log('Desktop Save button clicked');
+                              console.log('Current newRow data:', newRow);
+                              handleAddNewRow();
+                            }}
                             className="text-green-600 hover:text-green-800 text-xs bg-green-100 px-2 py-1 rounded transition-colors"
                             title="Save new record"
                           >
