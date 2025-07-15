@@ -1,0 +1,72 @@
+{
+  "timestamp": "2025-07-15T14:50:42.086Z",
+  "testCTR": "D10199",
+  "steps": [
+    {
+      "step": 1,
+      "description": "Check existing CTR in invoices",
+      "invoicesWithCTR": 0
+    },
+    {
+      "step": 1.5,
+      "description": "Check existing CTR in employees",
+      "employeesWithCTR": 0,
+      "employeeNames": []
+    },
+    {
+      "step": 2,
+      "description": "Find employees without contract",
+      "totalEmployees": 236,
+      "availableEmployees": 44
+    },
+    {
+      "step": 3,
+      "description": "Select test employees",
+      "selectedEmployees": [
+        {
+          "id": "1JbFgVNSl2ede6ZmYeri",
+          "name": "洪文意",
+          "company": "聯盟天下有限公司",
+          "uid": "EE-00209"
+        },
+        {
+          "id": "2n9wk8XZJv8V4wfvJHCY",
+          "name": "韋永藝",
+          "company": "十二星繡國際集團有限公司",
+          "uid": "EE-00215"
+        },
+        {
+          "id": "3fUQ4Swojrg3l5X0SgT5",
+          "name": "譚清柳",
+          "company": "萬發(九江)有限公司經營萬發海鮮菜館",
+          "uid": "EE-00222"
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "description": "Add CTR to employees",
+      "success": true,
+      "employeesUpdated": 3
+    },
+    {
+      "step": 5,
+      "description": "Verify CTR addition",
+      "totalVerified": 3,
+      "successfullyVerified": 3
+    },
+    {
+      "step": 6,
+      "description": "Remove CTR from employees",
+      "success": true,
+      "employeesUpdated": 3
+    },
+    {
+      "step": 7,
+      "description": "Verify CTR removal",
+      "totalVerified": 3,
+      "successfullyRemoved": 3
+    }
+  ],
+  "testResult": "PASSED"
+}
