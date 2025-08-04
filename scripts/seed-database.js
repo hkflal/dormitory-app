@@ -331,7 +331,7 @@ async function seedDatabase() {
         location: propertyName.includes('文') ? '香港島' : '九龍',
         target_gender_type: prop.gender === 'female' ? 'female' : prop.gender === 'male' ? 'male' : 'any',
         genderTypes: prop.gender === 'female' ? ['Female'] : prop.gender === 'male' ? ['Male'] : ['Male', 'Female'],
-        capacity: capacity,
+        capacity: capacity, // Total bed capacity
         occupancy: occupancy,
         totalRooms: rooms.length,
         occupiedRooms: Math.ceil(occupancy / 2),
@@ -352,7 +352,7 @@ async function seedDatabase() {
       const docRef = await addDoc(collection(db, 'properties'), propertyDoc);
       propertyIdMapping[propertyName] = docRef.id;
       
-      console.log(`   ✅ Added property: ${propertyName} (${occupancy}/${capacity}) - ${rooms.length} rooms`);
+      console.log(`   ✅ Added property: ${propertyName} (${occupancy} employees) - ${rooms.length} rooms`);
     }
 
     // Seed Employees
@@ -561,6 +561,7 @@ async function seedDatabase() {
     console.log(`   - Assigned: ${Object.values(employeeCountByProperty).reduce((a, b) => a + b, 0)}`);
     console.log(`   - Unassigned: ${employeeCount - Object.values(employeeCountByProperty).reduce((a, b) => a + b, 0)}`);
     console.log(`   - Property mappings:`, Object.keys(propertyIdMapping));
+    console.log(`   - NOTE: Property capacity is now calculated dynamically based on housed employees`);
     console.log('\n🚀 You can now run the application with real data!');
 
   } catch (error) {

@@ -171,8 +171,10 @@ export default function SeedData() {
           }
 
           const employeeData = {
-            name: cols[0].trim(),
-            company: cols[1].trim() || '未知公司',
+            uid: cols[0].trim(),
+            company: cols[1].trim() || '',
+            department: cols[2].trim(),
+            name: cols[3].trim(),
             gender: cols[3].trim() || 'male',
             preference: cols[4] ? cols[4].trim() : '',
             remarks: cols[5] ? cols[5].trim() : '',

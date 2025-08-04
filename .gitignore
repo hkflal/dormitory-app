@@ -41,6 +41,7 @@ next-env.d.ts
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+firebase-service-account.json
 
 # Environment variables and secrets
 .env
@@ -67,4 +68,4 @@ Thumbs.db
 
 # Backup files
 *.backup
-*.bak 
+*.bak

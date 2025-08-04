@@ -59,12 +59,12 @@ const AccountEditModal = ({ isOpen, onClose, accountInfo, onSave }) => {
     };
 
     const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('zh-HK', {
-            style: 'currency',
-            currency: 'HKD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2
-        }).format(amount || 0);
+        const numericAmount = parseFloat(amount || 0);
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            useGrouping: true
+        }).format(numericAmount);
     };
 
     return (
@@ -105,7 +105,7 @@ const AccountEditModal = ({ isOpen, onClose, accountInfo, onSave }) => {
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        租金單價 (HK$) <span className="text-red-500">*</span>
+                        租金單價 <span className="text-red-500">*</span>
                     </label>
                     <input
                         type="number"

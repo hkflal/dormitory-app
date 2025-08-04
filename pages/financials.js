@@ -9,7 +9,7 @@ import {
   UserGroupIcon,
   DocumentChartBarIcon,
 } from '@heroicons/react/24/outline';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 
 const StatCard = ({ title, value, change, changeType }) => (
   <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
@@ -28,6 +28,96 @@ const StatCard = ({ title, value, change, changeType }) => (
   </div>
 );
 
+// Helper function: Check if employee needs to pay this month
+const checkIfEmployeeNeedsToPayThisMonth = (employee, year, month) => {
+  const paymentFrequency = employee.paymentFrequency || employee.frequency || 1; // Default monthly
+  
+  // For quarterly payment (frequency = 3), check if they have paid in the current quarter
+  if (paymentFrequency === 3) {
+    // Check if they paid in any month of the current quarter
+    const currentQuarter = Math.floor(month / 3);
+    const quarterStartMonth = currentQuarter * 3;
+    const quarterMonths = [quarterStartMonth, quarterStartMonth + 1, quarterStartMonth + 2];
+    
+    // For quarterly payment, we consider them as "paid" if they paid any month in the quarter
+    // This will be handled in the payment check function
+    return true; // Always true for quarterly, but amount is divided by frequency
+  }
+  
+  // For other frequencies, assume monthly for now
+  return true;
+};
+
+// Helper function: Check if employee has paid this month
+const checkIfEmployeeHasPaidThisMonth = (employee, invoices, year, month) => {
+  const paymentFrequency = employee.paymentFrequency || employee.frequency || 1;
+  
+  if (paymentFrequency === 3) {
+    // For quarterly payment, check if they paid in ANY month of the current quarter
+    const currentQuarter = Math.floor(month / 3);
+    const quarterStartMonth = currentQuarter * 3;
+    const quarterMonths = [quarterStartMonth, quarterStartMonth + 1, quarterStartMonth + 2];
+    
+    const employeePaidInvoices = invoices.filter(inv => {
+      if (inv.status !== 'paid') return false;
+      
+      // Check if invoice belongs to this employee
+      const isEmployeeInvoice = inv.employeeId === employee.id || 
+                              inv.employee_id === employee.id ||
+                              inv.employeeName === employee.name;
+      if (!isEmployeeInvoice) return false;
+      
+      // Check if invoice is for ANY month in the current quarter
+      const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
+      if (issueDate.getFullYear() !== year) return false;
+      
+      return quarterMonths.includes(issueDate.getMonth());
+    });
+
+    return employeePaidInvoices.length > 0;
+  } else {
+    // For monthly payment, check current month only
+    const employeePaidInvoices = invoices.filter(inv => {
+      if (inv.status !== 'paid') return false;
+      
+      // Check if invoice belongs to this employee
+      const isEmployeeInvoice = inv.employeeId === employee.id || 
+                              inv.employee_id === employee.id ||
+                              inv.employeeName === employee.name;
+      if (!isEmployeeInvoice) return false;
+      
+      // Check if invoice is for current month
+      const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
+      return issueDate.getFullYear() === year && issueDate.getMonth() === month;
+    });
+
+    return employeePaidInvoices.length > 0;
+  }
+};
+
+// Calculate actual income based on housed employees who have paid this month
+const calculateActualIncome = (employees, invoices, currentYear, currentMonth) => {
+  return employees
+    .filter(emp => emp.status === 'housed') // Only housed employees
+    .reduce((total, emp) => {
+      const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
+      if (empRent === 0) return total;
+
+      // empRent is already monthly rent, regardless of payment frequency
+      const monthlyIncomeAmount = empRent;
+
+      // Check if employee needs to pay this month
+      const needsToPayThisMonth = checkIfEmployeeNeedsToPayThisMonth(emp, currentYear, currentMonth);
+      if (!needsToPayThisMonth) return total;
+
+      // Check if employee has paid this month (or quarter for quarterly payment)
+      const hasPaidThisMonth = checkIfEmployeeHasPaidThisMonth(emp, invoices, currentYear, currentMonth);
+      if (!hasPaidThisMonth) return total;
+
+      return total + monthlyIncomeAmount;
+    }, 0);
+};
+
 const FinancialsPage = () => {
   const [loading, setLoading] = useState(true);
   const [currentMonthStats, setCurrentMonthStats] = useState({});
@@ -35,6 +125,16 @@ const FinancialsPage = () => {
   const [monthlyTrends, setMonthlyTrends] = useState([]);
   const [historicalData, setHistoricalData] = useState([]);
   const [housedEmployees, setHousedEmployees] = useState([]);
+
+  // Currency formatting function
+  const formatCurrency = (amount) => {
+    const numericAmount = parseFloat(amount || 0);
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      useGrouping: true
+    }).format(numericAmount);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,18 +168,63 @@ const FinancialsPage = () => {
             return acc + (parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0);
         }, 0);
 
-        const rentCollected = currentMonthInvoices
-          .filter(inv => inv.status === 'paid')
-          .reduce((acc, inv) => acc + (parseFloat(inv.amount) || 0), 0);
+        const rentCollected = calculateActualIncome(housedEmployeesData, currentMonthInvoices, currentYear, currentMonth);
+        
+        // 🔍 Debug logging for financial calculations
+        console.log(`📊 Financial Debug - Current Month: ${currentYear}-${currentMonth + 1}`);
+        console.log(`📊 Housed Employees: ${housedEmployeesData.length}`);
+        console.log(`📊 Current Month Invoices: ${currentMonthInvoices.length}`);
+        console.log(`📊 Theoretical Revenue: ${formatCurrency(theoreticalRevenue)}`);
+        console.log(`📊 Actual Revenue (Paid Only): ${formatCurrency(rentCollected)}`);
+        
+        // Debug individual employee calculations
+        console.log(`🔍 Analyzing payment status...`);
+        console.log(`📊 Sample invoice data:`, currentMonthInvoices.slice(0, 2));
+        console.log(`📊 Sample employee data:`, housedEmployeesData.slice(0, 2));
+        
+        let paidEmployeeCount = 0;
+        let unpaidEmployeeCount = 0;
+        
+        housedEmployeesData.forEach(emp => {
+          const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
+          const paymentFrequency = emp.paymentFrequency || emp.frequency || 1;
+          const monthlyAmount = empRent; // Already monthly rent
+          
+          // Detailed payment check
+          const matchingInvoices = currentMonthInvoices.filter(inv => {
+            const isEmployeeInvoice = inv.employeeId === emp.id || 
+                                    inv.employee_id === emp.id ||
+                                    inv.employeeName === emp.name;
+            return isEmployeeInvoice;
+          });
+          
+          const paidInvoices = matchingInvoices.filter(inv => inv.status === 'paid');
+          const hasPaid = checkIfEmployeeHasPaidThisMonth(emp, currentMonthInvoices, currentYear, currentMonth);
+          
+          if (empRent > 0) {
+            if (hasPaid) {
+              paidEmployeeCount++;
+              console.log(`✅ ${emp.name}: PAID - Rent=${empRent}, Invoices=${paidInvoices.length}`);
+            } else {
+              unpaidEmployeeCount++;
+              console.log(`❌ ${emp.name}: UNPAID - Rent=${empRent}, Matching=${matchingInvoices.length}, Paid=${paidInvoices.length}`);
+              if (matchingInvoices.length > 0) {
+                console.log(`   - Invoice Status: ${matchingInvoices.map(i => i.status).join(', ')}`);
+              }
+            }
+          }
+        });
+        
+        console.log(`📊 Summary: ${paidEmployeeCount} paid, ${unpaidEmployeeCount} unpaid`);
         
         const totalRentalCost = properties.reduce((acc, prop) => acc + (parseFloat(prop.cost) || 0), 0);
         const otherCosts = 0; // Placeholder for other costs, set to 0 for now
 
         setCurrentMonthStats({
-          theoreticalRevenue: `HK$${theoreticalRevenue.toLocaleString()}`,
-          rentCollected: `HK$${rentCollected.toLocaleString()}`,
-          totalRentalCost: `HK$${totalRentalCost.toLocaleString()}`,
-          otherCosts: `HK$${otherCosts.toLocaleString()}`,
+                  theoreticalRevenue: formatCurrency(theoreticalRevenue),
+        rentCollected: formatCurrency(rentCollected),
+        totalRentalCost: formatCurrency(totalRentalCost),
+        otherCosts: formatCurrency(otherCosts),
         });
 
         // 2. Property-wise Summary
@@ -95,14 +240,26 @@ const FinancialsPage = () => {
             (inv.employee_id && propEmployeeIds.includes(inv.employee_id))
           );
 
-          const propActualRevenue = propInvoices
-            .filter(i => i.status === 'paid')
-            .reduce((acc, i) => acc + (parseFloat(i.amount) || 0), 0);
+          // Calculate actual revenue for this property using the same logic
+          const propActualRevenue = calculateActualIncome(
+            propHousedEmployees,
+            propInvoices,
+            currentYear,
+            currentMonth
+          );
           
           const propCost = parseFloat(prop.cost) || 0;
-          const actualProfit = propActualRevenue - propCost;
+          const theoreticalProfit = propTheoreticalRevenue - propCost;
 
-          const occupancyRate = prop.capacity > 0 ? ((prop.occupancy / prop.capacity) * 100).toFixed(1) : 0;
+          // Calculate actual occupancy (housed employees) for this property
+          const actualOccupancy = employees.filter(emp => 
+            emp.assigned_property_id === prop.id && emp.status === 'housed'
+          ).length;
+          
+          // Use static capacity (bed capacity) for the property
+          const staticCapacity = prop.capacity || 0;
+          
+          const occupancyRate = staticCapacity > 0 ? ((actualOccupancy / staticCapacity) * 100).toFixed(1) : 0;
           
           return {
             id: prop.id,
@@ -110,8 +267,8 @@ const FinancialsPage = () => {
             cost: propCost,
             theoreticalRevenue: propTheoreticalRevenue,
             actualRevenue: propActualRevenue,
-            profit: actualProfit,
-            occupancy: `${prop.occupancy}/${prop.capacity} (${occupancyRate}%)`,
+            profit: theoreticalProfit,
+            occupancy: `${actualOccupancy}/${staticCapacity} (${occupancyRate}%)`,
           };
         });
         setPropertySummary(summary);
@@ -135,9 +292,14 @@ const FinancialsPage = () => {
                 return issueDate.getFullYear() === year && issueDate.getMonth() === month;
             });
 
-            const rentCollected = monthInvoices
-                .filter(inv => inv.status === 'paid')
-                .reduce((acc, inv) => acc + (parseFloat(inv.amount) || 0), 0);
+            // Get employees who were housed during that month
+            const monthHousedEmployees = employees.filter(emp => {
+                const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
+                if (!checkInDate || isNaN(checkInDate.getTime())) return false; 
+                return checkInDate <= date && emp.status === 'housed';
+            });
+
+            const rentCollected = calculateActualIncome(monthHousedEmployees, monthInvoices, year, month);
             
             // Note: Employee count is a snapshot of who had checked in by that month.
             // This assumes a 'checkInDate' field exists on employee documents.
@@ -151,8 +313,8 @@ const FinancialsPage = () => {
 
             history.push({
                 month: `${year} ${monthNames[month]}`,
-                rentCollected: `HK$${rentCollected.toLocaleString()}`,
-                totalCosts: `HK$${totalMonthlyCost.toLocaleString()}`,
+                        rentCollected: formatCurrency(rentCollected),
+        totalCosts: formatCurrency(totalMonthlyCost),
                 pnl: pnl,
                 employees: employeeCount,
                 properties: properties.length 
@@ -247,10 +409,114 @@ const FinancialsPage = () => {
                 <DocumentChartBarIcon className="h-8 w-8 text-yellow-500" />
                 <div className="ml-4">
                   <p className="text-sm text-gray-500">平均損益 (六個月)</p>
-                  <p className="text-2xl font-bold">HK${(monthlyTrends.reduce((acc, t) => acc + t.PNL, 0) / monthlyTrends.length).toFixed(0)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency((monthlyTrends.reduce((acc, t) => acc + t.PNL, 0) / monthlyTrends.length))}</p>
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* P&L Charts */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Individual Property P&L Bar Chart */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">各物業損益分析</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={propertySummary.map(prop => ({
+                  name: prop.name,
+                  profit: prop.profit || 0,
+                  cost: prop.cost || 0,
+                  revenue: prop.theoreticalRevenue || 0
+                }))}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fontSize: 12 }}
+                  className="text-gray-600 dark:text-gray-300"
+                />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                  className="text-gray-600 dark:text-gray-300"
+                />
+                <Tooltip 
+                  formatter={(value, name) => [
+                    formatCurrency(value), 
+                    name === 'profit' ? '淨利潤' : name === 'cost' ? '成本' : '理論收入'
+                  ]}
+                  labelFormatter={(label) => `物業: ${label}`}
+                  contentStyle={{
+                    backgroundColor: 'rgb(31 41 55)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: 'white'
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="profit" name="淨利潤">
+                  {propertySummary.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={(entry.profit || 0) >= 0 ? '#10b981' : '#ef4444'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Aggregated P&L Summary */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">整體損益摘要</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={[
+                  {
+                    name: '總計',
+                    totalRevenue: propertySummary.reduce((acc, prop) => acc + (prop.theoreticalRevenue || 0), 0),
+                    totalCost: propertySummary.reduce((acc, prop) => acc + (prop.cost || 0), 0),
+                    totalProfit: propertySummary.reduce((acc, prop) => acc + (prop.profit || 0), 0)
+                  }
+                ]}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fontSize: 12 }}
+                  className="text-gray-600 dark:text-gray-300"
+                />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                  className="text-gray-600 dark:text-gray-300"
+                />
+                <Tooltip 
+                  formatter={(value, name) => [
+                    formatCurrency(value), 
+                    name === 'totalProfit' ? '總淨利潤' : name === 'totalCost' ? '總成本' : '總理論收入'
+                  ]}
+                  contentStyle={{
+                    backgroundColor: 'rgb(31 41 55)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: 'white'
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="totalRevenue" name="總理論收入" fill="#3b82f6" />
+                <Bar dataKey="totalCost" name="總成本" fill="#ef4444" />
+                <Bar dataKey="totalProfit" name="總淨利潤" fill="#10b981" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </section>
 
@@ -264,8 +530,7 @@ const FinancialsPage = () => {
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">物業</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">每月成本</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總收入 (理論)</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總收入 (實際)</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">淨利潤/虧損 (實際)</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">淨利潤/虧損</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">入住率</th>
                   </tr>
                 </thead>
@@ -273,11 +538,10 @@ const FinancialsPage = () => {
                   {propertySummary.map((prop) => (
                     <tr key={prop.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{prop.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-500">HK${(prop.cost || 0).toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-500">HK${(prop.theoreticalRevenue || 0).toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">HK${(prop.actualRevenue || 0).toLocaleString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-500">{formatCurrency(prop.cost || 0)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-500">{formatCurrency(prop.theoreticalRevenue || 0)}</td>
                       <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${(prop.profit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        HK${(prop.profit || 0).toLocaleString()}
+                        {formatCurrency(prop.profit || 0)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{prop.occupancy}</td>
                     </tr>
@@ -309,7 +573,7 @@ const FinancialsPage = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.rentCollected}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.totalCosts}</td>
                       <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${item.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        HK${item.pnl.toLocaleString()}
+                        {formatCurrency(item.pnl)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.employees}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.properties}</td>

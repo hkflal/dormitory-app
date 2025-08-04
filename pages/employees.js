@@ -23,6 +23,19 @@ import {
   logEmployeeUpdate, 
   logEmployeeDelete 
 } from '../lib/historyLogger';
+import {
+  EMPLOYEE_STATUSES,
+  STATUS_CONFIG,
+  getStatusBadge,
+  updateEmployeeStatus,
+  validateDepartureDate
+} from '../lib/employeeStatusManager';
+import {
+  getActiveEmployees,
+  getResignedEmployees,
+  filterEmployees,
+  sortEmployees
+} from '../lib/employeeFilters';
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
@@ -37,6 +50,7 @@ export default function Employees() {
   const [companyFilter, setCompanyFilter] = useState('');
   const [groupBy, setGroupBy] = useState('none');
   const [showMobileTips, setShowMobileTips] = useState(false);
+  const [showResigned, setShowResigned] = useState(false);
 
   // Form state for adding/editing employee
   const [employeeForm, setEmployeeForm] = useState({
@@ -49,6 +63,8 @@ export default function Employees() {
     status: 'pending_assignment',
     contact_info: '',
     notes: '',
+    departure_date: '',
+    departure_reason: '',
   });
 
   useEffect(() => {
@@ -57,7 +73,7 @@ export default function Employees() {
 
   useEffect(() => {
     applyFilters();
-  }, [employees, searchTerm, statusFilter, companyFilter]);
+  }, [employees, searchTerm, statusFilter, companyFilter, showResigned]);
 
   const fetchData = async () => {
     try {
@@ -82,31 +98,67 @@ export default function Employees() {
     return property ? property.name : propertyId;
   };
 
+  const getPropertyCapacity = (propertyName) => {
+    const property = properties.find(p => p.name === propertyName);
+    if (!property) return 0;
+    // Use stored capacity or calculate from room capacities
+    return property.capacity || property.static_room_capacity ||
+           (property.rooms ? property.rooms.reduce((sum, room) => sum + (room.capacity || 0), 0) : 0);
+  };
+
+  // For property grouping, calculate housed employees for accurate occupancy
+  const getGroupOccupancy = (groupKey, groupEmployees) => {
+    if (groupBy === 'property') {
+      return groupEmployees.filter(emp => emp.status === 'housed').length;
+    }
+    return groupEmployees.length;
+  };
+
+  const calculateEmployeeStatus = (employeeData) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Check if employee is assigned to a property
+    const hasPropertyAssignment = employeeData.assigned_property_id && employeeData.assigned_property_id !== '';
+    
+    // Parse arrival date
+    let arrivalDate = null;
+    if (employeeData.arrival_at) {
+      if (employeeData.arrival_at instanceof Date) {
+        arrivalDate = new Date(employeeData.arrival_at);
+      } else if (employeeData.arrival_at.seconds) {
+        // Firestore Timestamp
+        arrivalDate = new Date(employeeData.arrival_at.seconds * 1000);
+      } else if (typeof employeeData.arrival_at === 'string') {
+        arrivalDate = new Date(employeeData.arrival_at);
+      }
+      arrivalDate.setHours(0, 0, 0, 0);
+    }
+    
+    // Calculate status based on assignment and arrival
+    if (!hasPropertyAssignment) {
+      return 'pending_assignment'; // 待分配
+    } else if (arrivalDate && arrivalDate <= today) {
+      return 'housed'; // 已入住
+    } else {
+      return 'pending'; // 未入住
+    }
+  };
+
   const getUniqueCompanies = () => {
     return [...new Set(employees.map(e => e.company).filter(Boolean))].sort();
   };
 
   const applyFilters = () => {
-    let filtered = [...employees];
+    // Use the new filtering function from employeeFilters.js
+    const filters = {
+      search: searchTerm,
+      statuses: statusFilter ? [statusFilter] : [],
+      company: companyFilter,
+      showResigned: showResigned
+    };
 
-    if (searchTerm) {
-      const lowercased = searchTerm.toLowerCase();
-      filtered = filtered.filter(emp => 
-        emp.name?.toLowerCase().includes(lowercased) ||
-        emp.company?.toLowerCase().includes(lowercased) ||
-        emp.contact_info?.toLowerCase().includes(lowercased) ||
-        getPropertyName(emp.assigned_property_id)?.toLowerCase().includes(lowercased)
-      );
-    }
-
-    if (statusFilter) {
-      filtered = filtered.filter(emp => emp.status === statusFilter);
-    }
-
-    if (companyFilter) {
-      filtered = filtered.filter(emp => emp.company === companyFilter);
-    }
-
+    const filtered = filterEmployees(employees, filters);
     setFilteredEmployees(filtered);
   };
 
@@ -162,15 +214,44 @@ export default function Employees() {
 
   const handleAddEmployee = async (e) => {
     e.preventDefault();
+    
+    // Validate departure date for resignation statuses
+    if (employeeForm.status === 'pending_resign' || employeeForm.status === 'resigned') {
+      if (!employeeForm.departure_date) {
+        alert('請輸入離職日期');
+        return;
+      }
+      
+      const departureDate = new Date(employeeForm.departure_date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (employeeForm.status === 'pending_resign' && departureDate <= today) {
+        alert('即將離職的員工必須設定未來的離職日期');
+        return;
+      }
+    }
+    
     try {
       const data = {
         ...employeeForm,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
+      
       if (data.arrival_at) {
         data.arrival_at = new Date(data.arrival_at);
       }
+      
+      if (data.departure_date) {
+        data.departure_date = new Date(data.departure_date);
+      }
+      
+      // Only auto-calculate status for non-resignation statuses
+      if (data.status !== 'pending_resign' && data.status !== 'resigned') {
+        data.status = calculateEmployeeStatus(data);
+      }
+      
       const docRef = await addDoc(collection(db, 'employees'), data);
       await logEmployeeCreate(docRef.id, data);
       fetchData();
@@ -183,14 +264,43 @@ export default function Employees() {
   const handleEditEmployee = async (e) => {
     e.preventDefault();
     if (!editingEmployee) return;
+    
+    // Validate departure date for resignation statuses
+    if (employeeForm.status === 'pending_resign' || employeeForm.status === 'resigned') {
+      if (!employeeForm.departure_date) {
+        alert('請輸入離職日期');
+        return;
+      }
+      
+      const departureDate = new Date(employeeForm.departure_date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (employeeForm.status === 'pending_resign' && departureDate <= today) {
+        alert('即將離職的員工必須設定未來的離職日期');
+        return;
+      }
+    }
+    
     try {
       const updatedData = { 
         ...employeeForm, 
         updatedAt: new Date() 
       };
+      
       if (updatedData.arrival_at) {
         updatedData.arrival_at = new Date(updatedData.arrival_at);
       }
+      
+      if (updatedData.departure_date) {
+        updatedData.departure_date = new Date(updatedData.departure_date);
+      }
+      
+      // Only auto-calculate status for non-resignation statuses
+      if (updatedData.status !== 'pending_resign' && updatedData.status !== 'resigned') {
+        updatedData.status = calculateEmployeeStatus(updatedData);
+      }
+      
       await updateDoc(doc(db, 'employees', editingEmployee.id), updatedData);
       await logEmployeeUpdate(editingEmployee.id, editingEmployee, updatedData);
       fetchData();
@@ -215,6 +325,8 @@ export default function Employees() {
 
   const openEditModal = (employee) => {
     const arrivalDate = employee.arrival_at?.toDate ? employee.arrival_at.toDate() : new Date(employee.arrival_at);
+    const departureDate = employee.departure_date?.toDate ? employee.departure_date.toDate() : (employee.departure_date ? new Date(employee.departure_date) : null);
+    
     setEditingEmployee(employee);
     setEmployeeForm({
       name: employee.name || '',
@@ -226,6 +338,8 @@ export default function Employees() {
       status: employee.status || 'pending_assignment',
       contact_info: employee.contact_info || '',
       notes: employee.notes || '',
+      departure_date: departureDate && !isNaN(departureDate) ? departureDate.toISOString().split('T')[0] : '',
+      departure_reason: employee.departure_reason || '',
     });
     setShowEditModal(true);
   };
@@ -235,7 +349,9 @@ export default function Employees() {
       pending_assignment: { bg: 'bg-yellow-100 dark:bg-yellow-900/20', text: 'text-yellow-800 dark:text-yellow-400', label: '待分配' },
       housed: { bg: 'bg-green-100 dark:bg-green-900/20', text: 'text-green-800 dark:text-green-400', label: '已入住' },
       terminated: { bg: 'bg-gray-100 dark:bg-gray-900/20', text: 'text-gray-800 dark:text-gray-400', label: '已終止' },
-      pending: { bg: 'bg-blue-100 dark:bg-blue-900/20', text: 'text-blue-800 dark:text-blue-400', label: '未入住' }
+      pending: { bg: 'bg-blue-100 dark:bg-blue-900/20', text: 'text-blue-800 dark:text-blue-400', label: '未入住' },
+      pending_resign: { bg: 'bg-orange-100 dark:bg-orange-900/20', text: 'text-orange-800 dark:text-orange-400', label: '即將離職' },
+      resigned: { bg: 'bg-red-100 dark:bg-red-900/20', text: 'text-red-800 dark:text-red-400', label: '已離職' }
     }[status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: '未知' };
     return <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.bg} ${config.text}`}>{config.label}</span>;
   };
@@ -262,16 +378,32 @@ export default function Employees() {
         <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center"><MagnifyingGlassIcon className="h-5 w-5 mr-2" />搜尋與篩選</h3>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="搜尋姓名、公司等..."/>
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
             <option value="">所有狀態</option>
-            <option value="pending_assignment">待分配</option><option value="pending">未入住</option><option value="housed">已入住</option><option value="terminated">已終止</option>
+            <option value="pending_assignment">待分配</option>
+            <option value="pending">未入住</option>
+            <option value="housed">已入住</option>
+            <option value="terminated">已終止</option>
+            <option value="pending_resign">即將離職</option>
+            <option value="resigned">已離職</option>
           </select>
           <select value={companyFilter} onChange={(e) => setCompanyFilter(e.target.value)} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
             <option value="">所有公司</option>
             {getUniqueCompanies().map(c => <option key={c} value={c}>{c}</option>)}
           </select>
+          <div className="flex items-center">
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showResigned}
+                onChange={(e) => setShowResigned(e.target.checked)}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">顯示已離職員工</span>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -294,7 +426,11 @@ export default function Employees() {
           return keys.map(key => (
             <div key={key} className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
               <div className="px-4 sm:px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{key} <span className="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-3 py-1 text-sm rounded-full">{grouped[key].length}</span></h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{key} <span className={`px-3 py-1 text-sm rounded-full ${
+                  groupBy === 'property' && getGroupOccupancy(key, grouped[key]) >= getPropertyCapacity(key) 
+                    ? 'bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200' 
+                    : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
+                }`}>{groupBy === 'property' ? `${getGroupOccupancy(key, grouped[key])}/${getPropertyCapacity(key)}` : grouped[key].length}</span></h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -384,6 +520,8 @@ function EmployeeForm({ employeeForm, setEmployeeForm, onSubmit, onCancel, submi
             <option value="pending">未入住</option>
             <option value="housed">已入住</option>
             <option value="terminated">已終止</option>
+            <option value="pending_resign">即將離職</option>
+            <option value="resigned">已離職</option>
           </select>
         </div>
         <div>
@@ -401,6 +539,40 @@ function EmployeeForm({ employeeForm, setEmployeeForm, onSubmit, onCancel, submi
           <label htmlFor="arrival_at" className="block text-sm font-medium text-gray-700 dark:text-gray-300">入職日期</label>
           <input type="date" id="arrival_at" value={employeeForm.arrival_at} onChange={handleInputChange} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600"/>
         </div>
+        
+        {/* Departure fields - only show for resignation statuses */}
+        {(employeeForm.status === 'pending_resign' || employeeForm.status === 'resigned') && (
+          <>
+            <div>
+              <label htmlFor="departure_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {employeeForm.status === 'pending_resign' ? '預計離職日期' : '實際離職日期'}
+              </label>
+              <input 
+                type="date" 
+                id="departure_date" 
+                value={employeeForm.departure_date || ''} 
+                onChange={handleInputChange} 
+                className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600"
+                min={employeeForm.status === 'pending_resign' ? new Date().toISOString().split('T')[0] : undefined}
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {employeeForm.status === 'pending_resign' ? '必須為未來日期' : '員工實際離職的日期'}
+              </p>
+            </div>
+            <div>
+              <label htmlFor="departure_reason" className="block text-sm font-medium text-gray-700 dark:text-gray-300">離職原因 (選填)</label>
+              <input 
+                type="text" 
+                id="departure_reason" 
+                value={employeeForm.departure_reason || ''} 
+                onChange={handleInputChange} 
+                placeholder="例：合約到期、個人因素等..."
+                className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600"
+              />
+            </div>
+          </>
+        )}
+        
         <div className="sm:col-span-2">
           <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300">備註</label>
           <textarea id="notes" value={employeeForm.notes} onChange={handleInputChange} rows={3} className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600"></textarea>

@@ -68,7 +68,15 @@ const formatDate = (date) => {
     return dateObj.toLocaleDateString('zh-HK');
 };
 
-const formatCurrency = (amount) => amount != null ? `HK$${Number(amount).toFixed(2)}` : 'N/A';
+const formatCurrency = (amount) => {
+    if (amount == null) return 'N/A';
+    const numericAmount = parseFloat(amount || 0);
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+    }).format(numericAmount);
+};
 
 const isCreatedThisWeek = (createdDate) => {
     if (!createdDate) return false;

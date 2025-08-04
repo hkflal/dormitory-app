@@ -373,6 +373,8 @@ export default function DataManagement() {
   const [newRow, setNewRow] = useState({});
   const [showNewRow, setShowNewRow] = useState(false);
   const [columnDropdowns, setColumnDropdowns] = useState(new Set());
+  const [isFixingData, setIsFixingData] = useState(false);
+  const [fixResults, setFixResults] = useState(null);
 
   const collections = [
     { id: 'employees', name: 'Employees 👥', icon: '👥' },
@@ -602,6 +604,113 @@ export default function DataManagement() {
         }
       }
     );
+  };
+
+  // Handle data fix for assigned property fields
+  const handleFixAssignedPropertyData = async () => {
+    setIsFixingData(true);
+    setFixResults(null);
+    
+    try {
+      showToastNotification('🔧 Starting data fix...', 'info');
+      
+      // Get employees and properties
+      const [employeesSnapshot, propertiesSnapshot] = await Promise.all([
+        getDocs(collection(db, 'employees')),
+        getDocs(collection(db, 'properties'))
+      ]);
+
+      const employees = employeesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const properties = propertiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Create property name to ID mapping
+      const propertyNameToId = {};
+      properties.forEach(prop => {
+        if (prop.name) {
+          propertyNameToId[prop.name] = prop.id;
+        }
+      });
+
+      let fixedCount = 0;
+      let skippedCount = 0;
+      let errorCount = 0;
+      const fixDetails = [];
+
+      for (const employee of employees) {
+        try {
+          const updates = {};
+          let needsUpdate = false;
+
+          // Case 1: Has assignedProperty but no assigned_property_id
+          if (employee.assignedProperty && !employee.assigned_property_id) {
+            const propertyId = propertyNameToId[employee.assignedProperty];
+            if (propertyId) {
+              updates.assigned_property_id = propertyId;
+              needsUpdate = true;
+              fixDetails.push(`✅ ${employee.name || employee.id}: ${employee.assignedProperty} → ${propertyId}`);
+            } else {
+              fixDetails.push(`⚠️ ${employee.name || employee.id}: Property '${employee.assignedProperty}' not found`);
+            }
+          }
+
+          // Case 2: Has assigned_property_id but no assignedProperty (auto-fill)
+          if (employee.assigned_property_id && !employee.assignedProperty) {
+            const property = properties.find(p => p.id === employee.assigned_property_id);
+            if (property && property.name) {
+              updates.assignedProperty = property.name;
+              needsUpdate = true;
+              fixDetails.push(`🔄 ${employee.name || employee.id}: ${employee.assigned_property_id} → ${property.name}`);
+            }
+          }
+
+          // Case 3: Both exist but inconsistent
+          if (employee.assigned_property_id && employee.assignedProperty) {
+            const property = properties.find(p => p.id === employee.assigned_property_id);
+            if (property && property.name !== employee.assignedProperty) {
+              updates.assignedProperty = property.name;
+              needsUpdate = true;
+              fixDetails.push(`🔧 ${employee.name || employee.id}: Fixed inconsistency ${employee.assignedProperty} → ${property.name}`);
+            }
+          }
+
+          if (needsUpdate) {
+            await updateDoc(doc(db, 'employees', employee.id), {
+              ...updates,
+              updatedAt: new Date()
+            });
+            fixedCount++;
+          } else {
+            skippedCount++;
+          }
+
+        } catch (error) {
+          console.error(`Error processing employee ${employee.id}:`, error);
+          fixDetails.push(`❌ Error processing ${employee.name || employee.id}: ${error.message}`);
+          errorCount++;
+        }
+      }
+
+      const results = {
+        fixedCount,
+        skippedCount,
+        errorCount,
+        fixDetails
+      };
+
+      setFixResults(results);
+      showToastNotification(`🎉 Data fix completed! Fixed: ${fixedCount}, Skipped: ${skippedCount}, Errors: ${errorCount}`, 'success');
+      
+      // Refresh data if we're on employees collection
+      if (activeCollection === 'employees') {
+        await fetchData('employees');
+      }
+
+    } catch (error) {
+      console.error('Error fixing data:', error);
+      showToastNotification('❌ Data fix failed: ' + error.message, 'error');
+    } finally {
+      setIsFixingData(false);
+    }
   };
 
   // Parse CSV data - enhanced to handle tabs and commas
@@ -867,6 +976,67 @@ Jane Smith,jane@example.com,XYZ Inc,60000
         </div>
       )}
 
+      {/* Data Fix Results Modal */}
+      {fixResults && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-sm sm:max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium">🔧 数据修复结果</h3>
+              <button
+                onClick={() => setFixResults(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✖️
+              </button>
+            </div>
+            
+            <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-green-600">{fixResults.fixedCount}</div>
+                <div className="text-sm text-green-700">已修复记录</div>
+              </div>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-gray-600">{fixResults.skippedCount}</div>
+                <div className="text-sm text-gray-700">跳过记录</div>
+              </div>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-red-600">{fixResults.errorCount}</div>
+                <div className="text-sm text-red-700">错误记录</div>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <h4 className="font-medium text-gray-900 mb-2">修复详情:</h4>
+              <div className="bg-gray-100 rounded-lg p-4 max-h-60 overflow-y-auto">
+                <pre className="text-xs text-gray-700 whitespace-pre-wrap">
+                  {fixResults.fixDetails.join('\n')}
+                </pre>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setFixResults(null)}
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+              >
+                关闭
+              </button>
+              {fixResults.fixedCount > 0 && (
+                <button
+                  onClick={() => {
+                    setFixResults(null);
+                    window.location.reload();
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  刷新页面
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mb-4 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">🗃️ Database Management</h1>
         <p className="text-sm sm:text-base text-gray-600 hidden sm:block">View, edit, add, delete and import/export data from all Firebase collections</p>
@@ -1016,6 +1186,14 @@ Jane Smith,jane@example.com,XYZ Inc,60000
           >
             💾 Export CSV
           </button>
+
+          <button
+            onClick={handleFixAssignedPropertyData}
+            disabled={isFixingData}
+            className="inline-flex items-center px-3 py-2 bg-orange-600 text-white text-sm rounded-md hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isFixingData ? '🔄 修复中...' : '🔧 修复数据'}
+          </button>
         </div>
 
         {/* Mobile: Secondary Actions (Expandable) */}
@@ -1053,6 +1231,13 @@ Jane Smith,jane@example.com,XYZ Inc,60000
                 className="inline-flex items-center px-3 py-2 bg-gray-600 text-white text-sm rounded-md hover:bg-gray-700"
               >
                 💾 Export
+              </button>
+              <button
+                onClick={handleFixAssignedPropertyData}
+                disabled={isFixingData}
+                className="inline-flex items-center px-3 py-2 bg-orange-600 text-white text-sm rounded-md hover:bg-orange-700 disabled:opacity-50"
+              >
+                {isFixingData ? '🔄 修复中' : '🔧 修复'}
               </button>
             </div>
           </details>

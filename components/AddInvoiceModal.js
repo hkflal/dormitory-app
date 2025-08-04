@@ -33,6 +33,7 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
     invoice_number: '',
     contract_number: '',
     employee_names: '', // Storing as a comma-separated string in the form
+    company: '', // Add company field
     amount: '',
     start_date: '',
     end_date: '',
@@ -171,6 +172,7 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
           invoice_number: invoiceData.invoice_number || '',
           contract_number: invoiceData.contract_number || '',
           employee_names: (invoiceData.employee_names || []).join(', '),
+          company: invoiceData.company || '', // Add company field
           amount: invoiceData.amount || '',
           start_date: formatDateForInput(invoiceData.start_date),
           end_date: formatDateForInput(invoiceData.end_date),
@@ -268,6 +270,22 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
     }
   }, [formData.employee_names, availableEmployees]);
 
+  // Update company field when selected employees change
+  useEffect(() => {
+    if (selectedEmployees.length > 0) {
+      const firstEmployeeWithCompany = selectedEmployees.find(e => e.company);
+      setFormData(prev => ({
+        ...prev,
+        company: firstEmployeeWithCompany ? firstEmployeeWithCompany.company : ''
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        company: ''
+      }));
+    }
+  }, [selectedEmployees]);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -292,10 +310,16 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
     const frequency = calculateFrequency(formData.start_date, formData.end_date);
     const nEmployees = calculateNEmployees(employeeNamesArray);
     
+    // Get company from selected employees (use first employee's company)
+    const employeeCompany = selectedEmployees.length > 0 ? 
+      (selectedEmployees.find(e => e.company) || {}).company || '' : 
+      '';
+    
     // Convert employee_names string back to an array
     const submissionData = {
         ...formData,
         employee_names: employeeNamesArray,
+        company: employeeCompany, // Add company field
         amount: parseFloat(formData.amount),
         total: parseFloat(formData.total) || parseFloat(formData.amount),
         start_date: new Date(formData.start_date),
@@ -475,7 +499,7 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              {isDepositInvoice ? '單月押金金額 (HK$)' : '金額 (HK$)'}
+              {isDepositInvoice ? '單月押金金額' : '金額'}
             </label>
             <input 
               type="number" 
@@ -517,7 +541,7 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
           {!isDepositInvoice && (
             <div>
               <label htmlFor="total" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                總計 (HK$)
+                總計
                 <span className="text-xs text-gray-500 ml-1">(自動計算: 金額 × 租期)</span>
               </label>
               <input 

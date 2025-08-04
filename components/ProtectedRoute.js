@@ -3,19 +3,24 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ProtectedRoute({ children }) {
-  const { currentUser, isAdmin, loading } = useAuth();
+  const { currentUser, isAuthorized, canAccessPage, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading) {
       if (!currentUser) {
+        // Not logged in, redirect to login
         router.push('/login');
-      } else if (!isAdmin) {
-        // If user is authenticated but not admin, redirect to login
+      } else if (!isAuthorized) {
+        // Logged in but not authorized (not admin or editor), redirect to login
         router.push('/login');
+      } else if (!canAccessPage(router.pathname)) {
+        // Authorized user trying to access a page they don't have permission for
+        // Redirect editors to their default page (invoices)
+        router.push('/invoices');
       }
     }
-  }, [currentUser, isAdmin, loading, router]);
+  }, [currentUser, isAuthorized, loading, router, canAccessPage]);
 
   // Show loading spinner while checking auth state
   if (loading) {
@@ -27,7 +32,7 @@ export default function ProtectedRoute({ children }) {
   }
 
   // Show nothing while redirecting
-  if (!currentUser || !isAdmin) {
+  if (!currentUser || !isAuthorized || !canAccessPage(router.pathname)) {
     return null;
   }
 

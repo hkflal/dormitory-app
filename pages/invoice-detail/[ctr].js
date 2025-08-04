@@ -8,6 +8,8 @@ import { PlusIcon, ArrowDownTrayIcon, PencilIcon, TrashIcon, ArrowPathIcon, Arro
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import AddInvoiceModal from '../../components/AddInvoiceModal';
 import AccountEditModal from '../../components/AccountEditModal';
+import AddManagementFeeInvoiceModal from '../../components/AddManagementFeeInvoiceModal';
+import AddUtilitiesInvoiceModal from '../../components/AddUtilitiesInvoiceModal';
 
 const InvoiceDetailPage = () => {
     const { currentUser, login } = useAuth();
@@ -19,6 +21,8 @@ const InvoiceDetailPage = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showDepositModal, setShowDepositModal] = useState(false);
     const [editingInvoice, setEditingInvoice] = useState(null);
+    const [showManagementFeeModal, setShowManagementFeeModal] = useState(false);
+    const [showUtilitiesModal, setShowUtilitiesModal] = useState(false);
     const [updatingStatus, setUpdatingStatus] = useState({});
     const [generatingPdf, setGeneratingPdf] = useState(null);
     const [showInfoModal, setShowInfoModal] = useState(false);
@@ -299,7 +303,15 @@ const InvoiceDetailPage = () => {
         }
     };
 
-    const formatCurrency = (amount) => amount != null ? `HK$${Number(amount).toFixed(2)}` : 'N/A';
+    const formatCurrency = (amount) => {
+  if (amount == null) return 'N/A';
+  const numericAmount = parseFloat(amount || 0);
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true
+  }).format(numericAmount);
+};
     const formatDate = (date) => {
         if (!date) return 'N/A';
         // Handle Firestore timestamp
@@ -422,7 +434,7 @@ const InvoiceDetailPage = () => {
                                     id={`upload-${invoice.id}`}
                                     className="hidden"
                                     onChange={(e) => handleUploadReceipt(invoice.id, e.target.files[0])}
-                                    accept="image/*"
+                                    accept="image/*,application/pdf"  // Added PDF support
                                 />
                                 <button
                                     onClick={() => document.getElementById(`upload-${invoice.id}`).click()}
@@ -580,24 +592,48 @@ const InvoiceDetailPage = () => {
         }
         if (!file) return;
 
+        // Add file validation
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSize) {
+            alert("文件大小不能超過 10MB / File size cannot exceed 10MB");
+            return;
+        }
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+        if (!allowedTypes.includes(file.type)) {
+            alert("請上傳圖片或PDF文件 / Please upload an image or PDF file");
+            return;
+        }
+
         setUploadingReceipt(invoiceId);
         try {
-            const storageRef = ref(storage, `receipts/${invoiceId}/${file.name}`);
+            // Use consistent file naming like in invoices.js
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const storageRef = ref(storage, `receipts/${invoiceId}/receipt.${fileExtension}`);
             const uploadResult = await uploadBytes(storageRef, file);
             const downloadURL = await getDownloadURL(uploadResult.ref);
 
             const invoiceRef = doc(db, 'invoices', invoiceId);
             await updateDoc(invoiceRef, {
-                receiptUrl: downloadURL
+                receiptUrl: downloadURL,
+                receiptFileType: file.type,  // Store file type for future reference
+                receiptUploadedAt: new Date()
             });
             
             // The real-time listener will handle the UI update
-            setInfoModalMessage('收據上傳成功！');
+            setInfoModalMessage('收據上傳成功！Receipt uploaded successfully!');
             setShowInfoModal(true);
 
         } catch (error) {
             console.error("Error uploading receipt: ", error);
-            alert("Upload failed. Please try again.");
+            let errorMessage = "上傳失敗，請重試 / Upload failed. Please try again.";
+            if (error.code === 'storage/unauthorized') {
+                errorMessage = "您沒有權限上傳文件 / You don't have permission to upload files.";
+            } else if (error.code === 'storage/canceled') {
+                errorMessage = "上傳已取消 / Upload was canceled.";
+            }
+            alert(errorMessage);
         } finally {
             setUploadingReceipt(null);
         }
@@ -678,6 +714,18 @@ const InvoiceDetailPage = () => {
                         className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                         <PlusIcon className="w-4 h-4 mr-2" />
                         新增押金發票
+                    </button>
+                    <button 
+                        onClick={() => setShowManagementFeeModal(true)}
+                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-yellow-500 border border-transparent rounded-md shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">
+                        <PlusIcon className="w-4 h-4 mr-2" />
+                        新增管理費發票
+                    </button>
+                    <button 
+                        onClick={() => setShowUtilitiesModal(true)}
+                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-emerald-600 border border-transparent rounded-md shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                        <PlusIcon className="w-4 h-4 mr-2" />
+                        新增水電費發票
                     </button>
                 </div>
             </header>
@@ -801,13 +849,26 @@ const InvoiceDetailPage = () => {
             {showDepositModal && (
                 <AddInvoiceModal
                     isOpen={showDepositModal}
-                    onClose={() => {
-                        setShowDepositModal(false);
-                        setEditingInvoice(null);
-                    }}
+                    onClose={() => { setShowDepositModal(false); setEditingInvoice(null); }}
                     onSave={handleAddInvoice} // Use enhanced handler
                     invoiceData={editingInvoice}
                     isDepositInvoice={true}
+                />
+            )}
+
+            {showManagementFeeModal && (
+                <AddManagementFeeInvoiceModal
+                    isOpen={showManagementFeeModal}
+                    onClose={() => setShowManagementFeeModal(false)}
+                    onSave={fetchContractInvoices}
+                    contractNumber={ctr}
+                />
+            )}
+            
+            {showUtilitiesModal && (
+                <AddUtilitiesInvoiceModal
+                    isOpen={showUtilitiesModal}
+                    onClose={() => setShowUtilitiesModal(false)}
                 />
             )}
 

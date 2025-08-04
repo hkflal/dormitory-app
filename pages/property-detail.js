@@ -119,8 +119,7 @@ export default function PropertyDetail() {
       const employeesData = allEmployees.filter(emp => {
         // Check if employee is assigned to THIS property (same logic as getPropertyEmployees)
         const isAssignedById = emp.assigned_property_id === id;
-        const isAssignedByName = emp.assigned_property_id === propertyData.name || 
-                                emp.assignedProperty === propertyData.name;
+        const isAssignedByName = emp.assignedProperty === propertyData.name;
         
         const isAssignedToProperty = isAssignedById || isAssignedByName;
         
@@ -166,12 +165,27 @@ export default function PropertyDetail() {
       // Fetch invoices related to this property
       const invoicesRef = collection(db, 'invoices');
       const invoicesSnapshot = await getDocs(invoicesRef);
-      const invoicesData = invoicesSnapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(invoice => 
-          invoice.property_id === id ||
-          employeesData.some(emp => emp.id === invoice.employee_id)
+      const allInvoicesData = invoicesSnapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // Filter invoices by property (using assigned_property_id logic)
+      const invoicesData = allInvoicesData.filter(invoice => {
+        // Method 1: Direct property_id match
+        if (invoice.property_id === id) return true;
+        
+        // Method 2: Check if invoice belongs to employees assigned to this property
+        const employeeInThisProperty = employeesData.some(emp => 
+          emp.id === invoice.employee_id || emp.employeeId === invoice.employee_id
         );
+        
+        return employeeInThisProperty;
+      });
+      
+      console.log(`\n=== INVOICE DEBUG ===`);
+      console.log(`Property ID: ${id}, Property Name: ${propertyData.name}`);
+      console.log(`Total invoices in database: ${allInvoicesData.length}`);
+      console.log(`Invoices for this property: ${invoicesData.length}`);
+      console.log(`=== END INVOICE DEBUG ===\n`);
 
       // Fetch maintenance records for this property
       const maintenanceRef = collection(db, 'maintenance');
@@ -204,12 +218,14 @@ export default function PropertyDetail() {
 
   // FIXED: Helper functions for capacity calculations
   const getTotalPropertyCapacity = () => {
-    // Use property's own capacity field, not sum of room capacities
-    return property?.capacity || 0;
+    // Return static bed capacity (total bed spaces available)
+    return property?.capacity || 
+           (property?.rooms ? property.rooms.reduce((sum, room) => sum + (room.capacity || 0), 0) : 0);
   };
 
   const getCurrentOccupancy = () => {
-    return employees.length;
+    // Return count of housed employees only (actual occupancy)
+    return employees.filter(emp => emp.status === 'housed').length;
   };
 
   const getOccupancyPercentage = () => {
@@ -438,21 +454,66 @@ export default function PropertyDetail() {
   };
 
   const getRentStats = () => {
-    const totalRent = employees.length * (property?.monthlyRent || 20000);
-    const paidCount = Math.floor(employees.length * 0.7); // 70% paid simulation
+    // Calculate total rent from individual employee rent amounts
+    const totalRent = employees.reduce((sum, emp) => {
+      const rent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || parseFloat(property?.monthlyRent) || 0;
+      return sum + rent;
+    }, 0);
+    
+    // For simulation, assume 70% have paid
+    const paidCount = Math.floor(employees.length * 0.7);
     const dueCount = employees.length - paidCount;
-    const paidAmount = paidCount * (property?.monthlyRent || 20000);
-    const dueAmount = dueCount * (property?.monthlyRent || 20000);
+    
+    // Calculate paid and due amounts based on individual rents
+    let paidAmount = 0;
+    let dueAmount = 0;
+    
+    employees.forEach((emp, index) => {
+      const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || parseFloat(property?.monthlyRent) || 0;
+      if (index < paidCount) {
+        paidAmount += empRent;
+      } else {
+        dueAmount += empRent;
+      }
+    });
     
     return { totalRent, paidCount, dueCount, paidAmount, dueAmount };
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('zh-HK', {
-      style: 'currency',
-      currency: 'HKD',
-      minimumFractionDigits: 0
-    }).format(amount);
+    const numericAmount = parseFloat(amount || 0);
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      useGrouping: true
+    }).format(numericAmount);
+  };
+
+  // Helper function to get current month invoices
+  const getCurrentMonthInvoices = () => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+    
+    return invoices.filter(invoice => {
+      if (!invoice.created_at) return false;
+      
+      // Handle Firestore Timestamp
+      let invoiceDate;
+      if (invoice.created_at.seconds) {
+        invoiceDate = new Date(invoice.created_at.seconds * 1000);
+      } else {
+        invoiceDate = new Date(invoice.created_at);
+      }
+      
+      return invoiceDate.getFullYear() === currentYear && 
+             invoiceDate.getMonth() === currentMonth;
+    }).sort((a, b) => {
+      // Sort by creation date, newest first
+      const dateA = a.created_at.seconds ? new Date(a.created_at.seconds * 1000) : new Date(a.created_at);
+      const dateB = b.created_at.seconds ? new Date(b.created_at.seconds * 1000) : new Date(b.created_at);
+      return dateB - dateA;
+    });
   };
 
   const handleAddTodo = async () => {
@@ -536,6 +597,7 @@ export default function PropertyDetail() {
   const totalCapacity = getTotalPropertyCapacity();
   const currentOccupancy = getCurrentOccupancy();
   const unassignedEmployees = getUnassignedEmployees();
+  const currentMonthInvoices = getCurrentMonthInvoices();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1087,20 +1149,22 @@ export default function PropertyDetail() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">最近發票</h2>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  本月發票 ({new Date().getFullYear()}年{new Date().getMonth() + 1}月)
+                </h2>
                 <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                  {invoices.length}
+                  {currentMonthInvoices.length}
                 </span>
               </div>
             </div>
             <div className="p-6">
-              {invoices.length === 0 ? (
+              {currentMonthInvoices.length === 0 ? (
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                  暫無發票記錄
+                  本月暫無發票記錄
                 </p>
               ) : (
                 <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {invoices.slice(0, 5).map((invoice, index) => (
+                  {currentMonthInvoices.slice(0, 5).map((invoice, index) => (
                     <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">

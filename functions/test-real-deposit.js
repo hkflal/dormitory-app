@@ -4,7 +4,7 @@ const path = require('path');
 const { createReport } = require('docx-templates');
 
 // Initialize Firebase Admin
-const serviceAccount = require('./serviceAccountKey.json');
+const serviceAccount = require('../firebase-service-account.json');
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -16,8 +16,12 @@ const db = admin.firestore();
 
 // Helper function to format currency
 const formatCurrency = (amount) => {
-    const num = parseFloat(amount) || 0;
-    return `HK$${num.toFixed(2)}`;
+  const numericAmount = parseFloat(amount || 0);
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true
+  }).format(numericAmount);
 };
 
 // Helper function to format date

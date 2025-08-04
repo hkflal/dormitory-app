@@ -7,11 +7,40 @@ const fs = require('fs');
 const path = require('path');
 const { createReport } = require('docx-templates');
 
+// Add Chinese character normalization support
+let OpenCC;
+let simplifiedToTraditional;
+try {
+  OpenCC = require('opencc-js');
+  simplifiedToTraditional = OpenCC.Converter({ from: 'cn', to: 'hk' });
+} catch (error) {
+  console.warn('OpenCC not available for Chinese character normalization:', error.message);
+}
+
 admin.initializeApp();
 
 // Import and re-export the scheduled invoice generation function
-const { scheduledInvoiceGeneration } = require('./scheduled-invoice-generation');
+const { scheduledInvoiceGeneration, scheduledManagementFeeGeneration } = require('./scheduled-invoice-generation');
 exports.scheduledInvoiceGeneration = scheduledInvoiceGeneration;
+exports.scheduledManagementFeeGeneration = scheduledManagementFeeGeneration;
+
+// Import and re-export the scheduled employee status update function
+const { scheduledEmployeeStatusUpdate, checkEmployeeStatuses, fixEmployeeStatus } = require('./scheduled-employee-status-update');
+exports.scheduledEmployeeStatusUpdate = scheduledEmployeeStatusUpdate;
+exports.checkEmployeeStatuses = checkEmployeeStatuses;
+exports.fixEmployeeStatus = fixEmployeeStatus;
+
+// Import and re-export the scheduled monthly snapshot functions
+const { 
+  scheduledMonthlySnapshot, 
+  createMonthlySnapshotManual, 
+  getMonthlySnapshots,
+  backfillMonthlySnapshots 
+} = require('./scheduled-monthly-snapshot');
+exports.scheduledMonthlySnapshot = scheduledMonthlySnapshot;
+exports.createMonthlySnapshotManual = createMonthlySnapshotManual;
+exports.getMonthlySnapshots = getMonthlySnapshots;
+exports.backfillMonthlySnapshots = backfillMonthlySnapshots;
 
 // Set global options for all functions
 setGlobalOptions({ 
@@ -28,8 +57,121 @@ const calculateTotal = (amount, nEmployees, frequency) => {
     return unitPrice * employees * period;
 };
 
+// Chinese character normalization helper
+const normalizeChineseNames = (employeeNames) => {
+    if (!Array.isArray(employeeNames) || !simplifiedToTraditional) {
+        return employeeNames;
+    }
+    
+    return employeeNames.map(name => {
+        if (typeof name === 'string') {
+            const normalizedName = simplifiedToTraditional(name.trim());
+            if (normalizedName !== name.trim()) {
+                console.log(`🔤 Normalized Chinese characters: "${name.trim()}" → "${normalizedName}"`);
+            }
+            return normalizedName;
+        }
+        return name;
+    });
+};
+
+// Enhanced currency utilities (inline for compatibility)
+
+// We'll define the enhanced currency functions inline for compatibility
+const cleanCurrencySymbols = (amount) => {
+  if (typeof amount === 'number') return amount;
+  if (!amount) return 0;
+  
+  // Convert to string and remove all currency symbols
+  const cleanedAmount = String(amount)
+    .replace(/\$HK/gi, '')  // Remove $HK
+    .replace(/HK\$/gi, '')  // Remove HK$
+    .replace(/\$/g, '')     // Remove $
+    .replace(/港币|港元/g, '') // Remove Chinese currency terms
+    .replace(/[^\d.,\-]/g, '') // Remove any other non-numeric characters except commas, dots, and minus
+    .replace(/,/g, '');     // Remove commas
+    
+  return parseFloat(cleanedAmount) || 0;
+};
+
+/**
+ * GATEKEEPING FUNCTION: Ensures invoice data has clean numeric amounts before generation
+ * This function validates and cleans all amount-related fields in invoice data
+ * @param {Object} invoiceData - Raw invoice data that may contain currency symbols
+ * @returns {Object} Cleaned invoice data with numeric amounts only
+ */
+const validateAndCleanInvoiceAmounts = (invoiceData) => {
+  console.log('🛡️ GATEKEEPING: Validating and cleaning invoice amounts...');
+  
+  // Log original data for debugging
+  console.log('📥 Original amount data:', {
+    amount: invoiceData.amount,
+    total: invoiceData.total,
+    amount_type: typeof invoiceData.amount,
+    total_type: typeof invoiceData.total
+  });
+  
+  const cleanedData = { ...invoiceData };
+  
+  // Clean the main amount field
+  if (cleanedData.amount !== undefined && cleanedData.amount !== null) {
+    const originalAmount = cleanedData.amount;
+    cleanedData.amount = cleanCurrencySymbols(originalAmount);
+    
+    if (originalAmount !== cleanedData.amount) {
+      console.log(`🧹 Cleaned amount: "${originalAmount}" → ${cleanedData.amount}`);
+    }
+  }
+  
+  // Clean the total field
+  if (cleanedData.total !== undefined && cleanedData.total !== null) {
+    const originalTotal = cleanedData.total;
+    cleanedData.total = cleanCurrencySymbols(originalTotal);
+    
+    if (originalTotal !== cleanedData.total) {
+      console.log(`🧹 Cleaned total: "${originalTotal}" → ${cleanedData.total}`);
+    }
+  }
+  
+  // Validate that amounts are valid numbers
+  if (isNaN(cleanedData.amount) || cleanedData.amount <= 0) {
+    console.warn(`⚠️ Invalid amount detected: ${cleanedData.amount}, setting to 0`);
+    cleanedData.amount = 0;
+  }
+  
+  // Fix edge case: handle null/undefined totals properly
+  if (cleanedData.total === undefined || cleanedData.total === null || isNaN(cleanedData.total) || cleanedData.total < 0) {
+    console.log(`🔧 Setting total to match amount: ${cleanedData.amount}`);
+    cleanedData.total = cleanedData.amount;
+  }
+  
+  // Log cleaned data for verification
+  console.log('📤 Cleaned amount data:', {
+    amount: cleanedData.amount,
+    total: cleanedData.total,
+    amount_type: typeof cleanedData.amount,
+    total_type: typeof cleanedData.total
+  });
+  
+  console.log('✅ GATEKEEPING: Invoice amounts validated and cleaned');
+  return cleanedData;
+};
+
+const calculateTotalUtil = (amount, nEmployees, frequency) => {
+  const unitPrice = cleanCurrencySymbols(amount);
+  const employees = parseInt(nEmployees) || 1;
+  const period = parseInt(frequency) || 1;
+  return unitPrice * employees * period;
+};
+
 const formatCurrency = (amount) => {
-    return `HK$${parseFloat(amount || 0).toFixed(2)}`;
+    // Use enhanced currency formatting that strips all currency symbols
+    const numericAmount = cleanCurrencySymbols(amount);
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+    }).format(numericAmount);
 };
 
 const formatDate = (date) => {
@@ -38,11 +180,55 @@ const formatDate = (date) => {
     return d.toLocaleDateString('zh-HK');
 };
 
+async function getCompanyName(employeeNames) {
+    const fallbackCompany = ''; // Define fallback once
+    if (!employeeNames || !Array.isArray(employeeNames) || employeeNames.length === 0) {
+        console.log('No employee names provided, using fallback.');
+        return fallbackCompany;
+    }
+
+    const db = admin.firestore();
+    const employeesRef = db.collection('employees');
+    
+    // Clean the names list to ensure no empty strings are queried
+    const validNames = employeeNames.filter(name => name && typeof name === 'string' && name.trim() !== '');
+    if (validNames.length === 0) {
+        console.log('Employee names array was empty after cleaning, using fallback.');
+        return fallbackCompany;
+    }
+    
+    try {
+        console.log(`Querying for company name with employee names: ${validNames.join(', ')}`);
+        const snapshot = await employeesRef.where('name', 'in', validNames).get();
+
+        if (snapshot.empty) {
+            console.log(`No employees found for names: [${validNames.join(', ')}]. Using fallback.`);
+            return fallbackCompany;
+        }
+
+        // Find the first employee with a valid company name
+        for (const doc of snapshot.docs) {
+            const employee = doc.data();
+            if (employee.company && employee.company.trim() !== '') {
+                console.log(`Found company "${employee.company}" for employee "${employee.name}".`);
+                return employee.company;
+            }
+        }
+        
+        console.log(`None of the found employees [${validNames.join(', ')}] had a valid company name. Using fallback.`);
+        return fallbackCompany; // Fallback if no employee has a company
+        
+    } catch (error) {
+        console.error(`Error fetching company name for [${validNames.join(', ')}]:`, error);
+        return fallbackCompany; // Fallback on error
+    }
+}
+
 // Enhanced DOCX Template Processing Function
-async function processDocxTemplate(templatePath, invoiceData) {
+async function processDocxTemplate(templatePath, invoiceData, companyName) {
     try {
         console.log(`📄 Processing template: ${templatePath}`);
-        console.log(`📋 Invoice data:`, {
+        console.log(`�� Invoice data:`, {
             invoice_number: invoiceData.invoice_number,
             contract_number: invoiceData.contract_number,
             is_deposit: invoiceData.is_deposit,
@@ -54,29 +240,47 @@ async function processDocxTemplate(templatePath, invoiceData) {
         // Read the template file
         const templateBuffer = fs.readFileSync(templatePath);
         
-        // Calculate total amount using computed fields
-        const unitPrice = parseFloat(invoiceData.amount) || 0;
-        const nEmployees = parseInt(invoiceData.n_employees) || 1;
-        const frequency = parseInt(invoiceData.frequency) || 1;
-        const totalAmount = calculateTotal(unitPrice, nEmployees, frequency);
+        // APPLY GATEKEEPING: Clean all amounts before processing
+        const cleanedInvoiceData = validateAndCleanInvoiceAmounts(invoiceData);
+        
+        // Calculate total amount using computed fields with enhanced fallback logic and currency cleaning
+        const unitPrice = cleanedInvoiceData.amount; // Already cleaned by gatekeeping function
+        
+        // Normalize Chinese characters in employee names
+        const normalizedEmployeeNames = normalizeChineseNames(cleanedInvoiceData.employee_names);
+        
+        // Enhanced fallback: if n_employees is missing, calculate from employee_names array
+        let nEmployees = parseInt(cleanedInvoiceData.n_employees);
+        if (!nEmployees || nEmployees <= 0) {
+            nEmployees = Array.isArray(normalizedEmployeeNames) ? 
+                normalizedEmployeeNames.filter(name => name && name.trim().length > 0).length : 1;
+            
+            // Log warning for missing computed field
+            if (Array.isArray(normalizedEmployeeNames) && normalizedEmployeeNames.length > 1) {
+                console.warn(`⚠️ Invoice ${cleanedInvoiceData.invoice_number} missing n_employees field, calculated from employee_names: ${nEmployees}`);
+            }
+        }
+        
+        const frequency = parseInt(cleanedInvoiceData.frequency) || 1;
+        const totalAmount = calculateTotalUtil(unitPrice, nEmployees, frequency);
         
         // Prepare template data with enhanced field mapping
         const templateData = {
             // Basic info - matching template placeholders
-            issue_date: formatDate(invoiceData.created_at || new Date()),
-            invoice_number: invoiceData.invoice_number || '',
-            contract_number: invoiceData.contract_number || '',
+            issue_date: formatDate(cleanedInvoiceData.created_at || new Date()),
+            invoice_number: cleanedInvoiceData.invoice_number || '',
+            contract_number: cleanedInvoiceData.contract_number || '',
             
             // Company info
-            company: '港舍宿舍管理',
+            company: companyName,
             company_address: '香港',
             
-            // Employee info
-            employee_names: Array.isArray(invoiceData.employee_names) 
-                ? invoiceData.employee_names.join(', ') 
-                : (invoiceData.employee_names || 'N/A'),
+            // Employee info (using normalized Chinese characters)
+            employee_names: Array.isArray(normalizedEmployeeNames) 
+                ? normalizedEmployeeNames.join(', ') 
+                : (normalizedEmployeeNames || 'N/A'),
             n_employees: nEmployees,
-            n: invoiceData.n || nEmployees, // For deposit template
+            n: cleanedInvoiceData.n || nEmployees, // For deposit template
             
             // Financial info
             amount: formatCurrency(unitPrice),
@@ -85,28 +289,28 @@ async function processDocxTemplate(templatePath, invoiceData) {
             unit_price: formatCurrency(unitPrice),
             
             // Date info
-            start_date: formatDate(invoiceData.start_date),
-            end_date: formatDate(invoiceData.end_date),
+            start_date: formatDate(cleanedInvoiceData.start_date),
+            end_date: formatDate(cleanedInvoiceData.end_date),
             
             // Property info
-            property_name: invoiceData.property_name || '',
-            room_number: invoiceData.room_number || '',
+            property_name: cleanedInvoiceData.property_name || '',
+            room_number: cleanedInvoiceData.room_number || '',
             
             // Other fields
-            notes: invoiceData.notes || '',
-            tenant_name: Array.isArray(invoiceData.employee_names) 
-                ? invoiceData.employee_names[0] 
-                : invoiceData.employee_names || '',
-            due_date: formatDate(invoiceData.start_date),
+            notes: cleanedInvoiceData.notes || '',
+            tenant_name: Array.isArray(normalizedEmployeeNames) 
+                ? normalizedEmployeeNames[0] 
+                : normalizedEmployeeNames || '',
+            due_date: formatDate(cleanedInvoiceData.start_date),
             payment_method: '銀行轉帳',
             
             // Special fields for auto-generated invoices
-            auto_generated_tag: invoiceData.auto_generated ? '自動生成' : '',
-            renewal_tag: invoiceData.renewal_tag || '',
+            auto_generated_tag: cleanedInvoiceData.auto_generated ? '自動生成' : '',
+            renewal_tag: cleanedInvoiceData.renewal_tag || '',
             
             // Legacy fields for backward compatibility
             date: new Date().toLocaleDateString('zh-HK'),
-            is_deposit: invoiceData.is_deposit ? '押金' : '租金',
+            is_deposit: cleanedInvoiceData.is_deposit ? '押金' : '租金',
             generated_at: new Date().toLocaleString('zh-HK')
         };
         
@@ -136,7 +340,10 @@ async function processDocxTemplate(templatePath, invoiceData) {
 exports.generateInvoiceDocxTrigger = onDocumentCreated('invoices/{invoiceId}', async (event) => {
     try {
         const invoiceId = event.params.invoiceId;
-        const invoiceData = event.data.data();
+        const rawInvoiceData = event.data.data();
+        
+        // APPLY GATEKEEPING: Clean amounts before processing
+        const invoiceData = validateAndCleanInvoiceAmounts(rawInvoiceData);
         
         // FIXED: Use invoiceId as fallback for missing invoice_number and contract_number
         const invoiceNumber = invoiceData.invoice_number || invoiceId;
@@ -154,7 +361,7 @@ exports.generateInvoiceDocxTrigger = onDocumentCreated('invoices/{invoiceId}', a
         
         // Determine template type - Use new templates from public directory
         const templateName = invoiceData.is_deposit ? 'deposit_template.docx' : 'invoice_template.docx';
-        const templatePath = path.join(__dirname, '..', 'public', templateName);
+        const templatePath = path.join(__dirname, 'templates', templateName);
         
         console.log(`📄 Auto-generation template selection:`, {
             templateName,
@@ -169,8 +376,8 @@ exports.generateInvoiceDocxTrigger = onDocumentCreated('invoices/{invoiceId}', a
         
         console.log(`✅ Using template for auto-generation: ${templatePath}`);
         
-        // Generate DOCX
-        const docxBuffer = await processDocxTemplate(templatePath, invoiceData);
+        const companyName = await getCompanyName(invoiceData.employee_names);
+        const docxBuffer = await processDocxTemplate(templatePath, invoiceData, companyName);
         
         // Upload to Firebase Storage - FIXED: Use fallback values
         const bucket = admin.storage().bucket();
@@ -195,6 +402,7 @@ exports.generateInvoiceDocxTrigger = onDocumentCreated('invoices/{invoiceId}', a
         // Update invoice record with download URL and success status
         await admin.firestore().collection('invoices').doc(invoiceId).update({
             docx_url: publicUrl,
+            company: companyName, // Persist the fetched company name
             docx_generated_at: admin.firestore.FieldValue.serverTimestamp(),
             docx_file_path: fileName,
             docx_generation_status: 'success',
@@ -242,7 +450,7 @@ exports.generateInvoiceDocxRegenerationTrigger = onDocumentUpdated('invoices/{in
         });
         
         const templateName = afterData.is_deposit ? 'deposit_template.docx' : 'invoice_template.docx';
-        const templatePath = path.join(__dirname, '..', 'public', templateName);
+        const templatePath = path.join(__dirname, 'templates', templateName);
         
         console.log(`📄 Regeneration template selection:`, {
             templateName,
@@ -257,10 +465,14 @@ exports.generateInvoiceDocxRegenerationTrigger = onDocumentUpdated('invoices/{in
         
         console.log(`✅ Using template for regeneration: ${templatePath}`);
         
-        const docxBuffer = await processDocxTemplate(templatePath, afterData);
+        // APPLY GATEKEEPING: Clean amounts before processing (same as other functions)
+        const cleanedInvoiceData = validateAndCleanInvoiceAmounts(afterData);
+        
+        const companyName = await getCompanyName(cleanedInvoiceData.employee_names);
+        const docxBuffer = await processDocxTemplate(templatePath, cleanedInvoiceData, companyName);
         
         const bucket = admin.storage().bucket();
-        const fileName = `invoices/${afterData.contract_number}/${afterData.invoice_number}.docx`;
+        const fileName = `invoices/${cleanedInvoiceData.contract_number}/${cleanedInvoiceData.invoice_number}.docx`;
         const file = bucket.file(fileName);
         
         await file.save(docxBuffer, {
@@ -274,6 +486,7 @@ exports.generateInvoiceDocxRegenerationTrigger = onDocumentUpdated('invoices/{in
         
         await admin.firestore().collection('invoices').doc(invoiceId).update({
             docx_url: publicUrl,
+            company: companyName, // Persist the fetched company name
             docx_regenerated_at: admin.firestore.FieldValue.serverTimestamp(),
             docx_file_path: fileName,
             docx_generation_status: 'success',
@@ -313,7 +526,10 @@ exports.generateInvoiceDocxManual = onRequest(async (req, res) => {
                 return res.status(404).json({ error: 'Invoice not found' });
             }
 
-            const invoiceData = invoiceDoc.data();
+            const rawInvoiceData = invoiceDoc.data();
+            
+            // APPLY GATEKEEPING: Clean amounts before processing
+            const invoiceData = validateAndCleanInvoiceAmounts(rawInvoiceData);
             console.log(`📄 Manual DOCX generation for: ${invoiceData.invoice_number}`);
             console.log(`📄 Invoice data:`, {
                 is_deposit: invoiceData.is_deposit,
@@ -323,7 +539,7 @@ exports.generateInvoiceDocxManual = onRequest(async (req, res) => {
             
             // Determine template type - Use new templates from public directory
             const templateName = invoiceData.is_deposit ? 'deposit_template.docx' : 'invoice_template.docx';
-            const templatePath = path.join(__dirname, '..', 'public', templateName);
+            const templatePath = path.join(__dirname, 'templates', templateName);
             
             console.log(`📄 Template selection:`, {
                 templateName,
@@ -338,8 +554,15 @@ exports.generateInvoiceDocxManual = onRequest(async (req, res) => {
             
             console.log(`✅ Using template: ${templatePath}`);
             
+            const companyName = await getCompanyName(invoiceData.employee_names);
+
+            // If the company name in the DB is wrong, update it
+            if (invoiceData.company !== companyName) {
+                await admin.firestore().collection('invoices').doc(invoiceId).update({ company: companyName });
+            }
+
             // Generate DOCX
-            const docxBuffer = await processDocxTemplate(templatePath, invoiceData);
+            const docxBuffer = await processDocxTemplate(templatePath, invoiceData, companyName);
             
             // Return the DOCX file directly
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
@@ -382,7 +605,7 @@ exports.regenerateInvoiceDocx = onRequest(async (req, res) => {
                     
                     // Generate DOCX using enhanced function - Use new templates from public directory
                     const templateName = invoiceData.is_deposit ? 'deposit_template.docx' : 'invoice_template.docx';
-                    const templatePath = path.join(__dirname, '..', 'public', templateName);
+                    const templatePath = path.join(__dirname, 'templates', templateName);
                     
                     console.log(`📄 Bulk regeneration template selection for ${invoiceData.invoice_number}:`, {
                         templateName,
@@ -402,7 +625,8 @@ exports.regenerateInvoiceDocx = onRequest(async (req, res) => {
                     
                     console.log(`✅ Using template for bulk regeneration: ${templatePath}`);
                     
-                    const docxBuffer = await processDocxTemplate(templatePath, invoiceData);
+                    const companyName = await getCompanyName(invoiceData.employee_names);
+                    const docxBuffer = await processDocxTemplate(templatePath, invoiceData, companyName);
                     
                     // Upload to Firebase Storage
                     const bucket = admin.storage().bucket();
@@ -421,6 +645,7 @@ exports.regenerateInvoiceDocx = onRequest(async (req, res) => {
                     // Update the invoice document
                     await admin.firestore().collection('invoices').doc(invoiceId).update({
                         docx_url: publicUrl,
+                        company: companyName, // Persist the fetched company name
                         docx_regenerated_at: admin.firestore.FieldValue.serverTimestamp(),
                         docx_file_path: fileName,
                         docx_generation_status: 'success'

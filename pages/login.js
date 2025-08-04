@@ -8,15 +8,16 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { login, currentUser } = useAuth();
+  const { login, currentUser, getDefaultPage } = useAuth();
   const router = useRouter();
 
   // Redirect if already logged in
   useEffect(() => {
     if (currentUser) {
-      router.push('/');
+      const defaultPage = getDefaultPage();
+      router.push(defaultPage);
     }
-  }, [currentUser, router]);
+  }, [currentUser, router, getDefaultPage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +26,11 @@ export default function Login() {
       setError('');
       setLoading(true);
       await login(email, password);
-      router.push('/');
+      
+      // The useEffect above will handle the redirect based on user role
+      // But we can also handle it here for immediate feedback
+      const defaultPage = getDefaultPage();
+      router.push(defaultPage);
     } catch (error) {
       // More specific error messages
       let errorMessage = 'Failed to sign in. Please check your credentials.';

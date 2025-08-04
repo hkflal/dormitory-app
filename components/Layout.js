@@ -18,21 +18,26 @@ import {
   SunIcon
 } from '@heroicons/react/24/outline';
 
-const navigation = [
-  { name: '主頁', href: '/', icon: HomeIcon },
-  { name: '物業管理', href: '/properties', icon: BuildingOfficeIcon },
-  { name: '員工管理', href: '/employees', icon: UserGroupIcon },
-  { name: '財務管理', href: '/financials', icon: CurrencyDollarIcon },
-  { name: '發票管理', href: '/invoices', icon: DocumentTextIcon },
-  { name: '數據管理', href: '/data-management', icon: TableCellsIcon },
-  { name: '歷史記錄', href: '/history', icon: ClockIcon },
+const allNavigation = [
+  { name: '主頁', href: '/', icon: HomeIcon, roles: ['admin'] },
+  { name: '物業管理', href: '/properties', icon: BuildingOfficeIcon, roles: ['admin'] },
+  { name: '員工管理', href: '/employees', icon: UserGroupIcon, roles: ['admin', 'editor'] },
+  { name: '財務管理', href: '/financials', icon: CurrencyDollarIcon, roles: ['admin'] },
+  { name: '發票管理', href: '/invoices', icon: DocumentTextIcon, roles: ['admin', 'editor'] },
+  { name: '數據管理', href: '/data-management', icon: TableCellsIcon, roles: ['admin'] },
+  { name: '歷史記錄', href: '/history', icon: ClockIcon, roles: ['admin'] },
 ];
 
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, userRole } = useAuth();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const router = useRouter();
+
+  // Filter navigation based on user role
+  const navigation = allNavigation.filter(item => 
+    item.roles.includes(userRole)
+  );
 
   const handleLogout = async () => {
     try {

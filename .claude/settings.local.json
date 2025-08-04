@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(rg:*)",
+      "Bash(firebase functions:log:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(npm run deploy:*)",
+      "Bash(firebase functions:list:*)",
+      "Bash(gcloud auth:*)",
+      "Bash(firebase auth:list:*)",
+      "Bash(firebase projects:list:*)",
+      "Bash(firebase functions:config:get:*)",
+      "Bash(rm:*)",
+      "Bash(npm install)",
+      "Bash(firebase functions:delete:*)",
+      "Bash(npx firebase-tools deploy:*)",
+      "Bash(echo $PATH)",
+      "Bash(where bash)",
+      "Bash(timeout 240 firebase deploy --only functions --project dormitory-management-6c1a5 --force)",
+      "Bash(firebase --version)",
+      "Bash(npm:*)",
+      "Bash(echo $SHELL)",
+      "Bash(where firebase)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell:*)",
+      "Bash(gcloud:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": []
+  }
+}

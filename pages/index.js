@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { 
+  getCurrentMonthRentMetrics, 
+  calculateTotalCosts, 
+  getFinancialOverview,
+  formatCurrency,
+  formatPercentage 
+} from '../lib/rentCalculations';
+import { getActiveEmployees, getHousedEmployees } from '../lib/employeeFilters';
 import {
   BuildingOfficeIcon,
   UserGroupIcon,
@@ -24,22 +32,26 @@ export default function Dashboard() {
     totalProperties: 0,
     activeProperties: 0,
     totalEmployees: 0,
+    activeEmployees: 0,
     inHousedEmployees: 0,
+    resignedEmployees: 0,
     arrivedEmployees: 0,
     assignedEmployees: 0,
     pendingEmployees: 0,
     occupancyRate: 0,
     assignmentRate: 0,
-    totalBookRevenue: 0,
-    accountsReceivable: 0,
-    totalCosts: 0,
+    // New KPI metrics
+    totalReceivableRent: 0,
+    receivedRent: 0,
+    notYetReceivedRent: 0,
+    collectionRate: 0,
+    // Cost metrics (no operating costs)
     propertyCosts: 0,
-    operatingCosts: 0,
-    actualRevenue: 0,
+    netIncome: 0,
     totalCapacity: 0,
     pendingInvoices: 0,
     overdueInvoices: 0,
-    totalMonthlyRent: 0
+    invoicedRent: 0 // Added invoicedRent
   });
   const [loading, setLoading] = useState(true);
   const [properties, setProperties] = useState([]);
@@ -52,6 +64,12 @@ export default function Dashboard() {
   const getCurrentMonthName = () => {
     const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
     return months[new Date().getMonth()];
+  };
+
+  const getCurrentDateString = () => {
+    const now = new Date();
+    const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    return `${months[now.getMonth()]}${now.getDate()}日`;
   };
 
   const getLastDayOfCurrentMonth = () => {
@@ -102,86 +120,86 @@ export default function Dashboard() {
         }));
 
         const today = new Date();
-        const lastDayOfMonth = getLastDayOfCurrentMonth();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
         
+        // Basic property and employee counts
         const totalProperties = propertiesData.length;
         const activeProperties = propertiesData.filter(p => p.status !== 'inactive').length;
+        
+        // Employee filtering using new functions
+        const activeEmployees = getActiveEmployees(employeesData);
+        const housedEmployees = getHousedEmployees(employeesData);
         const totalEmployees = employeesData.length;
+        const resignedEmployees = employeesData.filter(emp => emp.status === 'resigned').length;
         
-        const inHousedEmployees = employeesData.filter(emp => {
-          if (emp.status !== 'housed') return false;
-          // Check if arrival date is <= today
-          const arrivalDate = emp.arrival_time ? new Date(emp.arrival_time.seconds * 1000) : 
-                             emp.arrivalDate ? new Date(emp.arrivalDate) : 
-                             emp.checkInDate ? new Date(emp.checkInDate) : null;
-          return !arrivalDate || arrivalDate <= today;
-        }).length;
+        // Current month rent metrics using new calculation functions
+        const rentMetrics = getCurrentMonthRentMetrics(employeesData, invoicesData, currentYear, currentMonth);
         
+        // Cost calculations (no operating costs)
+        const costMetrics = calculateTotalCosts(propertiesData);
+        
+        // Net income = received rent - property costs
+        const netIncome = rentMetrics.receivedRent - costMetrics.propertyCosts;
+        
+        // Employee counts for legacy compatibility
+        const inHousedEmployees = housedEmployees.length;
         const assignedEmployees = employeesData.filter(emp => 
-          emp.assigned_property_id || emp.assignedProperty
+          (emp.assigned_property_id && emp.assigned_property_id !== '') ||
+          (emp.assignedProperty && emp.assignedProperty !== '')
         ).length;
-        
         const pendingEmployees = employeesData.filter(emp => emp.status === 'pending').length;
-        const arrivedEmployees = inHousedEmployees; // Same as housed employees who have arrived
+        const arrivedEmployees = inHousedEmployees;
         
+        // Calculate total bed capacity
         const totalCapacity = propertiesData.reduce((sum, property) => 
-          sum + (parseInt(property.capacity) || 0), 0);
+          sum + (parseInt(property.capacity) || 
+                 (property.rooms ? property.rooms.reduce((roomSum, room) => roomSum + (room.capacity || 0), 0) : 0)), 0);
         
+        // Filter current month invoices for counts
         const currentMonthInvoices = invoicesData.filter(invoice => {
-          const createdAt = invoice.created_at ? new Date(invoice.created_at.seconds * 1000) : new Date(invoice.created_at);
-          return createdAt <= lastDayOfMonth;
+          const issueDate = invoice.issueDate?.toDate ? invoice.issueDate.toDate() : new Date(invoice.issueDate);
+          return issueDate.getFullYear() === currentYear && issueDate.getMonth() === currentMonth;
         });
         
-        const totalMonthlyRent = propertiesData.reduce((sum, property) => 
-          sum + (parseFloat(property.cost) || 0), 0);
-        const totalBookRevenue = totalMonthlyRent; // Use actual property costs
-        
-        const accountsReceivable = currentMonthInvoices
-          .filter(invoice => invoice.status === 'pending' || invoice.status === 'due')
-          .reduce((sum, invoice) => sum + (parseFloat(invoice.amount) || 0), 0);
-        
+        // Invoice status counts
         const pendingInvoices = currentMonthInvoices
           .filter(invoice => invoice.status === 'pending').length;
         const overdueInvoices = currentMonthInvoices
-          .filter(invoice => invoice.status === 'due' || invoice.status === 'overdue').length;
+          .filter(invoice => ['due', 'overdue'].includes(invoice.status)).length;
         
-        const propertyCosts = propertiesData.reduce((sum, property) => 
-          sum + (parseFloat(property.cost) || 0), 0);
-        
-        const operatingCosts = totalBookRevenue * 0.1;
-        
-        const totalCosts = propertyCosts + operatingCosts;
-        
-        const actualRevenue = totalBookRevenue - accountsReceivable - totalCosts;
-        
+        // Occupancy and assignment rates
         const occupancyRate = totalCapacity > 0 ? 
           Math.round((inHousedEmployees / totalCapacity) * 100) : 0;
-        
-        const assignmentRate = totalEmployees > 0 ? 
-          Math.round((assignedEmployees / totalEmployees) * 100) : 0;
+        const assignmentRate = activeEmployees.length > 0 ? 
+          Math.round((assignedEmployees / activeEmployees.length) * 100) : 0;
 
-        const inProgress = getInProgressProperties(propertiesData);
+        const inProgress = getInProgressProperties(propertiesData, employeesData);
 
         setStats({
           totalProperties,
           activeProperties,
           totalEmployees,
+          activeEmployees: activeEmployees.length,
           inHousedEmployees,
+          resignedEmployees,
           arrivedEmployees,
           assignedEmployees,
           pendingEmployees,
           occupancyRate,
           assignmentRate,
-          totalBookRevenue,
-          accountsReceivable,
-          totalCosts,
-          propertyCosts,
-          operatingCosts,
-          actualRevenue,
+          // New KPI metrics
+          totalReceivableRent: rentMetrics.totalReceivableRent,
+          receivedRent: rentMetrics.receivedRent,
+          notYetReceivedRent: rentMetrics.notYetReceivedRent,
+          collectionRate: rentMetrics.collectionRate,
+          // Cost metrics (no operating costs)
+          propertyCosts: costMetrics.propertyCosts,
+          netIncome,
           totalCapacity,
           pendingInvoices,
           overdueInvoices,
-          totalMonthlyRent
+          invoicedRent: rentMetrics.invoicedRent // Update invoicedRent
         });
 
         setProperties(propertiesData);
@@ -198,24 +216,23 @@ export default function Dashboard() {
     fetchDashboardData();
   }, []);
 
-  const getInProgressProperties = (propertiesData) => {
+  const getInProgressProperties = (propertiesData, employeesData) => {
     const today = new Date();
     return propertiesData.filter(prop => {
-      const occupancyRate = prop.capacity > 0 ? (prop.occupancy || 0) / prop.capacity : 0;
+      // Calculate actual occupancy based on housed employees
+      const actualOccupancy = employeesData.filter(emp => 
+        emp.assigned_property_id === prop.id && 
+        emp.status === 'housed'
+      ).length;
+      const capacity = prop.capacity || 0;
+      const occupancyRate = capacity > 0 ? actualOccupancy / capacity : 0;
       const expectedDate = prop.expectedDate ? new Date(prop.expectedDate) : null;
       
       return occupancyRate < 1.0 && expectedDate && expectedDate > today;
     }).sort((a, b) => new Date(a.expectedDate) - new Date(b.expectedDate));
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('zh-TW', {
-      style: 'currency',
-      currency: 'TWD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
+  // formatCurrency function now imported from rentCalculations.js
 
   const formatDate = (dateStr) => {
     if (!dateStr) return 'N/A';
@@ -228,6 +245,17 @@ export default function Dashboard() {
   };
 
   // Function to render gender icons
+  const getPropertyActualRevenue = (property) => {
+    return employees
+      .filter(emp => 
+        emp.status === 'housed' && 
+        emp.assigned_property_id === property.id
+      )
+      .reduce((sum, emp) => {
+        return sum + (parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0);
+      }, 0);
+  };
+
   const renderGenderIcons = (property) => {
     const genderTypes = property.genderTypes || (property.target_gender_type ? [property.target_gender_type] : []);
     
@@ -278,6 +306,7 @@ export default function Dashboard() {
   }
 
   const currentMonth = getCurrentMonthName();
+  const currentDateString = getCurrentDateString();
 
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
@@ -290,14 +319,14 @@ export default function Dashboard() {
             </div>
             <div className="text-right">
               <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">最後更新</p>
-              <p className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-gray-100">{new Date().toLocaleDateString('zh-TW')}</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">{new Date().toLocaleString('zh-TW')}</p>
             </div>
           </div>
-          
-          <div className="md:hidden">
+
+          <div className="lg:hidden">
             <button
               onClick={() => setShowMobileTips(!showMobileTips)}
-              className="flex items-center space-x-1 text-blue-600 dark:text-blue-400 text-sm"
+              className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 text-sm font-medium"
             >
               <InformationCircleIcon className="h-4 w-4" />
               <span>手機使用提示</span>
@@ -321,42 +350,42 @@ export default function Dashboard() {
           <div className="flex items-center">
             <CurrencyDollarIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="text-green-100 text-xs sm:text-sm font-medium">{currentMonth}總帳面收入 (A)</p>
-              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.totalBookRevenue)}</p>
-              <p className="text-green-100 text-xs mt-1">物業總月租: {formatCurrency(stats.totalMonthlyRent)}</p>
+              <p className="text-green-100 text-xs sm:text-sm font-medium">{currentMonth}應收租金總額</p>
+              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.totalReceivableRent)}</p>
+              <p className="text-green-100 text-xs mt-1">來自 {stats.inHousedEmployees} 位已入住員工</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+        <div className="bg-gradient-to-r from-purple-400 to-purple-600 text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+          <div className="flex items-center">
+            <CalendarDaysIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-purple-100 text-xs sm:text-sm font-medium">至 {currentDateString} 已開票租金</p>
+              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.invoicedRent)}</p>
+              <p className="text-purple-100 text-xs mt-1">已產生發票的租金總額</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-blue-400 to-blue-600 text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+          <div className="flex items-center">
+            <CheckCircleIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-blue-100 text-xs sm:text-sm font-medium">至 {currentDateString}本月已收租金</p>
+              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.receivedRent)}</p>
+              <p className="text-blue-100 text-xs mt-1">收款率: {stats.collectionRate.toFixed(1)}%</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-orange-400 to-orange-600 text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
           <div className="flex items-center">
             <ClockIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="text-yellow-100 text-xs sm:text-sm font-medium">{currentMonth}應收帳款 (B)</p>
-              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.accountsReceivable)}</p>
-              <p className="text-yellow-100 text-xs mt-1">待付款: {stats.pendingInvoices} | 逾期: {stats.overdueInvoices}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-r from-red-400 to-red-600 text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
-          <div className="flex items-center">
-            <ExclamationTriangleIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
-            <div className="min-w-0 flex-1">
-              <p className="text-red-100 text-xs sm:text-sm font-medium">{currentMonth}總成本 (C)</p>
-              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.totalCosts)}</p>
-              <p className="text-red-100 text-xs mt-1">物業 + 營運成本</p>
-            </div>
-          </div>
-        </div>
-
-        <div className={`bg-gradient-to-r ${stats.actualRevenue >= 0 ? 'from-blue-400 to-blue-600' : 'from-gray-400 to-gray-600'} text-white p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform`}>
-          <div className="flex items-center">
-            <HomeIcon className="h-8 w-8 sm:h-10 sm:w-10 mr-3 flex-shrink-0" />
-            <div className="min-w-0 flex-1">
-              <p className="text-blue-100 text-xs sm:text-sm font-medium">{currentMonth}實際收入</p>
-              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.actualRevenue)}</p>
-              <p className="text-blue-100 text-xs mt-1">A - B - C</p>
+              <p className="text-orange-100 text-xs sm:text-sm font-medium">至 {currentDateString}本月未收租金</p>
+              <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.notYetReceivedRent)}</p>
+              <p className="text-orange-100 text-xs mt-1">待收款發票金額</p>
             </div>
           </div>
         </div>
@@ -378,7 +407,7 @@ export default function Dashboard() {
             <UserGroupIcon className="h-6 w-6 lg:h-5 lg:w-5 text-green-500 mb-2" />
             <p className="text-xs lg:text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">分配率</p>
             <p className="text-lg lg:text-base xl:text-lg font-bold text-gray-900 dark:text-white">{stats.assignmentRate}%</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{stats.assignedEmployees}/{stats.totalEmployees}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{stats.assignedEmployees}/{stats.activeEmployees}</p>
           </div>
         </div>
         
@@ -411,10 +440,10 @@ export default function Dashboard() {
         
         <div className="bg-white dark:bg-gray-800 p-3 lg:p-2 xl:p-3 rounded-lg shadow">
           <div className="flex flex-col items-center text-center">
-            <ClockIcon className="h-6 w-6 lg:h-5 lg:w-5 text-yellow-500 mb-2" />
-            <p className="text-xs lg:text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">待入住</p>
-            <p className="text-lg lg:text-base xl:text-lg font-bold text-gray-900 dark:text-white">{stats.pendingEmployees}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">尚未到達</p>
+            <ExclamationTriangleIcon className="h-6 w-6 lg:h-5 lg:w-5 text-gray-500 mb-2" />
+            <p className="text-xs lg:text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">已離職</p>
+            <p className="text-lg lg:text-base xl:text-lg font-bold text-gray-900 dark:text-white">{stats.resignedEmployees}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">不計入租金</p>
           </div>
         </div>
         
@@ -441,24 +470,27 @@ export default function Dashboard() {
       <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
         <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-            <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
-            成本分析
+            <CurrencyDollarIcon className="h-5 w-5 mr-2" />
+            財務概覽
           </h3>
         </div>
         
         <div className="p-4 sm:p-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center p-4 sm:p-6 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-              <p className="text-red-600 dark:text-red-400 text-sm font-medium mb-2">物業成本 (C1)</p>
+              <p className="text-red-600 dark:text-red-400 text-sm font-medium mb-2">物業成本</p>
               <p className="text-2xl sm:text-3xl font-bold text-red-700 dark:text-red-300">{formatCurrency(stats.propertyCosts)}</p>
+              <p className="text-red-500 dark:text-red-400 text-xs mt-1">我們支付的房租/貸款</p>
             </div>
-            <div className="text-center p-4 sm:p-6 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
-              <p className="text-orange-600 dark:text-orange-400 text-sm font-medium mb-2">營運成本 (C2)</p>
-              <p className="text-2xl sm:text-3xl font-bold text-orange-700 dark:text-orange-300">{formatCurrency(stats.operatingCosts)}</p>
+            <div className="text-center p-4 sm:p-6 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+              <p className="text-green-600 dark:text-green-400 text-sm font-medium mb-2">收款率</p>
+              <p className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-300">{stats.collectionRate.toFixed(1)}%</p>
+              <p className="text-green-500 dark:text-green-400 text-xs mt-1">已收租金 / 應收租金</p>
             </div>
-            <div className="text-center p-4 sm:p-6 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">總成本 (C)</p>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-700 dark:text-gray-200">{formatCurrency(stats.totalCosts)}</p>
+            <div className="text-center p-4 sm:p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p className="text-blue-600 dark:text-blue-400 text-sm font-medium mb-2">淨收益</p>
+              <p className={`text-2xl sm:text-3xl font-bold ${stats.netIncome >= 0 ? 'text-blue-700 dark:text-blue-300' : 'text-red-700 dark:text-red-300'}`}>{formatCurrency(stats.netIncome)}</p>
+              <p className="text-blue-500 dark:text-blue-400 text-xs mt-1">已收租金 - 物業成本</p>
             </div>
           </div>
         </div>
@@ -515,9 +547,13 @@ export default function Dashboard() {
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {properties.map((property) => {
-                      const occupancy = property.occupancy || 0;
+                      // Calculate actual occupancy based on housed employees
+                      const actualOccupancy = employees.filter(emp => 
+                        emp.assigned_property_id === property.id && 
+                        emp.status === 'housed'
+                      ).length;
                       const capacity = property.capacity || 0;
-                      const occupancyRate = capacity > 0 ? Math.round((occupancy / capacity) * 100) : 0;
+                      const occupancyRate = capacity > 0 ? Math.round((actualOccupancy / capacity) * 100) : 0;
                       
                       const getPropertyStatus = () => {
                         const expectedDate = property.expectedDate;
@@ -548,7 +584,6 @@ export default function Dashboard() {
                       const status = getPropertyStatus();
                       const assignedEmployees = employees.filter(emp => 
                         emp.assigned_property_id === property.id || 
-                        emp.assigned_property_id === property.name ||
                         emp.assignedProperty === property.name
                       );
 
@@ -596,7 +631,7 @@ export default function Dashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              {occupancy}/{capacity}
+                              {actualOccupancy}/{capacity}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -624,7 +659,7 @@ export default function Dashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-900 dark:text-gray-100">
-                              {formatCurrency(property.monthlyRent || property.cost || 3500)}
+                              {formatCurrency(getPropertyActualRevenue(property))}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -656,9 +691,13 @@ export default function Dashboard() {
               {/* Mobile Card View */}
               <div className="lg:hidden space-y-4">
                 {properties.map((property) => {
-                  const occupancy = property.occupancy || 0;
+                  // Calculate actual occupancy based on housed employees
+                  const actualOccupancy = employees.filter(emp => 
+                    emp.assigned_property_id === property.id && 
+                    emp.status === 'housed'
+                  ).length;
                   const capacity = property.capacity || 0;
-                  const occupancyRate = capacity > 0 ? Math.round((occupancy / capacity) * 100) : 0;
+                  const occupancyRate = capacity > 0 ? Math.round((actualOccupancy / capacity) * 100) : 0;
                   
                   const getPropertyStatus = () => {
                     const expectedDate = property.expectedDate;
@@ -689,7 +728,6 @@ export default function Dashboard() {
                   const status = getPropertyStatus();
                   const assignedEmployees = employees.filter(emp => 
                     emp.assigned_property_id === property.id || 
-                    emp.assigned_property_id === property.name ||
                     emp.assignedProperty === property.name
                   );
 
@@ -744,7 +782,7 @@ export default function Dashboard() {
                               {occupancyRate}%
                             </span>
                             <span className="text-xs text-gray-500 dark:text-gray-400">
-                              ({occupancy}/{capacity})
+                              ({actualOccupancy}/{capacity})
                             </span>
                           </div>
                         </div>
@@ -764,7 +802,7 @@ export default function Dashboard() {
                           <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">月租金</p>
                             <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                              {formatCurrency(property.monthlyRent || property.cost || 3500)}
+                              {formatCurrency(getPropertyActualRevenue(property))}
                             </p>
                           </div>
                           <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
