@@ -25,7 +25,8 @@
       "Bash(cmd /c:*)",
       "Bash(powershell:*)",
       "Bash(gcloud:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

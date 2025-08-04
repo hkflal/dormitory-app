@@ -40,6 +40,7 @@ import {
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
   const [properties, setProperties] = useState([]);
+  const [invoices, setInvoices] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -77,14 +78,19 @@ export default function Employees() {
 
   const fetchData = async () => {
     try {
-      const employeesSnapshot = await getDocs(collection(db, 'employees'));
-      const employeesData = employeesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const [employeesSnapshot, propertiesSnapshot, invoicesSnapshot] = await Promise.all([
+        getDocs(collection(db, 'employees')),
+        getDocs(collection(db, 'properties')),
+        getDocs(collection(db, 'invoices'))
+      ]);
 
-      const propertiesSnapshot = await getDocs(collection(db, 'properties'));
+      const employeesData = employeesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       const propertiesData = propertiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const invoicesData = invoicesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       setEmployees(employeesData);
       setProperties(propertiesData);
+      setInvoices(invoicesData);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -96,6 +102,56 @@ export default function Employees() {
     if (!propertyId) return null;
     const property = properties.find(p => p.id === propertyId);
     return property ? property.name : propertyId;
+  };
+
+  // Check if employee has paid invoice covering next month's 1st day
+  const hasCurrentMonthPayment = (employee, invoices) => {
+    const today = new Date();
+    const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1); // 1st of next month
+    
+    return invoices.some(inv => {
+      // Skip deposit records - check multiple indicators
+      const isDepositRecord = (
+        // Check if description/title contains deposit keywords
+        (inv.description && inv.description.toLowerCase().includes('deposit')) ||
+        (inv.title && inv.title.toLowerCase().includes('deposit')) ||
+        (inv.description && inv.description.includes('按金')) ||
+        (inv.title && inv.title.includes('按金')) ||
+        // Check if type field indicates deposit
+        (inv.type && inv.type.toLowerCase() === 'deposit') ||
+        (inv.invoice_type && inv.invoice_type.toLowerCase() === 'deposit')
+      );
+      
+      if (isDepositRecord) {
+        return false;
+      }
+      
+      // Check if invoice belongs to this employee
+      const isEmployeeInvoice = inv.employeeId === employee.id || 
+                              inv.employee_id === employee.id ||
+                              inv.employeeName === employee.name ||
+                              (inv.employee_names && inv.employee_names.includes(employee.name));
+      
+      if (!isEmployeeInvoice || inv.status !== 'paid') return false;
+      
+      // Check if invoice covers 1st of next month
+      if (inv.start_date && inv.end_date) {
+        const startDate = inv.start_date?.toDate ? inv.start_date.toDate() : new Date(inv.start_date);
+        const endDate = inv.end_date?.toDate ? inv.end_date.toDate() : new Date(inv.end_date);
+        
+        // Invoice covers next month's 1st if start_date <= next_month_1st <= end_date
+        return startDate <= nextMonth && endDate >= nextMonth;
+      }
+      
+      return false;
+    });
+  };
+
+  // Get current month name in Chinese
+  const getCurrentMonthName = () => {
+    const monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
+    const today = new Date();
+    return monthNames[today.getMonth()];
   };
 
   const getPropertyCapacity = (propertyName) => {
@@ -448,7 +504,16 @@ export default function Employees() {
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {grouped[key].map(employee => (
                       <tr key={employee.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="px-6 py-4 whitespace-nowrap"><div className="text-sm font-medium text-gray-900 dark:text-gray-100">{employee.name || 'N/A'}</div></td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center space-x-2">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{employee.name || 'N/A'}</div>
+                            {hasCurrentMonthPayment(employee, invoices) && (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                {getCurrentMonthName()}已付
+                              </span>
+                            )}
+                          </div>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className={`text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded border-2 ${
                             employee.gender === 'female' ? 'border-pink-300 dark:border-pink-500 shadow-lg shadow-pink-200 dark:shadow-pink-800' : 

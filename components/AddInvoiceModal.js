@@ -48,6 +48,7 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [loadingEmployees, setLoadingEmployees] = useState(false);
   const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const isEditing = Boolean(invoiceData && invoiceData.id);
 
@@ -214,6 +215,7 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
 
     if (isOpen) {
       initializeForm();
+      setSubmitting(false); // Reset submitting state when modal opens
     }
   }, [invoiceData, isEditing, isOpen, isDepositInvoice]);
 
@@ -301,6 +303,14 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Prevent duplicate submissions
+    if (submitting) {
+      return;
+    }
+    
+    setSubmitting(true);
+    console.log('📊 Invoice submission started:', { isEditing, formData: formData.invoice_number });
+    
     // Parse employee names and calculate computed fields
     const employeeNamesArray = formData.employee_names
       .split(',')
@@ -336,18 +346,24 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
     try {
       if (isEditing) {
         // Update existing invoice in Firestore
+        console.log('📊 Updating invoice:', invoiceData.id);
         const invoiceRef = doc(db, 'invoices', invoiceData.id);
         await updateDoc(invoiceRef, submissionData);
       } else {
         // Add new invoice to Firestore
+        console.log('📊 Creating new invoice:', submissionData.invoice_number);
         await addDoc(collection(db, 'invoices'), submissionData);
       }
 
+      console.log('📊 Invoice submission completed successfully');
       onSave(); // This will refetch the invoices list
       onClose();
     } catch (error) {
-      console.error(error);
+      console.error('📊 Invoice submission failed:', error);
       alert(`錯誤: ${error.message}`);
+    } finally {
+      setSubmitting(false);
+      console.log('📊 Invoice submission state reset');
     }
   };
 
@@ -631,13 +647,16 @@ const AddInvoiceModal = ({ isOpen, onClose, onSave, invoiceData, isDepositInvoic
           </button>
           <button 
             type="submit" 
+            disabled={submitting}
             className={`px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-              isDepositInvoice 
-                ? 'bg-orange-600 hover:bg-orange-700 focus:ring-orange-500' 
-                : 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-500'
+              submitting 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : isDepositInvoice 
+                  ? 'bg-orange-600 hover:bg-orange-700 focus:ring-orange-500' 
+                  : 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-500'
             }`}
           >
-            {isEditing ? '保存更改' : isDepositInvoice ? '新增押金發票' : '新增發票'}
+            {submitting ? '處理中...' : isEditing ? '保存更改' : isDepositInvoice ? '新增押金發票' : '新增發票'}
           </button>
         </div>
       </form>

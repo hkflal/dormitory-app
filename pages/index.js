@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { 
   getCurrentMonthRentMetrics, 
@@ -26,6 +26,54 @@ import {
   InformationCircleIcon
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
+
+/**
+ * Auto-update invoice status to 'overdue' for unpaid invoices past their end_date
+ * @param {Array} invoices - Array of all invoice documents
+ */
+async function updateOverdueInvoices(invoices) {
+  const today = new Date();
+  today.setHours(23, 59, 59, 999); // Set to end of today for comparison
+  
+  const overdueUpdates = [];
+  
+  invoices.forEach(invoice => {
+    // Only check unpaid invoices (pending, due)
+    if (!['pending', 'due'].includes(invoice.status)) return;
+    
+    // Check if invoice has end_date
+    if (!invoice.end_date) return;
+    
+    // Parse end_date
+    const endDate = invoice.end_date?.toDate ? invoice.end_date.toDate() : new Date(invoice.end_date);
+    
+    // If end_date is before today, mark as overdue
+    if (endDate < today) {
+      overdueUpdates.push({
+        id: invoice.id,
+        ctr: invoice.ctr,
+        endDate: endDate.toDateString(),
+        currentStatus: invoice.status
+      });
+    }
+  });
+  
+  // Update overdue invoices in batches
+  if (overdueUpdates.length > 0) {
+    console.log(`📊 Found ${overdueUpdates.length} invoices to mark as overdue:`);
+    overdueUpdates.forEach(update => {
+      console.log(`   - ${update.ctr}: ${update.currentStatus} → overdue (end: ${update.endDate})`);
+    });
+    
+    // Update each invoice
+    const updatePromises = overdueUpdates.map(update => 
+      updateDoc(doc(db, 'invoices', update.id), { status: 'overdue' })
+    );
+    
+    await Promise.all(updatePromises);
+    console.log(`✅ Updated ${overdueUpdates.length} invoices to overdue status`);
+  }
+}
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -119,6 +167,16 @@ export default function Dashboard() {
           ...doc.data()
         }));
 
+        // Auto-update overdue invoices
+        await updateOverdueInvoices(invoicesData);
+        
+        // Reload invoice data after status updates
+        const updatedInvoicesSnapshot = await getDocs(invoicesRef);
+        const updatedInvoicesData = updatedInvoicesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
         const today = new Date();
         const currentYear = today.getFullYear();
         const currentMonth = today.getMonth();
@@ -130,11 +188,11 @@ export default function Dashboard() {
         // Employee filtering using new functions
         const activeEmployees = getActiveEmployees(employeesData);
         const housedEmployees = getHousedEmployees(employeesData);
-        const totalEmployees = employeesData.length;
+        const totalEmployees = activeEmployees.length;
         const resignedEmployees = employeesData.filter(emp => emp.status === 'resigned').length;
         
         // Current month rent metrics using new calculation functions
-        const rentMetrics = getCurrentMonthRentMetrics(employeesData, invoicesData, currentYear, currentMonth);
+        const rentMetrics = getCurrentMonthRentMetrics(employeesData, updatedInvoicesData, currentYear, currentMonth);
         
         // Cost calculations (no operating costs)
         const costMetrics = calculateTotalCosts(propertiesData);
@@ -144,11 +202,11 @@ export default function Dashboard() {
         
         // Employee counts for legacy compatibility
         const inHousedEmployees = housedEmployees.length;
-        const assignedEmployees = employeesData.filter(emp => 
+        const assignedEmployees = activeEmployees.filter(emp => 
           (emp.assigned_property_id && emp.assigned_property_id !== '') ||
           (emp.assignedProperty && emp.assignedProperty !== '')
         ).length;
-        const pendingEmployees = employeesData.filter(emp => emp.status === 'pending').length;
+        const pendingEmployees = activeEmployees.filter(emp => emp.status === 'pending').length;
         const arrivedEmployees = inHousedEmployees;
         
         // Calculate total bed capacity
@@ -157,16 +215,23 @@ export default function Dashboard() {
                  (property.rooms ? property.rooms.reduce((roomSum, room) => roomSum + (room.capacity || 0), 0) : 0)), 0);
         
         // Filter current month invoices for counts
-        const currentMonthInvoices = invoicesData.filter(invoice => {
+        const currentMonthInvoices = updatedInvoicesData.filter(invoice => {
           const issueDate = invoice.issueDate?.toDate ? invoice.issueDate.toDate() : new Date(invoice.issueDate);
           return issueDate.getFullYear() === currentYear && issueDate.getMonth() === currentMonth;
         });
         
-        // Invoice status counts
-        const pendingInvoices = currentMonthInvoices
+        // Invoice status counts - use ALL invoices, not just current month
+        const pendingInvoices = updatedInvoicesData
           .filter(invoice => invoice.status === 'pending').length;
-        const overdueInvoices = currentMonthInvoices
+        const overdueInvoices = updatedInvoicesData
           .filter(invoice => ['due', 'overdue'].includes(invoice.status)).length;
+        
+        // Debug logging for invoice counts
+        console.log(`📊 Invoice Status Counts:`);
+        console.log(`   Total invoices: ${updatedInvoicesData.length}`);
+        console.log(`   Pending invoices: ${pendingInvoices}`);
+        console.log(`   Overdue invoices: ${overdueInvoices}`);
+        console.log(`   Current month invoices: ${currentMonthInvoices.length}`);
         
         // Occupancy and assignment rates
         const occupancyRate = totalCapacity > 0 ? 
@@ -205,7 +270,7 @@ export default function Dashboard() {
         setProperties(propertiesData);
         setInProgressProperties(inProgress);
         setEmployees(employeesData);
-        setInvoices(invoicesData);
+        setInvoices(updatedInvoicesData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -352,7 +417,7 @@ export default function Dashboard() {
             <div className="min-w-0 flex-1">
               <p className="text-green-100 text-xs sm:text-sm font-medium">{currentMonth}應收租金總額</p>
               <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.totalReceivableRent)}</p>
-              <p className="text-green-100 text-xs mt-1">來自 {stats.inHousedEmployees} 位已入住員工</p>
+              <p className="text-green-100 text-xs mt-1">含預計入住員工</p>
             </div>
           </div>
         </div>

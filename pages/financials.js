@@ -95,6 +95,36 @@ const checkIfEmployeeHasPaidThisMonth = (employee, invoices, year, month) => {
   }
 };
 
+// Calculate projected income including housed employees and prorated upcoming employees
+const calculateProjectedIncome = (employees, currentYear, currentMonth) => {
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  
+  return employees.reduce((total, emp) => {
+    const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
+    if (empRent === 0) return total;
+
+    if (emp.status === 'housed') {
+      // Full rent for currently housed employees
+      return total + empRent;
+    } else if ((emp.status === 'approved' || emp.status === 'pending' || emp.status === 'pending_assignment') && emp.arrival_at) {
+      // Prorated rent for upcoming employees based on arrival date
+      const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
+      
+      // Check if arrival date is in the current month
+      if (arrivalDate.getFullYear() === currentYear && arrivalDate.getMonth() === currentMonth) {
+        const arrivalDay = arrivalDate.getDate();
+        const remainingDays = daysInMonth - arrivalDay + 1; // +1 to include arrival day
+        const proratedRent = (remainingDays / daysInMonth) * empRent;
+        
+        console.log(`📊 Prorated rent for ${emp.name}: ${remainingDays}/${daysInMonth} * ${empRent} = ${proratedRent.toFixed(2)}`);
+        return total + proratedRent;
+      }
+    }
+    
+    return total;
+  }, 0);
+};
+
 // Calculate actual income based on housed employees who have paid this month
 const calculateActualIncome = (employees, invoices, currentYear, currentMonth) => {
   return employees
@@ -163,19 +193,99 @@ const FinancialsPage = () => {
         const housedEmployeesData = employees.filter(emp => emp.status === 'housed');
         setHousedEmployees(housedEmployeesData);
         
-        const theoreticalRevenue = housedEmployeesData.reduce((acc, emp) => {
-            // Ensure rent is treated as a number, fallback to 0 if invalid
-            return acc + (parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0);
-        }, 0);
+        // Use the same projection model for theoretical revenue (housed + prorated upcoming)
+        const theoreticalRevenue = calculateProjectedIncome(employees, currentYear, currentMonth);
 
-        const rentCollected = calculateActualIncome(housedEmployeesData, currentMonthInvoices, currentYear, currentMonth);
+        // For display purposes, both theoretical and "projected collected" are the same for current month
+        const rentCollected = theoreticalRevenue;
         
         // 🔍 Debug logging for financial calculations
         console.log(`📊 Financial Debug - Current Month: ${currentYear}-${currentMonth + 1}`);
         console.log(`📊 Housed Employees: ${housedEmployeesData.length}`);
         console.log(`📊 Current Month Invoices: ${currentMonthInvoices.length}`);
         console.log(`📊 Theoretical Revenue: ${formatCurrency(theoreticalRevenue)}`);
-        console.log(`📊 Actual Revenue (Paid Only): ${formatCurrency(rentCollected)}`);
+        console.log(`📊 Projected Revenue (Housed + Prorated Upcoming): ${formatCurrency(rentCollected)}`);
+        
+        // Detailed breakdown for verification
+        const housedTotal = employees
+          .filter(emp => emp.status === 'housed')
+          .reduce((sum, emp) => sum + (parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0), 0);
+        
+        const upcomingTotal = employees
+          .filter(emp => (emp.status === 'approved' || emp.status === 'pending' || emp.status === 'pending_assignment') && emp.arrival_at)
+          .reduce((sum, emp) => {
+            const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
+            if (arrivalDate.getFullYear() === currentYear && arrivalDate.getMonth() === currentMonth) {
+              const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
+              const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+              const arrivalDay = arrivalDate.getDate();
+              const remainingDays = daysInMonth - arrivalDay + 1;
+              const proratedRent = (remainingDays / daysInMonth) * empRent;
+              return sum + proratedRent;
+            }
+            return sum;
+          }, 0);
+        
+        console.log(`📊 Breakdown: Housed=${formatCurrency(housedTotal)}, Upcoming Prorated=${formatCurrency(upcomingTotal)}, Total=${formatCurrency(housedTotal + upcomingTotal)}`);
+        
+        // Debug upcoming employees with detailed August calculation
+        const upcomingEmployees = employees.filter(emp => (emp.status === 'approved' || emp.status === 'pending' || emp.status === 'pending_assignment') && emp.arrival_at);
+        console.log(`📊 Upcoming Employees Found: ${upcomingEmployees.length}`);
+        
+        // Debug ALL employee statuses and check-in fields
+        console.log(`🔍 ALL EMPLOYEE DATA ANALYSIS:`);
+        console.log(`📊 Total employees in system: ${employees.length}`);
+        
+        const statusCounts = {};
+        const arrivalFields = new Set();
+        
+        employees.forEach((emp, index) => {
+          // Count statuses
+          statusCounts[emp.status] = (statusCounts[emp.status] || 0) + 1;
+          
+          // Find arrival date field names
+          Object.keys(emp).forEach(key => {
+            if (key.toLowerCase().includes('checkin') || key.toLowerCase().includes('check_in') || 
+                key.toLowerCase().includes('arrival') || key.toLowerCase().includes('start')) {
+              arrivalFields.add(key);
+            }
+          });
+          
+          // Show first 3 employees' full data
+          if (index < 3) {
+            console.log(`   Employee ${index + 1}:`, emp);
+          }
+        });
+        
+        console.log(`📊 Status distribution:`, statusCounts);
+        console.log(`📊 Potential arrival date fields found:`, Array.from(arrivalFields));
+        
+        let augustTotal = 0;
+        let augustCount = 0;
+        
+        console.log(`📊 AUGUST 2025 PRORATED CALCULATION:`);
+        upcomingEmployees.forEach(emp => {
+          const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
+          const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
+          
+          // Check if arrival is in August 2025
+          if (arrivalDate.getFullYear() === 2025 && arrivalDate.getMonth() === 7) { // August is month 7 (0-based)
+            const arrivalDay = arrivalDate.getDate();
+            const remainingDays = 31 - arrivalDay + 1; // +1 to include arrival day
+            const proratedRent = (remainingDays / 31) * empRent;
+            augustTotal += proratedRent;
+            augustCount++;
+            
+            console.log(`   ${augustCount}. ${emp.name || emp.id}: Aug ${arrivalDay} | ${remainingDays}/31 days | ${empRent} rent | Prorated: ${proratedRent.toFixed(2)}`);
+          }
+        });
+        
+        console.log(`📊 AUGUST TOTAL: ${augustCount} employees = ${augustTotal.toFixed(2)}`);
+        console.log(`📊 All upcoming employees:`);
+        upcomingEmployees.forEach(emp => {
+          const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
+          console.log(`   - ${emp.name || emp.id}: Status=${emp.status}, Arrival=${arrivalDate.toDateString()}, Rent=${emp.rent || emp.monthlyRent}`);
+        });
         
         // Debug individual employee calculations
         console.log(`🔍 Analyzing payment status...`);
@@ -274,51 +384,117 @@ const FinancialsPage = () => {
         setPropertySummary(summary);
         
         // 3. Monthly Trends & Historical Data
-        // Calculate historical data for the last 6 months
+        // Use hardcoded data for Jan-July 2025, then calculate for other months
         const history = [];
         const monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
         const today = new Date();
 
+        // Hardcoded data from CSV for Jan-July 2025
+        const hardcodedData2025 = [
+          { month: 0, totalIncome: 229039, totalExpenses: 108000, pnl: 121039, employees: 69, rooms: 5 }, // Jan
+          { month: 1, totalIncome: 274539, totalExpenses: 123500, pnl: 151039, employees: 80, rooms: 6 }, // Feb
+          { month: 2, totalIncome: 295539, totalExpenses: 164000, pnl: 131539, employees: 87, rooms: 8 }, // Mar
+          { month: 3, totalIncome: 351539, totalExpenses: 178500, pnl: 173039, employees: 100, rooms: 9 }, // Apr
+          { month: 4, totalIncome: 351539, totalExpenses: 232500, pnl: 119039, employees: 98, rooms: 12 }, // May
+          { month: 5, totalIncome: 384672, totalExpenses: 306500, pnl: 78172, employees: 163, rooms: 16 }, // Jun
+          { month: 6, totalIncome: 622200, totalExpenses: 373000, pnl: 249200, employees: 183, rooms: 21 }, // Jul
+        ];
+
         const totalMonthlyCost = properties.reduce((acc, prop) => acc + (parseFloat(prop.cost) || 0), 0);
 
-        for (let i = 5; i >= 0; i--) {
-            const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-            const year = date.getFullYear();
-            const month = date.getMonth();
+        // Calculate available months from the start of 2025 to current month
+        const startYear = 2025;
+        const startMonth = 0; // January
+        
+        // Calculate total months from Jan 2025 to current month
+        const totalMonths = (currentYear - startYear) * 12 + (currentMonth - startMonth) + 1;
+        
+        for (let i = totalMonths - 1; i >= 0; i--) {
+            // Calculate the actual year and month for this iteration
+            const monthsFromStart = totalMonths - 1 - i;
+            const year = startYear + Math.floor((startMonth + monthsFromStart) / 12);
+            const month = (startMonth + monthsFromStart) % 12;
+            const date = new Date(year, month, 1);
 
-            const monthInvoices = invoices.filter(inv => {
-                const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
-                if (isNaN(issueDate.getTime())) return false;
-                return issueDate.getFullYear() === year && issueDate.getMonth() === month;
-            });
+            // Check if this is 2025 and within Jan-July range
+            const hardcodedEntry = year === 2025 && month <= 6 ? 
+              hardcodedData2025.find(entry => entry.month === month) : null;
 
-            // Get employees who were housed during that month
-            const monthHousedEmployees = employees.filter(emp => {
-                const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
-                if (!checkInDate || isNaN(checkInDate.getTime())) return false; 
-                return checkInDate <= date && emp.status === 'housed';
-            });
-
-            const rentCollected = calculateActualIncome(monthHousedEmployees, monthInvoices, year, month);
-            
-            // Note: Employee count is a snapshot of who had checked in by that month.
-            // This assumes a 'checkInDate' field exists on employee documents.
-            const employeeCount = employees.filter(emp => {
-                const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
-                if (!checkInDate || isNaN(checkInDate.getTime())) return false; 
-                return checkInDate <= date;
-            }).length;
-
-            const pnl = rentCollected - totalMonthlyCost;
-
-            history.push({
+            if (hardcodedEntry) {
+              // Use hardcoded data
+              history.push({
                 month: `${year} ${monthNames[month]}`,
-                        rentCollected: formatCurrency(rentCollected),
-        totalCosts: formatCurrency(totalMonthlyCost),
-                pnl: pnl,
-                employees: employeeCount,
-                properties: properties.length 
-            });
+                rentCollected: formatCurrency(hardcodedEntry.totalIncome),
+                totalCosts: formatCurrency(hardcodedEntry.totalExpenses),
+                pnl: hardcodedEntry.pnl,
+                employees: hardcodedEntry.employees,
+                properties: hardcodedEntry.rooms
+              });
+            } else {
+              // Check if this is the current month for projection
+              const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
+              
+              if (isCurrentMonth) {
+                // Use projections for current month
+                const projectedRent = calculateProjectedIncome(employees, year, month);
+                const projectedEmployeeCount = employees.filter(emp => {
+                  if (emp.status === 'housed') return true;
+                  if ((emp.status === 'approved' || emp.status === 'pending' || emp.status === 'pending_assignment') && emp.arrival_at) {
+                    const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
+                    return arrivalDate.getFullYear() === year && arrivalDate.getMonth() === month;
+                  }
+                  return false;
+                }).length;
+                
+                const projectedPnl = projectedRent - totalMonthlyCost;
+                
+                history.push({
+                  month: `${year} ${monthNames[month]}`,
+                  rentCollected: formatCurrency(projectedRent),
+                  totalCosts: formatCurrency(totalMonthlyCost),
+                  pnl: projectedPnl,
+                  employees: projectedEmployeeCount,
+                  properties: properties.length,
+                  isProjection: true
+                });
+              } else {
+                // Calculate dynamically for other months
+                const monthInvoices = invoices.filter(inv => {
+                    const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
+                    if (isNaN(issueDate.getTime())) return false;
+                    return issueDate.getFullYear() === year && issueDate.getMonth() === month;
+                });
+
+                // Get employees who were housed during that month
+                const monthHousedEmployees = employees.filter(emp => {
+                    const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
+                    if (!checkInDate || isNaN(checkInDate.getTime())) return false; 
+                    return checkInDate <= date && emp.status === 'housed';
+                });
+
+                const rentCollected = calculateActualIncome(monthHousedEmployees, monthInvoices, year, month);
+                
+                // Note: Employee count is a snapshot of who had checked in by that month.
+                // This assumes a 'checkInDate' field exists on employee documents.
+                const employeeCount = employees.filter(emp => {
+                    const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
+                    if (!checkInDate || isNaN(checkInDate.getTime())) return false; 
+                    return checkInDate <= date;
+                }).length;
+
+                const pnl = rentCollected - totalMonthlyCost;
+
+                history.push({
+                    month: `${year} ${monthNames[month]}`,
+                    rentCollected: formatCurrency(rentCollected),
+                    totalCosts: formatCurrency(totalMonthlyCost),
+                    pnl: pnl,
+                    employees: employeeCount,
+                    properties: properties.length,
+                    isProjection: false
+                });
+              }
+            }
         }
         setHistoricalData(history.reverse());
         
@@ -326,7 +502,8 @@ const FinancialsPage = () => {
           name: h.month.split(' ')[1], // e.g., "一月"
           PNL: h.pnl,
           Employees: h.employees,
-          Properties: h.properties
+          Properties: h.properties,
+          isProjection: h.isProjection || false
         })).reverse(); // reverse back for chart order
         setMonthlyTrends(trends);
 
@@ -360,8 +537,8 @@ const FinancialsPage = () => {
 
         {/* KPI Cards */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard title="總應收租金 (理論)" value={currentMonthStats.theoreticalRevenue} />
-          <StatCard title="總實收租金 (實際)" value={currentMonthStats.rentCollected} />
+          <StatCard title="總應收租金 (含預計入住)" value={currentMonthStats.theoreticalRevenue} />
+          <StatCard title="總實收租金 (預計)" value={currentMonthStats.rentCollected} />
           <StatCard title="總物業成本" value={currentMonthStats.totalRentalCost} />
           <StatCard title="其他成本" value={currentMonthStats.otherCosts} />
         </section>
@@ -369,7 +546,15 @@ const FinancialsPage = () => {
         {/* Charts and Property Summary */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">每月趨勢</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">每月趨勢</h2>
+              {monthlyTrends.some(trend => trend.isProjection) && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-1 animate-pulse"></span>
+                  包含預計數據
+                </span>
+              )}
+            </div>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={monthlyTrends}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(128, 128, 128, 0.3)" />
@@ -381,9 +566,66 @@ const FinancialsPage = () => {
                   labelStyle={{ color: '#f3f4f6' }}
                 />
                 <Legend />
-                <Line yAxisId="left" type="monotone" dataKey="PNL" stroke="#8884d8" strokeWidth={2} name="每月損益 (PNL)" />
-                <Line yAxisId="right" type="monotone" dataKey="Employees" stroke="#82ca9d" strokeWidth={2} name="員工人數" />
-                <Line yAxisId="right" type="monotone" dataKey="Properties" stroke="#ffc658" strokeWidth={2} name="物業數量" />
+                <Line 
+                  yAxisId="left" 
+                  type="monotone" 
+                  dataKey="PNL" 
+                  stroke="#8884d8" 
+                  strokeWidth={2} 
+                  name="每月損益 (PNL)"
+                  dot={(props) => {
+                    const { cx, cy, payload } = props;
+                    if (payload?.isProjection) {
+                      return (
+                        <circle 
+                          cx={cx} 
+                          cy={cy} 
+                          r={5} 
+                          fill="#8884d8" 
+                          stroke="#fff" 
+                          strokeWidth={3}
+                          strokeDasharray="2 2"
+                          opacity={0.9}
+                        />
+                      );
+                    }
+                    return <circle cx={cx} cy={cy} r={3} fill="#8884d8" />;
+                  }}
+                />
+                <Line 
+                  yAxisId="right" 
+                  type="monotone" 
+                  dataKey="Employees" 
+                  stroke="#82ca9d" 
+                  strokeWidth={2} 
+                  name="員工人數"
+                  dot={(props) => {
+                    const { cx, cy, payload } = props;
+                    if (payload?.isProjection) {
+                      return (
+                        <circle 
+                          cx={cx} 
+                          cy={cy} 
+                          r={5} 
+                          fill="#82ca9d" 
+                          stroke="#fff" 
+                          strokeWidth={3}
+                          strokeDasharray="2 2"
+                          opacity={0.9}
+                        />
+                      );
+                    }
+                    return <circle cx={cx} cy={cy} r={3} fill="#82ca9d" />;
+                  }}
+                />
+                <Line 
+                  yAxisId="right" 
+                  type="monotone" 
+                  dataKey="Properties" 
+                  stroke="#ffc658" 
+                  strokeWidth={2} 
+                  name="物業數量"
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -408,7 +650,7 @@ const FinancialsPage = () => {
               <div className="flex items-center">
                 <DocumentChartBarIcon className="h-8 w-8 text-yellow-500" />
                 <div className="ml-4">
-                  <p className="text-sm text-gray-500">平均損益 (六個月)</p>
+                  <p className="text-sm text-gray-500">平均損益 (所有月份)</p>
                   <p className="text-2xl font-bold">{formatCurrency((monthlyTrends.reduce((acc, t) => acc + t.PNL, 0) / monthlyTrends.length))}</p>
                 </div>
               </div>
@@ -469,19 +711,16 @@ const FinancialsPage = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* Aggregated P&L Summary */}
+          {/* Monthly Rent Collection Bar Chart */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">整體損益摘要</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">每月租金收入</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart
-                data={[
-                  {
-                    name: '總計',
-                    totalRevenue: propertySummary.reduce((acc, prop) => acc + (prop.theoreticalRevenue || 0), 0),
-                    totalCost: propertySummary.reduce((acc, prop) => acc + (prop.cost || 0), 0),
-                    totalProfit: propertySummary.reduce((acc, prop) => acc + (prop.profit || 0), 0)
-                  }
-                ]}
+                data={historicalData.map(item => ({
+                  month: item.month.split(' ')[1] || item.month, // Extract month name (e.g., "一月")
+                  rentCollected: parseFloat(item.rentCollected.replace(/[^0-9.-]/g, '')) || 0, // Convert currency string to number
+                  isProjection: item.isProjection || false
+                }))}
                 margin={{
                   top: 20,
                   right: 30,
@@ -491,19 +730,21 @@ const FinancialsPage = () => {
               >
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis 
-                  dataKey="name" 
+                  dataKey="month" 
                   tick={{ fontSize: 12 }}
                   className="text-gray-600 dark:text-gray-300"
                 />
                 <YAxis 
                   tick={{ fontSize: 12 }}
                   className="text-gray-600 dark:text-gray-300"
+                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
                 />
                 <Tooltip 
                   formatter={(value, name) => [
                     formatCurrency(value), 
-                    name === 'totalProfit' ? '總淨利潤' : name === 'totalCost' ? '總成本' : '總理論收入'
+                    '總實收租金'
                   ]}
+                  labelFormatter={(label) => `月份: ${label}`}
                   contentStyle={{
                     backgroundColor: 'rgb(31 41 55)',
                     border: 'none',
@@ -512,11 +753,27 @@ const FinancialsPage = () => {
                   }}
                 />
                 <Legend />
-                <Bar dataKey="totalRevenue" name="總理論收入" fill="#3b82f6" />
-                <Bar dataKey="totalCost" name="總成本" fill="#ef4444" />
-                <Bar dataKey="totalProfit" name="總淨利潤" fill="#10b981" />
+                <Bar dataKey="rentCollected" name="總實收租金">
+                  {historicalData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={entry.isProjection ? '#60a5fa' : '#3b82f6'}
+                      opacity={entry.isProjection ? 0.7 : 1}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
+            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center">
+              <span className="flex items-center mr-4">
+                <div className="w-3 h-3 bg-blue-600 rounded mr-1"></div>
+                實際數據
+              </span>
+              <span className="flex items-center">
+                <div className="w-3 h-3 bg-blue-400 rounded mr-1 opacity-70"></div>
+                預計數據
+              </span>
+            </div>
           </div>
         </section>
 
@@ -568,8 +825,15 @@ const FinancialsPage = () => {
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {historicalData.map((item) => (
-                    <tr key={item.month}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{item.month}</td>
+                    <tr key={item.month} className={item.isProjection ? 'bg-blue-50 dark:bg-blue-900/20' : ''}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                        {item.month}
+                        {item.isProjection && (
+                          <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 animate-pulse">
+                            預計
+                          </span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.rentCollected}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.totalCosts}</td>
                       <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${item.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>

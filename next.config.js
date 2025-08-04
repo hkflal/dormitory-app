@@ -5,6 +5,7 @@ const nextConfig = {
   images: {
     unoptimized: true
   }
+  // Removed i18n configuration to prevent automatic locale redirects
 };
 
 module.exports = nextConfig; 
