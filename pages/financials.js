@@ -562,8 +562,15 @@ const FinancialsPage = () => {
                 <YAxis yAxisId="left" stroke="#9ca3af" />
                 <YAxis yAxisId="right" orientation="right" stroke="#9ca3af" />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: 'rgba(31, 41, 55, 0.8)', border: 'none', borderRadius: '0.5rem' }} 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(31, 41, 55, 0.95)', 
+                    color: '#f3f4f6',
+                    border: 'none', 
+                    borderRadius: '0.5rem',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }} 
                   labelStyle={{ color: '#f3f4f6' }}
+                  itemStyle={{ color: '#f3f4f6' }}
                 />
                 <Legend />
                 <Line 
@@ -696,10 +703,12 @@ const FinancialsPage = () => {
                   labelFormatter={(label) => `物業: ${label}`}
                   contentStyle={{
                     backgroundColor: 'rgb(31 41 55)',
+                    color: '#f3f4f6',
                     border: 'none',
-                    borderRadius: '8px',
-                    color: 'white'
+                    borderRadius: '8px'
                   }}
+                  labelStyle={{ color: '#f3f4f6' }}
+                  itemStyle={{ color: '#f3f4f6' }}
                 />
                 <Legend />
                 <Bar dataKey="profit" name="淨利潤">
@@ -747,10 +756,12 @@ const FinancialsPage = () => {
                   labelFormatter={(label) => `月份: ${label}`}
                   contentStyle={{
                     backgroundColor: 'rgb(31 41 55)',
+                    color: '#f3f4f6',
                     border: 'none',
-                    borderRadius: '8px',
-                    color: 'white'
+                    borderRadius: '8px'
                   }}
+                  labelStyle={{ color: '#f3f4f6' }}
+                  itemStyle={{ color: '#f3f4f6' }}
                 />
                 <Legend />
                 <Bar dataKey="rentCollected" name="總實收租金">
