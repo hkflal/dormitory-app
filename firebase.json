@@ -6,6 +6,18 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "redirects": [
+      {
+        "source": "/en/**",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/zh-hk/**",
+        "destination": "/",
+        "type": 301
+      }
+    ],
     "rewrites": [
       {
         "source": "/api/generate-invoice-docx-manual",

@@ -9,6 +9,7 @@
     "lint": "next lint",
     "seed": "node scripts/seed-database.js",
     "build:functions": "cd functions && npm install && npm run build",
+    "export": "next build && next export",
     "deploy:hosting": "npm run build && firebase deploy --only hosting",
     "deploy:functions": "firebase deploy --only functions",
     "deploy:firestore": "firebase deploy --only firestore",
