@@ -26,7 +26,10 @@
       "Bash(powershell:*)",
       "Bash(gcloud:*)",
       "Bash(git add:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npx firebase-tools login:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
