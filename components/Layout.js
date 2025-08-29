@@ -15,7 +15,8 @@ import {
   Bars3Icon,
   XMarkIcon,
   MoonIcon,
-  SunIcon
+  SunIcon,
+  CreditCardIcon
 } from '@heroicons/react/24/outline';
 
 const allNavigation = [
@@ -24,6 +25,7 @@ const allNavigation = [
   { name: '員工管理', href: '/employees', icon: UserGroupIcon, roles: ['admin', 'editor'] },
   { name: '財務管理', href: '/financials', icon: CurrencyDollarIcon, roles: ['admin'] },
   { name: '發票管理', href: '/invoices', icon: DocumentTextIcon, roles: ['admin', 'editor'] },
+  { name: '付款明細', href: '/payment-details', icon: CreditCardIcon, roles: ['admin', 'editor'] },
   { name: '數據管理', href: '/data-management', icon: TableCellsIcon, roles: ['admin'] },
   { name: '歷史記錄', href: '/history', icon: ClockIcon, roles: ['admin'] },
 ];
@@ -51,7 +53,7 @@ export default function Layout({ children }) {
   return (
     <div className="h-screen flex bg-gray-50 dark:bg-gray-900">
       {/* Mobile sidebar overlay */}
-      <div className={`fixed inset-0 flex z-40 lg:hidden ${sidebarOpen ? '' : 'hidden'}`}>
+      <div className={`fixed inset-0 flex z-50 lg:hidden ${sidebarOpen ? '' : 'hidden'}`}>
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
         <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white dark:bg-gray-800">
           <div className="absolute top-0 right-0 -mr-12 pt-2">
@@ -68,14 +70,14 @@ export default function Layout({ children }) {
       </div>
 
       {/* Static sidebar for desktop */}
-      <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
+      <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0" style={{ zIndex: 10000 }}>
         <SidebarContent />
       </div>
 
       {/* Main content */}
       <div className="lg:pl-64 flex flex-col flex-1">
         {/* Top navigation */}
-        <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <button
             type="button"
             className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 lg:hidden"
@@ -121,7 +123,7 @@ export default function Layout({ children }) {
         </main>
 
         {/* Mobile bottom navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 lg:hidden z-30">
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 lg:hidden z-50">
           <div className="flex justify-around items-center h-16">
             {navigation.map((item) => {
               const isActive = router.pathname === item.href;

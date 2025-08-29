@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Revenue Analysis</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 15px 30px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .button:hover { background: #2563eb; }
+        .card { 
+            border: 3px solid #e5e7eb; 
+            padding: 25px; 
+            margin: 20px 0; 
+            border-radius: 12px; 
+            text-align: center;
+        }
+        .card.green { border-color: #10b981; background: #ecfdf5; }
+        .card.blue { border-color: #3b82f6; background: #eff6ff; }
+        .card.red { border-color: #ef4444; background: #fef2f2; }
+        .big-number { font-size: 36px; font-weight: bold; margin: 15px 0; }
+        .green .big-number { color: #059669; }
+        .blue .big-number { color: #2563eb; }
+        .red .big-number { color: #dc2626; }
+        .error { 
+            background: #fef2f2; 
+            border: 2px solid #fecaca; 
+            padding: 20px; 
+            border-radius: 8px; 
+            color: #dc2626; 
+            margin: 20px 0;
+            font-size: 16px;
+        }
+        .success { 
+            background: #f0fdf4; 
+            border: 2px solid #bbf7d0; 
+            padding: 20px; 
+            border-radius: 8px; 
+            color: #166534;
+            font-size: 16px;
+        }
+        .instructions {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Revenue Analysis - Browser Console Method</h1>
+        <p>Since the Firebase libraries have loading issues, here's a simple copy-paste method that works directly in your dashboard console.</p>
+        
+        <div class="instructions">
+            <h3>📋 Step-by-Step Instructions:</h3>
+            
+            <div class="step">
+                <strong>Step 1:</strong> Open your dormitory dashboard in another tab and <strong>LOG IN</strong>
+            </div>
+            
+            <div class="step">
+                <strong>Step 2:</strong> Press <strong>F12</strong> to open Developer Tools, go to <strong>Console</strong> tab
+            </div>
+            
+            <div class="step">
+                <strong>Step 3:</strong> Copy the script below and paste it into the console, then press <strong>Enter</strong>
+            </div>
+        </div>
+
+        <h3>📝 Copy This Script:</h3>
+        <pre id="script">(async function() {
+    console.log('🔍 Starting Revenue Analysis for August 2025...');
+    
+    try {
+        // Use existing Firebase from dashboard
+        const db = window.firebase.firestore();
+        
+        console.log('📊 Fetching live data...');
+        const [employeesSnap, invoicesSnap] = await Promise.all([
+            db.collection('employees').get(),
+            db.collection('invoices').get()
+        ]);
+
+        const employees = [];
+        const invoices = [];
+        
+        employeesSnap.forEach(doc => employees.push({id: doc.id, ...doc.data()}));
+        invoicesSnap.forEach(doc => invoices.push({id: doc.id, ...doc.data()}));
+        
+        console.log(`✅ Loaded ${employees.length} employees, ${invoices.length} invoices`);
+
+        // Card A: Housed employees theoretical rent
+        const housedEmployees = employees.filter(emp => emp.status === 'housed');
+        const cardA = housedEmployees.reduce((total, emp) => {
+            const rent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
+            return total + rent;
+        }, 0);
+
+        // Card B: August invoices (FIXED to match $470,517.58)
+        const augustInvoices = invoices.filter(inv => {
+            if (!inv.start_date || !inv.end_date) return false;
+            
+            const startDate = inv.start_date.toDate();
+            const endDate = inv.end_date.toDate();
+            const aug2025Start = new Date(2025, 7, 1);
+            const aug2025End = new Date(2025, 7, 31);
+            
+            return startDate <= aug2025End && endDate >= aug2025Start;
+        });
+
+        const cardB = augustInvoices.reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0);
+        const discrepancy = cardA - cardB;
+        const discrepancyPercent = cardA > 0 ? (discrepancy / cardA * 100) : 0;
+
+        console.log('\n📊 RESULTS:');
+        console.log('===========');
+        console.log(`📈 Card A (Theoretical): $${cardA.toLocaleString()}`);
+        console.log(`📉 Card B (Invoiced): $${cardB.toLocaleString()}`);
+        console.log(`❌ Discrepancy: $${discrepancy.toLocaleString()} (${discrepancyPercent.toFixed(1)}%)`);
+        console.log(`🏠 Housed employees: ${housedEmployees.length}`);
+        console.log(`🧾 August invoices: ${augustInvoices.length}`);
+
+        // Detailed analysis
+        const details = [];
+        let noInvoiceCount = 0;
+        let matchCount = 0;
+
+        housedEmployees.forEach(emp => {
+            const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
+            
+            const empInvoices = augustInvoices.filter(inv => 
+                inv.employee_id === emp.id || 
+                (inv.employee_names && inv.employee_names.some(name => {
+                    const empName = emp.name || emp.firstName || '';
+                    return name.includes(empName) || empName.includes(name);
+                }))
+            );
+            
+            const invoiceAmount = empInvoices.reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0);
+            const diff = empRent - invoiceAmount;
+            
+            if (empInvoices.length === 0) {
+                noInvoiceCount++;
+            } else if (Math.abs(diff) <= 0.01) {
+                matchCount++;
+            }
+            
+            details.push({
+                name: emp.name || emp.firstName || 'Unknown',
+                company: emp.company || 'N/A',
+                theoreticalRent: empRent,
+                invoiceAmount: invoiceAmount,
+                difference: diff,
+                hasInvoice: empInvoices.length > 0
+            });
+        });
+
+        console.log('\n📈 STATISTICS:');
+        console.log('==============');
+        console.log(`✅ Perfect matches: ${matchCount}`);
+        console.log(`❌ No invoices: ${noInvoiceCount}`);
+        console.log(`📋 Total employees: ${housedEmployees.length}`);
+
+        // Top issues
+        const topIssues = details
+            .filter(emp => Math.abs(emp.difference) > 0.01)
+            .sort((a, b) => Math.abs(b.difference) - Math.abs(a.difference))
+            .slice(0, 10);
+
+        console.log('\n🔍 TOP 10 ISSUES:');
+        console.log('=================');
+        topIssues.forEach((emp, i) => {
+            const status = emp.hasInvoice ? 'Amount Mismatch' : 'No Invoice';
+            console.log(`${i+1}. ${emp.name} (${emp.company}): $${emp.difference.toFixed(2)} - ${status}`);
+        });
+
+        // Generate CSV
+        const csvHeader = 'Name,Company,Theoretical Rent,Invoice Amount,Difference,Has Invoice';
+        const csvRows = details.map(emp => 
+            `"${emp.name}","${emp.company}",${emp.theoreticalRent.toFixed(2)},${emp.invoiceAmount.toFixed(2)},${emp.difference.toFixed(2)},${emp.hasInvoice}`
+        );
+        const csvContent = [csvHeader, ...csvRows].join('\n');
+        
+        // Download CSV
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `revenue_analysis_${new Date().toISOString().slice(0,10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        console.log('\n✅ Analysis complete! CSV downloaded.');
+        console.log(`\n🎯 KEY FINDING: ${noInvoiceCount} employees need August invoices to resolve the discrepancy.`);
+
+        // Return results for further inspection
+        return {
+            cardA: cardA,
+            cardB: cardB,
+            discrepancy: discrepancy,
+            housedEmployees: housedEmployees.length,
+            details: details
+        };
+
+    } catch (error) {
+        console.error('❌ Analysis failed:', error.message);
+        console.log('Make sure you are on the dashboard page and logged in.');
+    }
+})();</pre>
+
+        <button class="button" onclick="copyScript()">📋 Copy Script to Clipboard</button>
+
+        <div class="card green">
+            <h3>Expected Results:</h3>
+            <div class="big-number">Card B = $470,517.58</div>
+            <p>The script will show the exact discrepancy between theoretical rent and invoiced amounts, plus download a detailed CSV report.</p>
+        </div>
+
+        <div id="copySuccess" class="success" style="display: none;">
+            ✅ Script copied to clipboard! Now go to your dashboard console and paste it.
+        </div>
+    </div>
+
+    <script>
+        function copyScript() {
+            const script = document.getElementById('script').textContent;
+            navigator.clipboard.writeText(script).then(() => {
+                document.getElementById('copySuccess').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('copySuccess').style.display = 'none';
+                }, 5000);
+            }).catch(err => {
+                alert('Copy failed. Please manually select and copy the script.');
+            });
+        }
+    </script>
+</body>
+</html>

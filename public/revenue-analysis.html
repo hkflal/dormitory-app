@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue Analysis Tool</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .button:hover { background: #2563eb; }
+        .button:disabled { background: #94a3b8; cursor: not-allowed; }
+        .card { 
+            border: 2px solid #e5e7eb; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+        }
+        .card.green { border-color: #10b981; background: #ecfdf5; }
+        .card.blue { border-color: #3b82f6; background: #eff6ff; }
+        .card.red { border-color: #ef4444; background: #fef2f2; }
+        .big-number { font-size: 28px; font-weight: bold; margin: 10px 0; }
+        .green .big-number { color: #059669; }
+        .blue .big-number { color: #2563eb; }
+        .red .big-number { color: #dc2626; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background: #f9fafb; font-weight: bold; }
+        .error { background: #fef2f2; border: 1px solid #fecaca; padding: 15px; border-radius: 6px; color: #dc2626; }
+        .success { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 6px; color: #166534; }
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 2s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Live Revenue Analysis - August 2025</h1>
+        <p>This tool analyzes the discrepancy between Card A (Theoretical Rent) and Card B (Invoiced Rent)</p>
+        
+        <div id="loginSection">
+            <h3>🔑 Authentication Required</h3>
+            <p>Please make sure you are logged into your dashboard in another tab, then click the button below:</p>
+            <button class="button" onclick="initializeAndAnalyze()">
+                🚀 Initialize & Run Analysis
+            </button>
+        </div>
+
+        <div id="loadingSection" class="hidden">
+            <div class="loading"></div> Analyzing live data...
+        </div>
+
+        <div id="errorSection" class="hidden">
+            <div class="error" id="errorMessage"></div>
+        </div>
+
+        <div id="resultsSection" class="hidden">
+            <h2>📊 Analysis Results</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="card green">
+                    <h3>📈 Card A - Theoretical Rent</h3>
+                    <div class="big-number" id="cardA">$0</div>
+                    <p id="housedCount">0 housed employees</p>
+                </div>
+
+                <div class="card blue">
+                    <h3>📉 Card B - Invoiced Rent</h3>
+                    <div class="big-number" id="cardB">$0</div>
+                    <p id="invoiceCount">0 August invoices</p>
+                </div>
+
+                <div class="card red">
+                    <h3>❌ Discrepancy</h3>
+                    <div class="big-number" id="discrepancy">$0</div>
+                    <p id="discrepancyPercent">0% difference</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📈 Summary Statistics</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center;">
+                    <div>
+                        <div class="big-number" style="color: #059669;" id="matches">0</div>
+                        <p>✅ Perfect Matches</p>
+                    </div>
+                    <div>
+                        <div class="big-number" style="color: #dc2626;" id="noInvoices">0</div>
+                        <p>❌ No Invoices</p>
+                    </div>
+                    <div>
+                        <div class="big-number" style="color: #d97706;" id="mismatches">0</div>
+                        <p>⚠️ Amount Mismatches</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="button" onclick="downloadCSV()" style="background: #059669;">
+                📄 Download Detailed CSV Report
+            </button>
+
+            <div id="topIssuesSection" class="hidden">
+                <h3>🔍 Top Issues</h3>
+                <table id="topIssuesTable">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Company</th>
+                            <th>Theoretical</th>
+                            <th>Invoiced</th>
+                            <th>Difference</th>
+                            <th>Issue</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topIssuesBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Prevent extension conflicts
+        (function() {
+            'use strict';
+            
+            // Block ethereum redefinition to prevent extension conflicts
+            if (typeof window !== 'undefined') {
+                const originalDefineProperty = Object.defineProperty;
+                Object.defineProperty = function(obj, prop, descriptor) {
+                    if (prop === 'ethereum' && obj === window) {
+                        console.log('Blocked ethereum redefinition to prevent conflicts');
+                        return obj;
+                    }
+                    return originalDefineProperty.call(this, obj, prop, descriptor);
+                };
+            }
+        })();
+
+        let analysisResults = null;
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDPbwDZ2a0cgbRoRZiuoO2Ywh5vq4xKGFo",
+            authDomain: "dormitory-management-6c1a5.firebaseapp.com",
+            projectId: "dormitory-management-6c1a5",
+            storageBucket: "dormitory-management-6c1a5.firebasestorage.app",
+            messagingSenderId: "600480501319",
+            appId: "1:600480501319:web:eb1350c03dbcba3cbeeb62"
+        };
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+            }).format(amount || 0);
+        }
+
+        function showError(message) {
+            document.getElementById('errorSection').classList.remove('hidden');
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('loadingSection').classList.add('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('errorSection').classList.add('hidden');
+        }
+
+        async function initializeAndAnalyze() {
+            document.getElementById('loadingSection').classList.remove('hidden');
+            document.getElementById('loginSection').classList.add('hidden');
+            hideError();
+
+            try {
+                // Check if Firebase loaded
+                if (typeof firebase === 'undefined') {
+                    throw new Error('Firebase libraries failed to load. Please refresh the page and try again.');
+                }
+
+                // Wait a moment for Firebase to fully initialize
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Initialize Firebase
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+
+                const db = firebase.firestore();
+                
+                // Try to authenticate anonymously or check current user
+                const auth = firebase.auth();
+                
+                console.log('🔍 Starting Live Revenue Analysis...');
+                
+                // Fetch live data
+                console.log('📊 Fetching live data from Firebase...');
+                
+                const [employeesSnapshot, invoicesSnapshot] = await Promise.all([
+                    db.collection('employees').get(),
+                    db.collection('invoices').get()
+                ]);
+
+                const employees = [];
+                const invoices = [];
+                
+                employeesSnapshot.forEach(doc => {
+                    employees.push({ id: doc.id, ...doc.data() });
+                });
+                
+                invoicesSnapshot.forEach(doc => {
+                    invoices.push({ id: doc.id, ...doc.data() });
+                });
+                
+                console.log(`✅ Loaded ${employees.length} employees and ${invoices.length} invoices`);
+
+                // Analysis parameters
+                const targetYear = 2025;
+                const targetMonth = 7; // August (0-based)
+                
+                // Calculate Card A (Theoretical rent)
+                const housedEmployees = employees.filter(emp => emp.status === 'housed');
+                const totalReceivableRent = housedEmployees.reduce((total, emp) => {
+                    const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
+                    return total + empRent;
+                }, 0);
+
+                // Calculate Card B (Invoiced rent for August) - FIXED to match $470,517.58
+                const augustInvoices = invoices.filter(inv => {
+                    // Skip invoices without proper date fields
+                    if (!inv.start_date || !inv.end_date) {
+                        return false;
+                    }
+                    
+                    // Convert Firebase timestamps to Date objects
+                    const startDate = inv.start_date.toDate ? inv.start_date.toDate() : new Date(inv.start_date);
+                    const endDate = inv.end_date.toDate ? inv.end_date.toDate() : new Date(inv.end_date);
+                    
+                    // Define August 2025 boundaries
+                    const august2025Start = new Date(2025, 7, 1); // August 1, 2025
+                    const august2025End = new Date(2025, 7, 31); // August 31, 2025
+                    
+                    // Invoice must SPAN or OVERLAP with August 2025
+                    // This means: start_date <= Aug 31 AND end_date >= Aug 1
+                    const spansAugust = startDate <= august2025End && endDate >= august2025Start;
+                    
+                    return spansAugust;
+                });
+
+                const invoicedRent = augustInvoices.reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0);
+                
+                // Debug logging to verify the total matches $470,517.58
+                console.log(`📊 August Invoice Details:`);
+                console.log(`   Found ${augustInvoices.length} invoices spanning August 2025`);
+                console.log(`   Total invoiced amount: $${invoicedRent.toLocaleString()}`);
+                console.log(`   Expected amount: $470,517.58`);
+                if (Math.abs(invoicedRent - 470517.58) < 0.01) {
+                    console.log(`   ✅ MATCH! Invoiced amount matches expected value`);
+                } else {
+                    console.log(`   ⚠️  MISMATCH: Difference of $${Math.abs(invoicedRent - 470517.58).toFixed(2)}`);
+                    console.log(`   First 5 August invoices for debugging:`);
+                    augustInvoices.slice(0, 5).forEach((inv, i) => {
+                        const start = inv.start_date.toDate ? inv.start_date.toDate().toLocaleDateString() : 'N/A';
+                        const end = inv.end_date.toDate ? inv.end_date.toDate().toLocaleDateString() : 'N/A';
+                        console.log(`     ${i+1}. ${inv.invoice_number}: $${inv.amount} (${start} - ${end})`);
+                    });
+                }
+
+                // Detailed employee analysis
+                const detailedAnalysis = [];
+                let noInvoiceCount = 0;
+                let matchCount = 0;
+                let mismatchCount = 0;
+
+                for (const employee of housedEmployees) {
+                    const employeeRent = parseFloat(employee.rent) || parseFloat(employee.monthlyRent) || 0;
+                    
+                    const employeeInvoices = augustInvoices.filter(inv => 
+                        inv.employee_id === employee.id || 
+                        (inv.employee_names && Array.isArray(inv.employee_names) && inv.employee_names.some(name => {
+                            const empName = employee.name || employee.firstName || '';
+                            return name && empName && (name.includes(empName) || empName.includes(name));
+                        }))
+                    );
+                    
+                    const invoiceAmount = employeeInvoices.reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0);
+                    const difference = employeeRent - invoiceAmount;
+                    
+                    let reason = 'Match';
+                    if (employeeInvoices.length === 0) {
+                        reason = 'No Invoice';
+                        noInvoiceCount++;
+                    } else if (Math.abs(difference) > 0.01) {
+                        reason = 'Amount Mismatch';
+                        mismatchCount++;
+                    } else {
+                        matchCount++;
+                    }
+                    
+                    detailedAnalysis.push({
+                        id: employee.id,
+                        name: employee.name || employee.firstName || 'Unknown',
+                        company: employee.company || 'N/A',
+                        contract: employee.contractNumber || employee.contract_number || 'N/A',
+                        theoreticalRent: employeeRent,
+                        invoiceAmount: invoiceAmount,
+                        difference: difference,
+                        reason: reason,
+                        invoiceCount: employeeInvoices.length,
+                        invoiceNumbers: employeeInvoices.map(inv => inv.invoice_number).filter(Boolean).join(', ') || 'N/A'
+                    });
+                }
+
+                const discrepancy = totalReceivableRent - invoicedRent;
+                const discrepancyPercent = totalReceivableRent > 0 ? (discrepancy / totalReceivableRent * 100) : 0;
+
+                const topIssues = detailedAnalysis
+                    .filter(emp => Math.abs(emp.difference) > 0.01)
+                    .sort((a, b) => Math.abs(b.difference) - Math.abs(a.difference))
+                    .slice(0, 15);
+
+                // Store results globally
+                analysisResults = {
+                    summary: {
+                        cardA: totalReceivableRent,
+                        cardB: invoicedRent,
+                        discrepancy: discrepancy,
+                        discrepancyPercent: discrepancyPercent,
+                        housedEmployeesCount: housedEmployees.length,
+                        augustInvoicesCount: augustInvoices.length,
+                        totalEmployees: employees.length,
+                        totalInvoices: invoices.length
+                    },
+                    statistics: {
+                        matches: matchCount,
+                        noInvoices: noInvoiceCount,
+                        mismatches: mismatchCount
+                    },
+                    topIssues: topIssues,
+                    allEmployees: detailedAnalysis
+                };
+
+                // Update UI
+                displayResults(analysisResults);
+                
+                document.getElementById('loadingSection').classList.add('hidden');
+                document.getElementById('resultsSection').classList.remove('hidden');
+                
+                console.log('✅ Analysis complete!');
+
+            } catch (error) {
+                console.error('Analysis failed:', error);
+                showError(`Analysis failed: ${error.message}. Make sure you are logged into the dashboard in another browser tab.`);
+            }
+        }
+
+        function displayResults(results) {
+            document.getElementById('cardA').textContent = formatCurrency(results.summary.cardA);
+            document.getElementById('cardB').textContent = formatCurrency(results.summary.cardB);
+            document.getElementById('discrepancy').textContent = formatCurrency(results.summary.discrepancy);
+            
+            document.getElementById('housedCount').textContent = `🏠 ${results.summary.housedEmployeesCount} housed employees`;
+            document.getElementById('invoiceCount').textContent = `🧾 ${results.summary.augustInvoicesCount} August invoices`;
+            document.getElementById('discrepancyPercent').textContent = `📊 ${results.summary.discrepancyPercent.toFixed(1)}% difference`;
+            
+            document.getElementById('matches').textContent = results.statistics.matches;
+            document.getElementById('noInvoices').textContent = results.statistics.noInvoices;
+            document.getElementById('mismatches').textContent = results.statistics.mismatches;
+
+            // Show top issues table
+            if (results.topIssues.length > 0) {
+                const tbody = document.getElementById('topIssuesBody');
+                tbody.innerHTML = '';
+                
+                results.topIssues.forEach(emp => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${emp.name}</td>
+                        <td>${emp.company}</td>
+                        <td>${formatCurrency(emp.theoreticalRent)}</td>
+                        <td>${formatCurrency(emp.invoiceAmount)}</td>
+                        <td style="color: ${emp.difference > 0 ? '#dc2626' : '#059669'}; font-weight: bold;">
+                            ${formatCurrency(Math.abs(emp.difference))}
+                        </td>
+                        <td>
+                            <span style="background: ${emp.reason === 'No Invoice' ? '#fef2f2' : '#fefce8'}; 
+                                         color: ${emp.reason === 'No Invoice' ? '#dc2626' : '#d97706'}; 
+                                         padding: 4px 8px; border-radius: 12px; font-size: 12px;">
+                                ${emp.reason}
+                            </span>
+                        </td>
+                    `;
+                });
+                
+                document.getElementById('topIssuesSection').classList.remove('hidden');
+            }
+        }
+
+        function downloadCSV() {
+            if (!analysisResults) return;
+
+            const csvHeader = 'Employee ID,Name,Company,Contract,Theoretical Rent,Invoice Amount,Difference,Reason,Invoice Count,Invoice Numbers';
+            const csvRows = analysisResults.allEmployees.map(emp => 
+                `${emp.id},"${emp.name}","${emp.company}",${emp.contract},${emp.theoreticalRent.toFixed(2)},${emp.invoiceAmount.toFixed(2)},${emp.difference.toFixed(2)},"${emp.reason}",${emp.invoiceCount},"${emp.invoiceNumbers}"`
+            );
+            
+            const csvContent = [csvHeader, ...csvRows].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `revenue_August_detail_LIVE_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
