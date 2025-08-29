@@ -851,13 +851,32 @@ export default function PaymentDetails() {
                           const monthPayment = employeeData.monthlyPayments[month.key];
                           return total + (monthPayment.amount || 0);
                         }, 0);
+
+                        // Calculate paid vs unpaid breakdown
+                        const paidData = paymentData.reduce((acc, employeeData) => {
+                          const monthPayment = employeeData.monthlyPayments[month.key];
+                          if (monthPayment.invoices.length > 0) {
+                            const paidInvoices = monthPayment.invoices.filter(inv => inv.isPaid);
+                            const unpaidInvoices = monthPayment.invoices.filter(inv => !inv.isPaid);
+                            
+                            acc.paidAmount += paidInvoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
+                            acc.unpaidAmount += unpaidInvoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
+                            acc.paidCount += paidInvoices.length;
+                            acc.unpaidCount += unpaidInvoices.length;
+                          }
+                          return acc;
+                        }, { paidAmount: 0, unpaidAmount: 0, paidCount: 0, unpaidCount: 0 });
                         
                         return (
-                          <div key={month.key} className={`border rounded-lg p-2 text-center ${
-                            isCurrentMonth 
-                              ? 'bg-gradient-to-br from-blue-100 to-purple-100 border-blue-300 shadow-md' 
-                              : 'bg-blue-50 border-gray-200'
-                          }`}>
+                          <div 
+                            key={month.key} 
+                            className={`border rounded-lg p-2 text-center cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${
+                              isCurrentMonth 
+                                ? 'bg-gradient-to-br from-blue-100 to-purple-100 border-blue-300 shadow-md' 
+                                : 'bg-blue-50 border-gray-200'
+                            }`}
+                            title={`已付款: ${formatCurrency(paidData.paidAmount)} (${paidData.paidCount}張發票)\n未付款: ${formatCurrency(paidData.unpaidAmount)} (${paidData.unpaidCount}張發票)\n總計: ${formatCurrency(monthTotal)}`}
+                          >
                             <div className={`font-bold text-sm ${
                               isCurrentMonth ? 'text-blue-900' : 'text-blue-800'
                             }`}>
@@ -869,6 +888,11 @@ export default function PaymentDetails() {
                               {paymentData.reduce((count, emp) => 
                                 count + (emp.monthlyPayments[month.key].invoices.length > 0 ? 1 : 0), 0
                               )} 人
+                            </div>
+                            <div className={`text-xs mt-1 ${
+                              isCurrentMonth ? 'text-green-700' : 'text-green-600'
+                            }`}>
+                              ✓{paidData.paidCount} ✗{paidData.unpaidCount}
                             </div>
                           </div>
                         );
