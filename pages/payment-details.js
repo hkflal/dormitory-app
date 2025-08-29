@@ -858,12 +858,24 @@ export default function PaymentDetails() {
                           const monthPayment = employeeData.monthlyPayments[month.key];
                           if (monthPayment && monthPayment.invoices && monthPayment.invoices.length > 0) {
                             monthPayment.invoices.forEach(inv => {
+                              const amount = inv.amount || 0;
                               if (inv.isPaid === true) {
-                                acc.paidAmount += (inv.amount || 0);
+                                acc.paidAmount += amount;
                                 acc.paidCount += 1;
                               } else {
-                                acc.unpaidAmount += (inv.amount || 0);
+                                acc.unpaidAmount += amount;
                                 acc.unpaidCount += 1;
+                              }
+                              
+                              // Debug each invoice for first employee in July/August
+                              if ((month.key === '2025-08' || month.key === '2025-07') && 
+                                  paymentData.indexOf(employeeData) === 0) {
+                                console.log(`🔍 Invoice Debug ${month.key}:`, {
+                                  invoice: inv.number,
+                                  amount: amount,
+                                  isPaid: inv.isPaid,
+                                  isPaidType: typeof inv.isPaid
+                                });
                               }
                             });
                           }
@@ -872,12 +884,13 @@ export default function PaymentDetails() {
                         
                         // Debug logging for first few months to verify data
                         if (month.key === '2025-08' || month.key === '2025-07') {
-                          console.log(`📊 ${month.key} Summary:`, {
-                            total: formatCurrency(monthTotal),
-                            paid: formatCurrency(paidData.paidAmount),
-                            unpaid: formatCurrency(paidData.unpaidAmount),
+                          console.log(`📊 ${month.key} Summary Breakdown:`, {
+                            total: `$${monthTotal.toFixed(2)}`,
+                            paidAmount: `$${paidData.paidAmount.toFixed(2)}`,
+                            unpaidAmount: `$${paidData.unpaidAmount.toFixed(2)}`,
                             paidCount: paidData.paidCount,
-                            unpaidCount: paidData.unpaidCount
+                            unpaidCount: paidData.unpaidCount,
+                            totalInvoices: paidData.paidCount + paidData.unpaidCount
                           });
                         }
                         
