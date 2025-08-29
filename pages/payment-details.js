@@ -4,7 +4,19 @@ import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function PaymentDetails() {
-  const { currentUser } = useAuth();
+  const { currentUser, userRole } = useAuth();
+  
+  // Admin permission check
+  if (userRole !== 'admin') {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+          <p className="text-gray-600">You need admin permissions to access this page.</p>
+        </div>
+      </div>
+    );
+  }
   const [paymentData, setPaymentData] = useState(null);
   const [allPaymentData, setAllPaymentData] = useState(null); // Store unfiltered data
   const [loading, setLoading] = useState(false);
