@@ -138,9 +138,6 @@ export default function PaymentDetails() {
     });
 
     setPaymentData(filtered);
-    
-    // Pre-calculate monthly summaries for hover tooltips
-    calculateMonthlySummaries(filtered);
   };
 
   // Pre-calculate monthly summaries for efficient hover display
@@ -187,8 +184,15 @@ export default function PaymentDetails() {
     // Debug logging for verification
     console.log('📊 Pre-calculated Monthly Summaries:', {
       'July 2025': summaries['2025-07'],
-      'August 2025': summaries['2025-08']
+      'August 2025': summaries['2025-08'],
+      'All months': Object.keys(summaries),
+      'Total summaries created': Object.keys(summaries).length
     });
+    
+    // Verify state will be updated
+    setTimeout(() => {
+      console.log('📊 State verification after 100ms:', monthSummaries);
+    }, 100);
   };
 
   // Update filters
@@ -573,6 +577,13 @@ export default function PaymentDetails() {
     applyFilters();
   }, [allPaymentData, selectedStatus, selectedCompany]);
 
+  // Recalculate summaries whenever paymentData changes
+  useEffect(() => {
+    if (paymentData && paymentData.length > 0) {
+      calculateMonthlySummaries(paymentData);
+    }
+  }, [paymentData]);
+
   const formatCurrency = (amount) => {
     if (amount === 0) return '';
     return new Intl.NumberFormat('zh-TW', {
@@ -918,13 +929,26 @@ export default function PaymentDetails() {
                                 ? 'bg-gradient-to-br from-blue-100 to-purple-100 border-blue-300 shadow-md' 
                                 : 'bg-blue-50 border-gray-200'
                             }`}
-                            onMouseEnter={(e) => setHoveredSummary({
-                              month: month.label,
-                              monthKey: month.key,
-                              summary: summary,
-                              x: e.currentTarget.getBoundingClientRect().left,
-                              y: e.currentTarget.getBoundingClientRect().top
-                            })}
+                            onMouseEnter={(e) => {
+                              // Use data directly from monthSummaries state instead of local variable
+                              const stateSummary = monthSummaries[month.key];
+                              if (stateSummary) {
+                                const hoverData = {
+                                  month: month.label,
+                                  monthKey: month.key,
+                                  summary: stateSummary,
+                                  x: e.currentTarget.getBoundingClientRect().left,
+                                  y: e.currentTarget.getBoundingClientRect().top
+                                };
+                                console.log(`🖱️ Hover ${month.key}:`, { 
+                                  stateSummary: stateSummary,
+                                  willShow: stateSummary.paid > 0 || stateSummary.unpaid > 0
+                                });
+                                setHoveredSummary(hoverData);
+                              } else {
+                                console.log(`❌ No summary data for ${month.key}`);
+                              }
+                            }}
                             onMouseLeave={() => setHoveredSummary(null)}
                           >
                             <div className={`font-bold text-sm ${
@@ -1037,14 +1061,16 @@ export default function PaymentDetails() {
       )}
 
       {/* Summary Tooltip for monthly totals */}
-      {hoveredSummary && hoveredSummary.summary && (
+      {hoveredSummary && (
         <div 
-          className="fixed bg-white border border-gray-200 rounded-xl p-4 shadow-2xl z-50 backdrop-blur-sm bg-white/95"
+          className="fixed bg-white border-2 border-blue-300 rounded-xl p-4 shadow-2xl backdrop-blur-sm bg-white/95"
           style={{
             left: `${hoveredSummary.x + 10}px`,
             top: `${hoveredSummary.y - 10}px`,
             transform: 'translateY(-100%)',
-            minWidth: '320px'
+            minWidth: '320px',
+            zIndex: 10000,
+            pointerEvents: 'none'
           }}
         >
           {/* Header */}
@@ -1057,10 +1083,15 @@ export default function PaymentDetails() {
 
           {/* Payment Breakdown */}
           <div className="space-y-3">
+            {/* Debug: Show what data we have */}
+            {console.log('🎯 Rendering tooltip for:', hoveredSummary)}
+            
             {/* Total */}
             <div className="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
               <span className="text-sm font-medium text-gray-700">總計金額</span>
-              <span className="text-lg font-bold text-blue-600">{formatCurrency(hoveredSummary.summary.total)}</span>
+              <span className="text-lg font-bold text-blue-600">
+                {hoveredSummary.summary ? formatCurrency(hoveredSummary.summary.total) : 'No Data'}
+              </span>
             </div>
             
             {/* Paid */}
@@ -1071,10 +1102,10 @@ export default function PaymentDetails() {
               </span>
               <div className="text-right">
                 <div className="text-lg font-bold text-green-600">
-                  {formatCurrency(hoveredSummary.summary.paid)}
+                  {hoveredSummary.summary ? formatCurrency(hoveredSummary.summary.paid) : '$0.00'}
                 </div>
                 <div className="text-xs text-green-500">
-                  {hoveredSummary.summary.paidCount} 張發票
+                  {hoveredSummary.summary ? hoveredSummary.summary.paidCount : 0} 張發票
                 </div>
               </div>
             </div>
@@ -1087,10 +1118,10 @@ export default function PaymentDetails() {
               </span>
               <div className="text-right">
                 <div className="text-lg font-bold text-orange-600">
-                  {formatCurrency(hoveredSummary.summary.unpaid)}
+                  {hoveredSummary.summary ? formatCurrency(hoveredSummary.summary.unpaid) : '$0.00'}
                 </div>
                 <div className="text-xs text-orange-500">
-                  {hoveredSummary.summary.unpaidCount} 張發票
+                  {hoveredSummary.summary ? hoveredSummary.summary.unpaidCount : 0} 張發票
                 </div>
               </div>
             </div>
@@ -1098,7 +1129,9 @@ export default function PaymentDetails() {
             {/* Employee Count */}
             <div className="flex justify-between items-center pt-2 border-t border-gray-100">
               <span className="text-xs text-gray-500">參與員工數</span>
-              <span className="text-xs font-medium text-gray-700">{hoveredSummary.summary.employeeCount} 人</span>
+              <span className="text-xs font-medium text-gray-700">
+                {hoveredSummary.summary ? hoveredSummary.summary.employeeCount : 0} 人
+              </span>
             </div>
           </div>
         </div>
