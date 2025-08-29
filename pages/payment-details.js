@@ -23,6 +23,7 @@ export default function PaymentDetails() {
   const [error, setError] = useState(null);
   const [hoveredInvoice, setHoveredInvoice] = useState(null);
   const [showReceiptModal, setShowReceiptModal] = useState(null); // For receipt selection modal
+  const [hoveredSummary, setHoveredSummary] = useState(null); // For summary cell tooltip
   
   // Filter states
   const [selectedStatus, setSelectedStatus] = useState(['housed']); // Default to housed only
@@ -855,27 +856,47 @@ export default function PaymentDetails() {
                         // Calculate paid vs unpaid breakdown
                         const paidData = paymentData.reduce((acc, employeeData) => {
                           const monthPayment = employeeData.monthlyPayments[month.key];
-                          if (monthPayment.invoices.length > 0) {
-                            const paidInvoices = monthPayment.invoices.filter(inv => inv.isPaid);
-                            const unpaidInvoices = monthPayment.invoices.filter(inv => !inv.isPaid);
-                            
-                            acc.paidAmount += paidInvoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
-                            acc.unpaidAmount += unpaidInvoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
-                            acc.paidCount += paidInvoices.length;
-                            acc.unpaidCount += unpaidInvoices.length;
+                          if (monthPayment && monthPayment.invoices && monthPayment.invoices.length > 0) {
+                            monthPayment.invoices.forEach(inv => {
+                              if (inv.isPaid === true) {
+                                acc.paidAmount += (inv.amount || 0);
+                                acc.paidCount += 1;
+                              } else {
+                                acc.unpaidAmount += (inv.amount || 0);
+                                acc.unpaidCount += 1;
+                              }
+                            });
                           }
                           return acc;
                         }, { paidAmount: 0, unpaidAmount: 0, paidCount: 0, unpaidCount: 0 });
                         
+                        // Debug logging for first few months to verify data
+                        if (month.key === '2025-08' || month.key === '2025-07') {
+                          console.log(`📊 ${month.key} Summary:`, {
+                            total: formatCurrency(monthTotal),
+                            paid: formatCurrency(paidData.paidAmount),
+                            unpaid: formatCurrency(paidData.unpaidAmount),
+                            paidCount: paidData.paidCount,
+                            unpaidCount: paidData.unpaidCount
+                          });
+                        }
+                        
                         return (
                           <div 
                             key={month.key} 
-                            className={`border rounded-lg p-2 text-center cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${
+                            className={`relative border rounded-lg p-2 text-center cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${
                               isCurrentMonth 
                                 ? 'bg-gradient-to-br from-blue-100 to-purple-100 border-blue-300 shadow-md' 
                                 : 'bg-blue-50 border-gray-200'
                             }`}
-                            title={`已付款: ${formatCurrency(paidData.paidAmount)} (${paidData.paidCount}張發票)\n未付款: ${formatCurrency(paidData.unpaidAmount)} (${paidData.unpaidCount}張發票)\n總計: ${formatCurrency(monthTotal)}`}
+                            onMouseEnter={(e) => setHoveredSummary({
+                              month: month.key,
+                              data: paidData,
+                              total: monthTotal,
+                              x: e.currentTarget.offsetLeft,
+                              y: e.currentTarget.offsetTop
+                            })}
+                            onMouseLeave={() => setHoveredSummary(null)}
                           >
                             <div className={`font-bold text-sm ${
                               isCurrentMonth ? 'text-blue-900' : 'text-blue-800'
@@ -984,6 +1005,68 @@ export default function PaymentDetails() {
           {/* Click hint */}
           <div className="mt-3 pt-2 border-t border-gray-100 text-xs text-gray-400 text-center">
             點擊查看詳細信息
+          </div>
+        </div>
+      )}
+
+      {/* Summary Tooltip for monthly totals */}
+      {hoveredSummary && (
+        <div 
+          className="fixed bg-white border border-gray-200 rounded-xl p-4 shadow-2xl z-50 backdrop-blur-sm bg-white/95"
+          style={{
+            left: `${hoveredSummary.x + 10}px`,
+            top: `${hoveredSummary.y - 10}px`,
+            transform: 'translateY(-100%)',
+            minWidth: '280px'
+          }}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+            <h3 className="font-bold text-gray-800 text-sm">月度付款詳情</h3>
+            <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+              {hoveredSummary.month}
+            </span>
+          </div>
+
+          {/* Payment Breakdown */}
+          <div className="space-y-3">
+            {/* Total */}
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium text-gray-700">總計金額</span>
+              <span className="text-lg font-bold text-blue-600">{formatCurrency(hoveredSummary.total)}</span>
+            </div>
+            
+            {/* Paid */}
+            <div className="flex justify-between items-center p-2 bg-green-50 rounded-lg">
+              <span className="text-sm text-green-700 flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                已付款
+              </span>
+              <div className="text-right">
+                <div className="text-sm font-semibold text-green-600">
+                  {formatCurrency(hoveredSummary.data.paidAmount)}
+                </div>
+                <div className="text-xs text-green-500">
+                  {hoveredSummary.data.paidCount} 張發票
+                </div>
+              </div>
+            </div>
+            
+            {/* Unpaid */}
+            <div className="flex justify-between items-center p-2 bg-orange-50 rounded-lg">
+              <span className="text-sm text-orange-700 flex items-center">
+                <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                未付款
+              </span>
+              <div className="text-right">
+                <div className="text-sm font-semibold text-orange-600">
+                  {formatCurrency(hoveredSummary.data.unpaidAmount)}
+                </div>
+                <div className="text-xs text-orange-500">
+                  {hoveredSummary.data.unpaidCount} 張發票
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
