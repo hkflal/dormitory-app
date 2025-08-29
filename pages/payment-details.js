@@ -24,6 +24,7 @@ export default function PaymentDetails() {
   const [hoveredInvoice, setHoveredInvoice] = useState(null);
   const [showReceiptModal, setShowReceiptModal] = useState(null); // For receipt selection modal
   const [hoveredSummary, setHoveredSummary] = useState(null); // For summary cell tooltip
+  const [monthSummaries, setMonthSummaries] = useState({}); // Pre-calculated monthly summaries
   
   // Filter states
   const [selectedStatus, setSelectedStatus] = useState(['housed']); // Default to housed only
@@ -137,6 +138,57 @@ export default function PaymentDetails() {
     });
 
     setPaymentData(filtered);
+    
+    // Pre-calculate monthly summaries for hover tooltips
+    calculateMonthlySummaries(filtered);
+  };
+
+  // Pre-calculate monthly summaries for efficient hover display
+  const calculateMonthlySummaries = (filteredData) => {
+    const summaries = {};
+    
+    months.forEach(month => {
+      const monthTotal = filteredData.reduce((total, employeeData) => {
+        const monthPayment = employeeData.monthlyPayments[month.key];
+        return total + (monthPayment?.amount || 0);
+      }, 0);
+
+      const paidData = filteredData.reduce((acc, employeeData) => {
+        const monthPayment = employeeData.monthlyPayments[month.key];
+        if (monthPayment && monthPayment.invoices && monthPayment.invoices.length > 0) {
+          monthPayment.invoices.forEach(inv => {
+            const amount = inv.amount || 0;
+            if (inv.isPaid === true) {
+              acc.paidAmount += amount;
+              acc.paidCount += 1;
+            } else {
+              acc.unpaidAmount += amount;
+              acc.unpaidCount += 1;
+            }
+          });
+        }
+        return acc;
+      }, { paidAmount: 0, unpaidAmount: 0, paidCount: 0, unpaidCount: 0 });
+
+      summaries[month.key] = {
+        total: monthTotal,
+        paid: paidData.paidAmount,
+        unpaid: paidData.unpaidAmount,
+        paidCount: paidData.paidCount,
+        unpaidCount: paidData.unpaidCount,
+        employeeCount: filteredData.reduce((count, emp) => 
+          count + (emp.monthlyPayments[month.key]?.invoices?.length > 0 ? 1 : 0), 0
+        )
+      };
+    });
+    
+    setMonthSummaries(summaries);
+    
+    // Debug logging for verification
+    console.log('📊 Pre-calculated Monthly Summaries:', {
+      'July 2025': summaries['2025-07'],
+      'August 2025': summaries['2025-08']
+    });
   };
 
   // Update filters
@@ -848,51 +900,15 @@ export default function PaymentDetails() {
                         const isCurrentMonth = month.year === currentDate.getFullYear() && 
                                              month.month === (currentDate.getMonth() + 1);
                         
-                        const monthTotal = paymentData.reduce((total, employeeData) => {
-                          const monthPayment = employeeData.monthlyPayments[month.key];
-                          return total + (monthPayment.amount || 0);
-                        }, 0);
-
-                        // Calculate paid vs unpaid breakdown
-                        const paidData = paymentData.reduce((acc, employeeData) => {
-                          const monthPayment = employeeData.monthlyPayments[month.key];
-                          if (monthPayment && monthPayment.invoices && monthPayment.invoices.length > 0) {
-                            monthPayment.invoices.forEach(inv => {
-                              const amount = inv.amount || 0;
-                              if (inv.isPaid === true) {
-                                acc.paidAmount += amount;
-                                acc.paidCount += 1;
-                              } else {
-                                acc.unpaidAmount += amount;
-                                acc.unpaidCount += 1;
-                              }
-                              
-                              // Debug each invoice for first employee in July/August
-                              if ((month.key === '2025-08' || month.key === '2025-07') && 
-                                  paymentData.indexOf(employeeData) === 0) {
-                                console.log(`🔍 Invoice Debug ${month.key}:`, {
-                                  invoice: inv.number,
-                                  amount: amount,
-                                  isPaid: inv.isPaid,
-                                  isPaidType: typeof inv.isPaid
-                                });
-                              }
-                            });
-                          }
-                          return acc;
-                        }, { paidAmount: 0, unpaidAmount: 0, paidCount: 0, unpaidCount: 0 });
-                        
-                        // Debug logging for first few months to verify data
-                        if (month.key === '2025-08' || month.key === '2025-07') {
-                          console.log(`📊 ${month.key} Summary Breakdown:`, {
-                            total: `$${monthTotal.toFixed(2)}`,
-                            paidAmount: `$${paidData.paidAmount.toFixed(2)}`,
-                            unpaidAmount: `$${paidData.unpaidAmount.toFixed(2)}`,
-                            paidCount: paidData.paidCount,
-                            unpaidCount: paidData.unpaidCount,
-                            totalInvoices: paidData.paidCount + paidData.unpaidCount
-                          });
-                        }
+                        // Use pre-calculated summary data
+                        const summary = monthSummaries[month.key] || {
+                          total: 0,
+                          paid: 0,
+                          unpaid: 0,
+                          paidCount: 0,
+                          unpaidCount: 0,
+                          employeeCount: 0
+                        };
                         
                         return (
                           <div 
@@ -903,30 +919,28 @@ export default function PaymentDetails() {
                                 : 'bg-blue-50 border-gray-200'
                             }`}
                             onMouseEnter={(e) => setHoveredSummary({
-                              month: month.key,
-                              data: paidData,
-                              total: monthTotal,
-                              x: e.currentTarget.offsetLeft,
-                              y: e.currentTarget.offsetTop
+                              month: month.label,
+                              monthKey: month.key,
+                              summary: summary,
+                              x: e.currentTarget.getBoundingClientRect().left,
+                              y: e.currentTarget.getBoundingClientRect().top
                             })}
                             onMouseLeave={() => setHoveredSummary(null)}
                           >
                             <div className={`font-bold text-sm ${
                               isCurrentMonth ? 'text-blue-900' : 'text-blue-800'
                             }`}>
-                              {formatCurrency(monthTotal)}
+                              {formatCurrency(summary.total)}
                             </div>
                             <div className={`text-xs ${
                               isCurrentMonth ? 'text-blue-700' : 'text-blue-600'
                             }`}>
-                              {paymentData.reduce((count, emp) => 
-                                count + (emp.monthlyPayments[month.key].invoices.length > 0 ? 1 : 0), 0
-                              )} 人
+                              {summary.employeeCount} 人
                             </div>
                             <div className={`text-xs mt-1 ${
                               isCurrentMonth ? 'text-green-700' : 'text-green-600'
                             }`}>
-                              ✓{paidData.paidCount} ✗{paidData.unpaidCount}
+                              ✓{summary.paidCount} ✗{summary.unpaidCount}
                             </div>
                           </div>
                         );
@@ -1023,14 +1037,14 @@ export default function PaymentDetails() {
       )}
 
       {/* Summary Tooltip for monthly totals */}
-      {hoveredSummary && (
+      {hoveredSummary && hoveredSummary.summary && (
         <div 
           className="fixed bg-white border border-gray-200 rounded-xl p-4 shadow-2xl z-50 backdrop-blur-sm bg-white/95"
           style={{
             left: `${hoveredSummary.x + 10}px`,
             top: `${hoveredSummary.y - 10}px`,
             transform: 'translateY(-100%)',
-            minWidth: '280px'
+            minWidth: '320px'
           }}
         >
           {/* Header */}
@@ -1044,41 +1058,47 @@ export default function PaymentDetails() {
           {/* Payment Breakdown */}
           <div className="space-y-3">
             {/* Total */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
               <span className="text-sm font-medium text-gray-700">總計金額</span>
-              <span className="text-lg font-bold text-blue-600">{formatCurrency(hoveredSummary.total)}</span>
+              <span className="text-lg font-bold text-blue-600">{formatCurrency(hoveredSummary.summary.total)}</span>
             </div>
             
             {/* Paid */}
-            <div className="flex justify-between items-center p-2 bg-green-50 rounded-lg">
-              <span className="text-sm text-green-700 flex items-center">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+            <div className="flex justify-between items-center p-2 bg-green-50 rounded-lg border-l-4 border-green-400">
+              <span className="text-sm text-green-700 flex items-center font-medium">
+                <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
                 已付款
               </span>
               <div className="text-right">
-                <div className="text-sm font-semibold text-green-600">
-                  {formatCurrency(hoveredSummary.data.paidAmount)}
+                <div className="text-lg font-bold text-green-600">
+                  {formatCurrency(hoveredSummary.summary.paid)}
                 </div>
                 <div className="text-xs text-green-500">
-                  {hoveredSummary.data.paidCount} 張發票
+                  {hoveredSummary.summary.paidCount} 張發票
                 </div>
               </div>
             </div>
             
             {/* Unpaid */}
-            <div className="flex justify-between items-center p-2 bg-orange-50 rounded-lg">
-              <span className="text-sm text-orange-700 flex items-center">
-                <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+            <div className="flex justify-between items-center p-2 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+              <span className="text-sm text-orange-700 flex items-center font-medium">
+                <span className="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
                 未付款
               </span>
               <div className="text-right">
-                <div className="text-sm font-semibold text-orange-600">
-                  {formatCurrency(hoveredSummary.data.unpaidAmount)}
+                <div className="text-lg font-bold text-orange-600">
+                  {formatCurrency(hoveredSummary.summary.unpaid)}
                 </div>
                 <div className="text-xs text-orange-500">
-                  {hoveredSummary.data.unpaidCount} 張發票
+                  {hoveredSummary.summary.unpaidCount} 張發票
                 </div>
               </div>
+            </div>
+            
+            {/* Employee Count */}
+            <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+              <span className="text-xs text-gray-500">參與員工數</span>
+              <span className="text-xs font-medium text-gray-700">{hoveredSummary.summary.employeeCount} 人</span>
             </div>
           </div>
         </div>
