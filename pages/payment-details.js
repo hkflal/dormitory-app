@@ -366,7 +366,7 @@ export default function PaymentDetails() {
                   isPaid: isPaid,
                   startDate: startDate.toLocaleDateString('zh-TW'),
                   endDate: endDate.toLocaleDateString('zh-TW'),
-                  receiptUrls: invoice.receipt_urls || invoice.receiptUrls || [],
+                  receiptUrls: invoice.receiptUrl ? [invoice.receiptUrl] : (invoice.receipt_urls || invoice.receiptUrls || []),
                   totalInvoiceAmount: totalInvoiceAmount
                 });
               }
@@ -795,9 +795,9 @@ export default function PaymentDetails() {
                             const isCurrentMonth = month.year === currentDate.getFullYear() && 
                                                  month.month === (currentDate.getMonth() + 1);
                             
-                            // Check for receipts availability
+                            // Check for receipts availability (any invoice with receipts)
                             const hasReceiptAvailable = paymentInfo.invoices.some(inv => 
-                              inv.isPaid && inv.receiptUrls && inv.receiptUrls.length > 0
+                              inv.receiptUrls && inv.receiptUrls.length > 0
                             );
                             
                             // Determine cell color based on payment status
@@ -853,19 +853,48 @@ export default function PaymentDetails() {
                                 onMouseLeave={() => setHoveredInvoice(null)}
                                 onClick={() => {
                                   if (paymentInfo.amount > 0) {
-                                    // Find paid invoices with receipts
+                                    // Debug: Check all invoice data
+                                    console.log(`🔍 Click Debug for ${employeeData.employee.name} - ${month.label}:`, {
+                                      totalInvoices: paymentInfo.invoices.length,
+                                      invoiceDetails: paymentInfo.invoices.map(inv => ({
+                                        number: inv.number,
+                                        amount: inv.amount,
+                                        isPaid: inv.isPaid,
+                                        isPaidType: typeof inv.isPaid,
+                                        receiptUrls: inv.receiptUrls,
+                                        receiptCount: inv.receiptUrls ? inv.receiptUrls.length : 0
+                                      }))
+                                    });
+                                    
+                                    // Find any invoices with receipts (prioritize paid ones)
                                     const paidInvoicesWithReceipts = paymentInfo.invoices.filter(inv => 
                                       inv.isPaid && inv.receiptUrls && inv.receiptUrls.length > 0
                                     );
                                     
-                                    if (paidInvoicesWithReceipts.length === 0) {
-                                      alert('此月份沒有已付款的收據可查看');
+                                    const anyInvoicesWithReceipts = paymentInfo.invoices.filter(inv => 
+                                      inv.receiptUrls && inv.receiptUrls.length > 0
+                                    );
+                                    
+                                    console.log(`🔍 Receipt Analysis:`, {
+                                      paidWithReceipts: paidInvoicesWithReceipts.length,
+                                      anyWithReceipts: anyInvoicesWithReceipts.length,
+                                      paidInvoicesWithReceipts: paidInvoicesWithReceipts,
+                                      anyInvoicesWithReceipts: anyInvoicesWithReceipts
+                                    });
+                                    
+                                    // Use paid invoices with receipts if available, otherwise use any with receipts
+                                    const invoicesToShow = paidInvoicesWithReceipts.length > 0 
+                                      ? paidInvoicesWithReceipts 
+                                      : anyInvoicesWithReceipts;
+                                    
+                                    if (invoicesToShow.length === 0) {
+                                      alert('此月份沒有收據可查看');
                                       return;
                                     }
                                     
-                                    if (paidInvoicesWithReceipts.length === 1) {
-                                      // Single paid invoice - check receipts
-                                      const invoice = paidInvoicesWithReceipts[0];
+                                    if (invoicesToShow.length === 1) {
+                                      // Single invoice with receipts
+                                      const invoice = invoicesToShow[0];
                                       if (invoice.receiptUrls.length === 1) {
                                         // Single receipt - open directly
                                         window.open(invoice.receiptUrls[0], '_blank');
@@ -878,8 +907,8 @@ export default function PaymentDetails() {
                                         });
                                       }
                                     } else {
-                                      // Multiple paid invoices - show selection modal with all receipts
-                                      const allReceiptUrls = paidInvoicesWithReceipts.flatMap(inv => inv.receiptUrls || []);
+                                      // Multiple invoices with receipts - show selection modal with all receipts
+                                      const allReceiptUrls = invoicesToShow.flatMap(inv => inv.receiptUrls || []);
                                       setShowReceiptModal({
                                         invoiceNumber: `${employeeData.employee.name} - ${month.label}`,
                                         receiptUrls: allReceiptUrls,
@@ -887,10 +916,10 @@ export default function PaymentDetails() {
                                       });
                                     }
                                     
-                                    console.log(`${employeeData.employee.name} - ${month.label}:`, {
+                                    console.log(`✅ Opening receipts for ${employeeData.employee.name} - ${month.label}:`, {
                                       totalInvoices: paymentInfo.invoices.length,
-                                      paidWithReceipts: paidInvoicesWithReceipts.length,
-                                      allInvoices: paymentInfo.invoices
+                                      invoicesToShow: invoicesToShow.length,
+                                      receiptUrls: invoicesToShow.flatMap(inv => inv.receiptUrls || [])
                                     });
                                   }
                                 }}
