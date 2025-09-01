@@ -417,8 +417,8 @@ const FinancialsPage = () => {
             const month = (startMonth + monthsFromStart) % 12;
             const date = new Date(year, month, 1);
 
-            // Check if this is 2025 and within Jan-July range
-            const hardcodedEntry = year === 2025 && month <= 6 ? 
+            // Check if this is 2025 and within Jan-August range
+            const hardcodedEntry = year === 2025 && month <= 7 ? 
               hardcodedData2025.find(entry => entry.month === month) : null;
 
             if (hardcodedEntry) {
