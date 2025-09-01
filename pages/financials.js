@@ -389,7 +389,7 @@ const FinancialsPage = () => {
         const monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
         const today = new Date();
 
-        // Hardcoded data from CSV for Jan-July 2025
+        // Hardcoded data from CSV for Jan-August 2025
         const hardcodedData2025 = [
           { month: 0, totalIncome: 229039, totalExpenses: 108000, pnl: 121039, employees: 69, rooms: 5 }, // Jan
           { month: 1, totalIncome: 274539, totalExpenses: 123500, pnl: 151039, employees: 80, rooms: 6 }, // Feb
@@ -398,6 +398,7 @@ const FinancialsPage = () => {
           { month: 4, totalIncome: 351539, totalExpenses: 232500, pnl: 119039, employees: 98, rooms: 12 }, // May
           { month: 5, totalIncome: 384672, totalExpenses: 306500, pnl: 78172, employees: 163, rooms: 16 }, // Jun
           { month: 6, totalIncome: 622200, totalExpenses: 373000, pnl: 249200, employees: 183, rooms: 21 }, // Jul
+          { month: 7, totalIncome: 635183, totalExpenses: 373000, pnl: 262183, employees: 192, rooms: 21 }, // Aug
         ];
 
         const totalMonthlyCost = properties.reduce((acc, prop) => acc + (parseFloat(prop.cost) || 0), 0);
