@@ -795,6 +795,11 @@ export default function PaymentDetails() {
                             const isCurrentMonth = month.year === currentDate.getFullYear() && 
                                                  month.month === (currentDate.getMonth() + 1);
                             
+                            // Check for receipts availability
+                            const hasReceiptAvailable = paymentInfo.invoices.some(inv => 
+                              inv.isPaid && inv.receiptUrls && inv.receiptUrls.length > 0
+                            );
+                            
                             // Determine cell color based on payment status
                             let cellColorClass = '';
                             let borderColorClass = 'border-gray-200';
@@ -804,16 +809,16 @@ export default function PaymentDetails() {
                               const anyPaid = paymentInfo.invoices.some(inv => inv.isPaid);
                               
                               if (allPaid) {
-                                // All invoices paid - green
-                                cellColorClass = isCurrentMonth 
-                                  ? 'bg-green-50 hover:bg-green-100' 
-                                  : 'bg-green-50 hover:bg-green-100';
+                                // All invoices paid - green (with receipt indicator)
+                                cellColorClass = hasReceiptAvailable
+                                  ? (isCurrentMonth ? 'bg-green-100 hover:bg-green-200 ring-2 ring-blue-300' : 'bg-green-100 hover:bg-green-200 ring-1 ring-blue-200')
+                                  : (isCurrentMonth ? 'bg-green-50 hover:bg-green-100' : 'bg-green-50 hover:bg-green-100');
                                 borderColorClass = 'border-green-400 border-2';
                               } else if (anyPaid) {
                                 // Partially paid - orange/yellow mix  
-                                cellColorClass = isCurrentMonth 
-                                  ? 'bg-yellow-50 hover:bg-yellow-100' 
-                                  : 'bg-yellow-50 hover:bg-yellow-100';
+                                cellColorClass = hasReceiptAvailable
+                                  ? (isCurrentMonth ? 'bg-yellow-100 hover:bg-yellow-200 ring-2 ring-blue-300' : 'bg-yellow-100 hover:bg-yellow-200 ring-1 ring-blue-200')
+                                  : (isCurrentMonth ? 'bg-yellow-50 hover:bg-yellow-100' : 'bg-yellow-50 hover:bg-yellow-100');
                                 borderColorClass = 'border-yellow-400 border-2';
                               } else {
                                 // None paid - yellow
@@ -848,7 +853,45 @@ export default function PaymentDetails() {
                                 onMouseLeave={() => setHoveredInvoice(null)}
                                 onClick={() => {
                                   if (paymentInfo.amount > 0) {
-                                    console.log(`${employeeData.employee.name} - ${month.label}:`, paymentInfo.invoices);
+                                    // Find paid invoices with receipts
+                                    const paidInvoicesWithReceipts = paymentInfo.invoices.filter(inv => 
+                                      inv.isPaid && inv.receiptUrls && inv.receiptUrls.length > 0
+                                    );
+                                    
+                                    if (paidInvoicesWithReceipts.length === 0) {
+                                      alert('此月份沒有已付款的收據可查看');
+                                      return;
+                                    }
+                                    
+                                    if (paidInvoicesWithReceipts.length === 1) {
+                                      // Single paid invoice - check receipts
+                                      const invoice = paidInvoicesWithReceipts[0];
+                                      if (invoice.receiptUrls.length === 1) {
+                                        // Single receipt - open directly
+                                        window.open(invoice.receiptUrls[0], '_blank');
+                                      } else {
+                                        // Multiple receipts for single invoice - show modal
+                                        setShowReceiptModal({
+                                          invoiceNumber: invoice.number,
+                                          receiptUrls: invoice.receiptUrls,
+                                          totalAmount: invoice.totalInvoiceAmount
+                                        });
+                                      }
+                                    } else {
+                                      // Multiple paid invoices - show selection modal with all receipts
+                                      const allReceiptUrls = paidInvoicesWithReceipts.flatMap(inv => inv.receiptUrls || []);
+                                      setShowReceiptModal({
+                                        invoiceNumber: `${employeeData.employee.name} - ${month.label}`,
+                                        receiptUrls: allReceiptUrls,
+                                        totalAmount: paymentInfo.amount
+                                      });
+                                    }
+                                    
+                                    console.log(`${employeeData.employee.name} - ${month.label}:`, {
+                                      totalInvoices: paymentInfo.invoices.length,
+                                      paidWithReceipts: paidInvoicesWithReceipts.length,
+                                      allInvoices: paymentInfo.invoices
+                                    });
                                   }
                                 }}
                               >
@@ -872,11 +915,18 @@ export default function PaymentDetails() {
                                         formatCurrency(paymentInfo.amount)
                                       )}
                                     </div>
-                                    <div className="text-gray-500 text-xs group-hover:text-gray-700 transition-colors">
+                                    <div className="text-gray-500 text-xs group-hover:text-gray-700 transition-colors flex items-center justify-center">
                                       {paymentInfo.invoices.length}發票
+                                      {hasReceiptAvailable && (
+                                        <span className="ml-1 text-blue-500" title="點擊查看收據">📄</span>
+                                      )}
                                     </div>
                                     {/* Hover indicator */}
                                     <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-5 transition-opacity rounded"></div>
+                                    {/* Receipt available indicator */}
+                                    {hasReceiptAvailable && (
+                                      <div className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                    )}
                                   </div>
                                 )}
                                 {paymentInfo.amount === 0 && (
