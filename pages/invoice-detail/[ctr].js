@@ -39,6 +39,11 @@ const InvoiceDetailPage = () => {
     });
     const [generationStatus, setGenerationStatus] = useState({}); // Track generation status per invoice
     const [uploadingReceipt, setUploadingReceipt] = useState(null);
+    const [contractDocuments, setContractDocuments] = useState({
+        contract: null,
+        deposit: null
+    });
+    const [uploadingDocument, setUploadingDocument] = useState(null);
 
     // Function to generate next invoice number
     const generateNextInvoiceNumber = async (contractNumber, type = 'Z') => {
@@ -77,6 +82,31 @@ const InvoiceDetailPage = () => {
             return `${contractNumber}-${type}001`;
         }
     };
+
+    // Function to fetch contract documents from Firebase storage
+    const fetchContractDocuments = useCallback(async () => {
+        if (!ctr) return;
+        
+        try {
+            // Try to get document URLs from a contracts collection or storage references
+            // This is a placeholder - you might store document metadata in Firestore
+            const contractsQuery = query(
+                collection(db, 'contract_documents'),
+                where('contract_number', '==', ctr)
+            );
+            
+            const snapshot = await getDocs(contractsQuery);
+            if (!snapshot.empty) {
+                const docData = snapshot.docs[0].data();
+                setContractDocuments({
+                    contract: docData.contract_url || null,
+                    deposit: docData.deposit_url || null
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching contract documents:', error);
+        }
+    }, [ctr]);
 
     const fetchContractInvoices = useCallback(async () => {
         if (!currentUser || !ctr) {
@@ -136,7 +166,7 @@ const InvoiceDetailPage = () => {
             }
             
             setInvoices(invoicesData);
-            deriveAccountInfo(invoicesData);
+            await deriveAccountInfo(invoicesData);
         } catch (error) {
             console.error('Error fetching contract invoices:', error);
         } finally {
@@ -146,7 +176,8 @@ const InvoiceDetailPage = () => {
 
     useEffect(() => {
         fetchContractInvoices();
-    }, [fetchContractInvoices]);
+        fetchContractDocuments();
+    }, [fetchContractInvoices, fetchContractDocuments]);
 
     // Enhanced real-time listener with generation status tracking
     useEffect(() => {
@@ -482,7 +513,7 @@ const InvoiceDetailPage = () => {
         }
     };
 
-    const deriveAccountInfo = useCallback((invoicesData) => {
+    const deriveAccountInfo = useCallback(async (invoicesData) => {
         if (invoicesData.length === 0) return;
         
         // Get the most recent non-deposit invoice to derive account info
@@ -495,11 +526,31 @@ const InvoiceDetailPage = () => {
             })[0];
         
         if (recentInvoice) {
+            // Fetch company name from employees collection
+            let companyName = recentInvoice.property_name || '';
+            
+            try {
+                const employeesSnapshot = await getDocs(collection(db, 'employees'));
+                const employeesData = employeesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Find employees with this contract number and get company name
+                const contractEmployees = employeesData.filter(emp => 
+                    emp.activeCtr === ctr || emp.contractNumber === ctr || emp.contract_number === ctr
+                );
+                
+                if (contractEmployees.length > 0 && contractEmployees[0].company) {
+                    companyName = contractEmployees[0].company;
+                }
+            } catch (error) {
+                console.error('Error fetching company name:', error);
+            }
+            
             setAccountInfo({
                 contract_number: recentInvoice.contract_number || ctr,
                 employee_names: recentInvoice.employee_names || [],
                 rental_amount: recentInvoice.amount || '',
                 property_name: recentInvoice.property_name || '',
+                company_name: companyName,
                 frequency: recentInvoice.frequency || 1,
                 notes: recentInvoice.notes || ''
             });
@@ -636,6 +687,82 @@ const InvoiceDetailPage = () => {
             alert(errorMessage);
         } finally {
             setUploadingReceipt(null);
+        }
+    };
+
+    // Handle contract document upload
+    const handleDocumentUpload = async (docType, file) => {
+        if (!currentUser || !file) return;
+
+        // Validate file type
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            alert("請上傳PDF或圖片文件 / Please upload a PDF or image file");
+            return;
+        }
+
+        // Validate file size (10MB limit)
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert("文件大小不能超過 10MB / File size cannot exceed 10MB");
+            return;
+        }
+
+        setUploadingDocument(docType);
+        try {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const fileName = docType === 'contract' ? 'contract' : 'deposit';
+            const storageRef = ref(storage, `contract_documents/${ctr}/${fileName}.${fileExtension}`);
+            
+            const uploadResult = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(uploadResult.ref);
+
+            // Store in Firestore
+            const docRef = query(
+                collection(db, 'contract_documents'),
+                where('contract_number', '==', ctr)
+            );
+            
+            const snapshot = await getDocs(docRef);
+            
+            if (snapshot.empty) {
+                // Create new document
+                await addDoc(collection(db, 'contract_documents'), {
+                    contract_number: ctr,
+                    [docType === 'contract' ? 'contract_url' : 'deposit_url']: downloadURL,
+                    [`${docType}_uploaded_at`]: new Date(),
+                    [`${docType}_file_name`]: file.name,
+                    [`${docType}_file_type`]: file.type
+                });
+            } else {
+                // Update existing document
+                const docId = snapshot.docs[0].id;
+                await updateDoc(doc(db, 'contract_documents', docId), {
+                    [docType === 'contract' ? 'contract_url' : 'deposit_url']: downloadURL,
+                    [`${docType}_uploaded_at`]: new Date(),
+                    [`${docType}_file_name`]: file.name,
+                    [`${docType}_file_type`]: file.type
+                });
+            }
+
+            // Update local state
+            setContractDocuments(prev => ({
+                ...prev,
+                [docType]: downloadURL
+            }));
+
+            setInfoModalMessage(`${docType === 'contract' ? '合約文件' : '押金發票'}上傳成功！`);
+            setShowInfoModal(true);
+
+        } catch (error) {
+            console.error('Error uploading document:', error);
+            let errorMessage = "上傳失敗，請重試 / Upload failed. Please try again.";
+            if (error.code === 'storage/unauthorized') {
+                errorMessage = "您沒有權限上傳文件 / You don't have permission to upload files.";
+            }
+            alert(errorMessage);
+        } finally {
+            setUploadingDocument(null);
         }
     };
 
@@ -778,10 +905,10 @@ const InvoiceDetailPage = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                物業名稱
+                                公司名稱
                             </label>
                             <p className="text-sm text-gray-900 dark:text-white">
-                                {accountInfo.property_name || '未設定'}
+                                {accountInfo.company_name || accountInfo.property_name || '未設定'}
                             </p>
                         </div>
                         <div>
@@ -802,6 +929,149 @@ const InvoiceDetailPage = () => {
                             </label>
                             <p className="text-sm text-gray-900 dark:text-white">
                                 {accountInfo.notes || '無'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Contract Documents Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-white">合約文件管理</h2>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">上傳和管理合約相關文件</p>
+                </div>
+                <div className="px-6 py-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Contract Document */}
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                合約文件
+                            </label>
+                            <div className="flex items-center space-x-3">
+                                {contractDocuments.contract ? (
+                                    <div className="flex items-center space-x-2">
+                                        <a
+                                            href={contractDocuments.contract}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                        >
+                                            <LinkIcon className="w-4 h-4 mr-2" />
+                                            查看合約
+                                        </a>
+                                        <input
+                                            type="file"
+                                            id="contract-upload"
+                                            className="hidden"
+                                            onChange={(e) => handleDocumentUpload('contract', e.target.files[0])}
+                                            accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                                        />
+                                        <button
+                                            onClick={() => document.getElementById('contract-upload').click()}
+                                            disabled={uploadingDocument === 'contract'}
+                                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                                        >
+                                            {uploadingDocument === 'contract' ? (
+                                                <ArrowPathIcon className="w-4 h-4 mr-2 animate-spin" />
+                                            ) : (
+                                                <ArrowUpOnSquareIcon className="w-4 h-4 mr-2" />
+                                            )}
+                                            更換
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <input
+                                            type="file"
+                                            id="contract-upload"
+                                            className="hidden"
+                                            onChange={(e) => handleDocumentUpload('contract', e.target.files[0])}
+                                            accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                                        />
+                                        <button
+                                            onClick={() => document.getElementById('contract-upload').click()}
+                                            disabled={uploadingDocument === 'contract'}
+                                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                                        >
+                                            {uploadingDocument === 'contract' ? (
+                                                <ArrowPathIcon className="w-4 h-4 mr-2 animate-spin" />
+                                            ) : (
+                                                <ArrowUpOnSquareIcon className="w-4 h-4 mr-2" />
+                                            )}
+                                            上傳合約
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                支援PDF, JPG, PNG格式，最大10MB
+                            </p>
+                        </div>
+
+                        {/* Deposit Invoice Document */}
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                押金發票
+                            </label>
+                            <div className="flex items-center space-x-3">
+                                {contractDocuments.deposit ? (
+                                    <div className="flex items-center space-x-2">
+                                        <a
+                                            href={contractDocuments.deposit}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-orange-600 bg-orange-50 border border-orange-200 rounded-md hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                                        >
+                                            <LinkIcon className="w-4 h-4 mr-2" />
+                                            查看押金發票
+                                        </a>
+                                        <input
+                                            type="file"
+                                            id="deposit-upload"
+                                            className="hidden"
+                                            onChange={(e) => handleDocumentUpload('deposit', e.target.files[0])}
+                                            accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                                        />
+                                        <button
+                                            onClick={() => document.getElementById('deposit-upload').click()}
+                                            disabled={uploadingDocument === 'deposit'}
+                                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                                        >
+                                            {uploadingDocument === 'deposit' ? (
+                                                <ArrowPathIcon className="w-4 h-4 mr-2 animate-spin" />
+                                            ) : (
+                                                <ArrowUpOnSquareIcon className="w-4 h-4 mr-2" />
+                                            )}
+                                            更換
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <input
+                                            type="file"
+                                            id="deposit-upload"
+                                            className="hidden"
+                                            onChange={(e) => handleDocumentUpload('deposit', e.target.files[0])}
+                                            accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                                        />
+                                        <button
+                                            onClick={() => document.getElementById('deposit-upload').click()}
+                                            disabled={uploadingDocument === 'deposit'}
+                                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50"
+                                        >
+                                            {uploadingDocument === 'deposit' ? (
+                                                <ArrowPathIcon className="w-4 h-4 mr-2 animate-spin" />
+                                            ) : (
+                                                <ArrowUpOnSquareIcon className="w-4 h-4 mr-2" />
+                                            )}
+                                            上傳押金發票
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                支援PDF, JPG, PNG格式，最大10MB
                             </p>
                         </div>
                     </div>

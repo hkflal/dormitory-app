@@ -1,0 +1,35 @@
+﻿發票號碼,合約號碼,員工姓名,公司,金額,人數,頻率,總金額,開始日期,結束日期,狀態,已開出,創建日期,收據URL,DOCX URL
+D10128-Z001,D10128,叶洁慧; 张晓冰; 许水云; 林丽芬; 曾春芳; 岑永梅; 熊家文; 陳麗珠,英皇珠宝,3500,8,3,84000,14/4/2025,13/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10128-Z001.docx
+CTR-D10164,D10164,吉大城,,3500,1,1,3500,18/6/2025,17/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10164.docx
+D10116-Z0012,D10116,吴春玉; 孔梅花; 林惠娟,来发馆,3500,3,3,31500,15/6/2025,14/9/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10116-Z0012.docx
+D10129-Z003,D10129,梁燕紅; 楊玉妃,歌富,3500,2,3,21000,23/4/2025,23/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10129-Z003.docx
+D10137-Z002,D10137,范晓玲,歌富,3500,1,3,10500,17/5/2025,16/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10137-Z002.docx
+D10116-Z009,D10116,胡秋明; 张瑜美,来发馆,3500,2,3,21000,11/5/2025,10/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10116-Z009.docx
+D10103-Z013,D10103,陈裕维; 黄锡球,卫讯,3500,2,3,21000,16/6/2025,15/9/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10103/D10103-Z013.docx
+D10111-Z003,D10111,罗祝辉; 陈嘉荣,,3500,2,3,21000,23/6/2025,22/9/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10111-Z003.docx
+D10101-Z0031,D10101,黄悅婷; 何清霞; 吴俊毅; 江锦波; 曾金花,老虎堂,3500,5,1,17500,26/6/2025,25/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10101-Z0031.docx
+D10102-Z007,D10102,谭洁敏; 谭嘉欣; 黄东妮,来发,3500,3,3,31500,12/5/2025,11/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10102-Z007.docx
+D10130-Z002,D10130,伍贵洪,万发（九江）,3500,1,3,10500,6/4/2025,5/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10130-Z002.docx
+D10106-Z006,D10106,何少芳; 蒙嘉敏; 温清秀; 欧颖,桦润,3500,4,3,42000,29/4/2025,28/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10106-Z006.docx
+D10129-Z004,D10129,莫嘉強,歌富,3500,1,3,10500,11/5/2025,10/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10129-Z004.docx
+D10116-Z0011,D10116,黎燕芳,来发馆,3500,1,3,10500,25/5/2025,24/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10116-Z0011.docx
+D10143-Z001,D10143,林群英; 叶清林,A-1面包,3500,2,3,21000,3/6/2025,2/9/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10143-Z001.docx
+D10109-Z006,D10109,叶王英,十二星,3500,1,3,10500,1/6/2025,31/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10109-Z006.docx
+D10104-Z003,D10104,"李東霏; 朱昌华; 胡飞; 王子杰; 李天杰; 周培金; 武天赐; 欧桂凤,; 陈佳宁",湊湊,3500,9,3,94500,15/5/2025,14/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10104-Z003.docx
+D10109-Z005,D10109,刘银平,十二星,3500,1,3,10500,1/5/2025,31/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10109-Z005.docx
+D10131-Z002,D10131,潘建棋,舶裕,3500,1,3,10500,17/5/2025,16/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10131-Z002.docx
+D10112-Z003,D10112,钟勇,,3500,1,3,10500,12/6/2025,11/9/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10112-Z003.docx
+D10139-Z001,D10139,林健新; 董德荣; 黄嘉和; 胡艳娟; 胡艳媚; 董意开,信隆,3500,6,3,63000,24/4/2025,23/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10139-Z001.docx
+D10121-Z007,D10121,王煜燃,YB得景有限公司,3500,1,1,3500,13/6/2025,12/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10121-Z007.docx
+D10135-Z002,D10135,陈基发,万发（九江）,3500,1,3,10500,20/4/2025,10/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10135-Z002.docx
+D10145-Z001,D10145,吴伟池,嘉俊食品有限公司,3500,1,3,10500,2/6/2025,1/9/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10145-Z001.docx
+D10147-Z001,D10147,陈富山,,3500,1,3,10500,31/5/2025,30/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10147-Z001.docx
+D10120-Z002,D10120,黄伟梅,来发,3500,1,3,10500,13/4/2025,12/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10120-Z002.docx
+D10127-Z002,D10127,胡荧姬; 叶思劲; 邓北生; 张阳文,世亚,3500,4,3,42000,4/5/2025,3/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10127-Z002.docx
+D10133-Z002,D10133,李铭欣,第一集團,3500,1,3,10500,3/6/2025,2/9/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10133-Z002.docx
+D10113-Z003,D10113,陈俊娣,,3500,1,3,10500,30/5/2025,19/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10113-Z003.docx
+D10136-Z009,D10136,黄家海; 梁智恒,YB蒲罗,3500,2,1,7000,3/6/2025,2/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10136-Z009.docx
+D10103-Z0010,D10103,余碧颜,卫讯,3500,1,3,10500,1/5/2025,31/7/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10103-Z0010.docx
+D10132-Z002,D10132,伍金霞,十二星绣,3500,1,3,10500,4/5/2025,3/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10132-Z002.docx
+D10103-Z0011,D10103,陈超文,卫讯,3500,1,3,10500,1/6/2025,31/8/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10103-Z0011.docx
+D10114-Z002,D10114,伍诺琦,依部国际,3500,1,3,10500,12/6/2025,11/9/2025,已付款,否,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10114-Z002.docx

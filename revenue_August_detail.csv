@@ -1,0 +1,104 @@
+employee_id,name,status,company,contract_number,assigned_property,theoretical_rent,invoice_count,invoice_amount,discrepancy_amount,discrepancy_reason,invoice_numbers,arrival_date
+0TketFMgQOmgLEDjpiJN,"孔梅花",housed,"来发馆",D10116,X0TnOJyJJZUYlmLvIRq4,3500.00,1,3500.00,0.00,"Match","D10116-Z0012",N/A
+1z7W7eKR9xkEE17a05i3,"何少芳",housed,"桦润",D10106,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+3KauqwH2IW2ueo7Qa6DG,"洗健儀",housed,"A-1面包",D136,2zuSQWkW1oR6872ut8i1,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+3OUHhVQslnx2OlFH801H,"胡秋明",housed,"来发馆",D10116,CGNGF26ECM1pbQmfjfbG,3500.00,1,3500.00,0.00,"Match","D10116-Z009",N/A
+4Ns7xeI5OqbFz7XNzo2f,"陈基发",housed,"万发（九江）",D10135,CGNGF26ECM1pbQmfjfbG,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+4beOwgksKpQ50232Eaza,"陈梓梅",housed,"YB越和",D10146,Yn497dTfvKpGnLm3MDQW,3500.00,1,3500.00,0.00,"Match","D10146-Z003",N/A
+56Za6StiVLZalSli2ava,"黄嘉和",housed,"信隆",D10139,CGNGF26ECM1pbQmfjfbG,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+590h0uyygQOSkeArKHfh,"王子杰",housed,"湊湊",D10104,x99th3TFvmJnw7NZvjw0,3500.00,1,3500.00,0.00,"Match","D10104-Z003",N/A
+6cD7jkEW2K0y2XbIkBJM,"严伟宝（已离职）换陳燕",housed,"沣来",D310,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+8WEvRew72yFqXPkseJ88,"曾春芳",housed,"英皇珠宝",D10128,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+8gowWOHNpyefgWz17QP4,"林惠娟",housed,"来发馆",D10116,X0TnOJyJJZUYlmLvIRq4,3500.00,1,3500.00,0.00,"Match","D10116-Z0012",N/A
+9lzc1df95mfjGWdNba5C,"周清莲",housed,"YB蒲罗",D10141,Yn497dTfvKpGnLm3MDQW,3500.00,1,3500.00,0.00,"Match","D10141-Z007",N/A
+A8AbDKQn8uq33dsdBERb,"叶思劲",housed,"世亚",D10127,Zk0KLYQVa4jvWUqWNnZw,3500.00,1,3500.00,0.00,"Match","D10127-Z002",N/A
+AZOsVcRTR3kkMmTYleto,"黄健生",housed,"咖吔餐飲有限公司",D10165,dteUeT0gFnRAkudoaQIk,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+AhbZumxX2oG1sO0xqiRh,"叶王英",housed,"十二星",D10109,X0TnOJyJJZUYlmLvIRq4,3500.00,1,3500.00,0.00,"Match","D10109-Z006",N/A
+Bx3FkoyF2EQM8ye8wJVH,"胡飞",housed,"湊湊",D10104,x99th3TFvmJnw7NZvjw0,3500.00,1,3500.00,0.00,"Match","D10104-Z003",N/A
+CXqVXZkqwbT4aiKSV7LS,"李铭欣",housed,"第一集團",D10133,DHZ97KCR2axnXk5mthUf,3500.00,1,3500.00,0.00,"Match","D10133-Z002",N/A
+DjfXVnBpExwWWa8NtWME,"张阳文",housed,"世亚",D10127,Zk0KLYQVa4jvWUqWNnZw,3500.00,1,3500.00,0.00,"Match","D10127-Z002",N/A
+E4Vk9qioDHOV4ZmrhCFF,"黄汉林",housed,"威輝有限公司",D10162,psJDFyaHEYCBGtF7pFJP,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+EXPDwxAP1E2qbvU1v4Q4,"吴春玉",housed,"来发馆",D10116,X0TnOJyJJZUYlmLvIRq4,3500.00,1,3500.00,0.00,"Match","D10116-Z0012",N/A
+Eq6q08iOwHcMysz9SjOf,"董意开",housed,"信隆",D10139,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+IFgDp6X0nQr6lMF7ZcGJ,"陳麗珠",housed,"英皇珠宝",D10128,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+IGVjEWcfg3BdLjQHmfv3,"李東霏",housed,"湊湊",D10104,x99th3TFvmJnw7NZvjw0,3500.00,1,3500.00,0.00,"Match","D10104-Z003",N/A
+IKGc4BxiNKjTOU5HpFBY,"朱昌华",housed,"湊湊",D10104,x99th3TFvmJnw7NZvjw0,3500.00,1,3500.00,0.00,"Match","D10104-Z003",N/A
+KW35g6qfNqFvZZnabSq5,"胡荧姬",housed,"世亚",D10127,DHZ97KCR2axnXk5mthUf,3500.00,1,3500.00,0.00,"Match","D10127-Z002",N/A
+KqD0vg0tq7JlkvBJlGMd,"范晓玲",housed,"歌富",D10137,DHZ97KCR2axnXk5mthUf,3500.00,1,3500.00,0.00,"Match","D10137-Z002",N/A
+LBlQD4FZC1Eo1jQjyPCg,"高芬兰",housed,"煌業",D10123,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+LILBmuYrbBqKz6TLbD1T,"苏媚",housed,"老虎堂",D10138,DHZ97KCR2axnXk5mthUf,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+LK3xjDXmnwH88VPIglqO,"关泳琳",housed,"湊湊",D10124,voDpQHBqtkbGvZVbN30n,3500.00,1,3500.00,0.00,"Match","D10124-Z003",N/A
+Lg97Z799Cqdo0bWIWFr1,"黄惠华（换陈富山）",housed,"灃來",D286,CGNGF26ECM1pbQmfjfbG,3500.00,1,3500.00,0.00,"Match","D10147-Z001",N/A
+Lu784HBHJwosr5eY7sqF,"萬殷",housed,"A-1面包",D136,uEfoZEnGbKZVfTXk4D38,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+McGafaXCV8qcP0yk3PRQ,"林曼茵",housed,"YB得景",D10134,DHZ97KCR2axnXk5mthUf,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+Mvem9ewjOiYcQwFvBpDv,"林健新",housed,"信隆",D10139,CGNGF26ECM1pbQmfjfbG,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+NaAC8VGi4sC7moMIX0n5,"梁智恒",housed,"YB蒲罗",D10136,Zk0KLYQVa4jvWUqWNnZw,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+NfPjbJJCMDc2DvGuUIyh,"钟海俊",housed,"YB宝丰",D10122,2sJbqAf7yyD96UJ1L9FT,3500.00,1,3500.00,0.00,"Match","D10122-Z007",N/A
+OU9QjuoT07JRkuK1TTD5,"陈一建（已离职）",housed,"舶裕",D412,Zk0KLYQVa4jvWUqWNnZw,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+Oep3Ys0tKJAST9JwpDzH,"张金华",housed,"煌業",D10123,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+PsvlXOalee1H80K6l008,"梁基志",housed,"優善餐飲有限公司",D10166,dteUeT0gFnRAkudoaQIk,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+Q6KUf4UHbHZEgJDl6dtN,"陈达辉",housed,"龍彩有限公司",D10151,2sJbqAf7yyD96UJ1L9FT,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+QC1ORixjagYSPRG8r18C,"康少清",housed,"香港外劳",D00000,X0TnOJyJJZUYlmLvIRq4,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+QO0sPbhPp2hVAR9U1AVw,"陈莉",housed,"来发",D10102,voDpQHBqtkbGvZVbN30n,3500.00,1,3500.00,0.00,"Match","D10102-Z008",N/A
+R43WOkxjZxqfAScW6krC,"黄悅婷",housed,"老虎堂",D10101,X0TnOJyJJZUYlmLvIRq4,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+S5LiHmJyRDRt41cVBCG8,"余碧颜",housed,"卫讯",D10103,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+Sifjnd2h1vDwrAN48b4l,"徐绍贤 沙田",housed,"A-1面包",D136,5hiu1CqyGB6iXM6Xhr6i,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+UoVgjGEv1iKgfe62mxB2,"叶洁慧",housed,"英皇珠宝",D10128,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+WhOtWVC2uchZOyxJWuES,"姚轸耀（已离职）",housed,"湊湊",D280,x99th3TFvmJnw7NZvjw0,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+WjynQSPNl0TsO4evIIvf,"莫嘉強",housed,"歌富",D10129,Zk0KLYQVa4jvWUqWNnZw,3500.00,1,3500.00,0.00,"Match","D10129-Z004",N/A
+XErZI4cxi0qUTAazTcNw,"罗伟健",housed,"YB得景",D10134,2sJbqAf7yyD96UJ1L9FT,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+Xhoo2FQefJKA52rb9Ifr,"熊家文",housed,"英皇珠宝",D10128,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+Xjc9ybVENDO6M0mg0tjn,"陳力維",housed,"A-1面包",D136,94ZIdGFZWjeimv4yDV5Q,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+YNxp5Edbq824No8OFusd,"潘建棋",housed,"舶裕",D10131,Zk0KLYQVa4jvWUqWNnZw,3500.00,1,3500.00,0.00,"Match","D10131-Z002",N/A
+ZFH2suBXsvpamvZjxPQ0,"武天赐",housed,"湊湊",D10104,x99th3TFvmJnw7NZvjw0,3500.00,1,3500.00,0.00,"Match","D10104-Z003",N/A
+ZfC7fLYb0ek5HEDeTE0n,"馬鳳儀",housed,"YB龍展有限公司",D406,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+b03KYtSfVC4ng1iNdRwq,"黄家海",housed,"YB蒲罗",D10136,Zk0KLYQVa4jvWUqWNnZw,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+bDqPIquMbqFhydsIO3lW,"陈达辉",housed,"YB龍彩有限公司",D424,2sJbqAf7yyD96UJ1L9FT,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+byh2ybcLTR4yHv0ep4Bx,"陈爱珍",housed,"YB蒲罗",D10141,DHZ97KCR2axnXk5mthUf,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+c1QGqIOBpaHQ9hLtWR85,"张瑜美",housed,"来发馆",D10116,voDpQHBqtkbGvZVbN30n,3500.00,1,3500.00,0.00,"Match","D10116-Z009",N/A
+cNrX8ddTEs4YVGkZtClp,"黄兰香",housed,"YB越和",D10146,Yn497dTfvKpGnLm3MDQW,3500.00,1,3500.00,0.00,"Match","D10146-Z003",N/A
+cxYyFCQwhXAooRxTTfeA,"陈佳宁",housed,"湊湊",D10104,voDpQHBqtkbGvZVbN30n,3500.00,1,3500.00,0.00,"Match","D10104-Z003",N/A
+ekuC0kSre0Xep9ySyQLL,"蒙嘉敏",housed,"桦润",D10106,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+fXAle9gwVTsgx8ctlyvG,"黄东妮",housed,"来发",D10102,X0TnOJyJJZUYlmLvIRq4,3500.00,1,3500.00,0.00,"Match","D10102-Z007",N/A
+fsqvDEQHWQjRCuskxW3Y,"伍金霞",housed,"十二星绣",D10132,DHZ97KCR2axnXk5mthUf,3500.00,1,3500.00,0.00,"Match","D10132-Z002",N/A
+g7ZFT1lrz28wcPXtAGaa,"林丽芬",housed,"英皇珠宝",D10128,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+h28sHnQfTXtnEdDlsIh0,"曾金花",housed,"老虎堂",D10101,DHZ97KCR2axnXk5mthUf,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+hFPhYINwy0gpRTtTbsTO,"林嘉炜 沙田",housed,"A-1面包",D136,5hiu1CqyGB6iXM6Xhr6i,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+hiplwTt0eMmLWqRiKtZD,"李锦宁",housed,"湊湊",D10124,x99th3TFvmJnw7NZvjw0,3500.00,1,3500.00,0.00,"Match","D10124-Z003",N/A
+hxUOx5uKH7fgUrJyMGja,"练有芳",housed,"煌業",D10123,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+iUJcNcYCCm53a4KgaJ0w,"周培金",housed,"湊湊",D10104,x99th3TFvmJnw7NZvjw0,3500.00,1,3500.00,0.00,"Match","D10104-Z003",N/A
+inYwDhYPdSUlz5o3RcLH,"伍贵洪",housed,"万发（九江）",D10130,x99th3TFvmJnw7NZvjw0,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+iyAFdDNllJlbEzepeJP9,"陈超文",housed,"卫讯",D10103,CGNGF26ECM1pbQmfjfbG,3500.00,1,3500.00,0.00,"Match","D10103-Z0011",N/A
+j31ir3UZOA8i8Q0APmdP,"卢捷（已离职）",housed,"依部国际",D376,Zk0KLYQVa4jvWUqWNnZw,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+jEsFjhjCL2YGmID14T5q,"张晓冰",housed,"英皇珠宝",D10128,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+kEZeu9sCrKVhTNtE4hkK,"郭海有",housed,"来发馆",D244,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+kHWYNNa3MscpjGw3k61e,"陈裕维",housed,"卫讯",D10103,x99th3TFvmJnw7NZvjw0,3500.00,2,7000.00,-3500.00,"Amount Mismatch","D10103-Z013, D10103-Z012",N/A
+kJMjs51koesIpUOaUqMW,"岑永梅",housed,"英皇珠宝",D10128,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+kcfJcuB9sJLT6WQP8Qyh,"谭洁敏",housed,"来发",D10102,X0TnOJyJJZUYlmLvIRq4,3500.00,1,3500.00,0.00,"Match","D10102-Z007",N/A
+lrbennx3DxwW8ACmZGTx,"楊玉妃",housed,"歌富",D10129,DHZ97KCR2axnXk5mthUf,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+mA6aFnWZ1IAhHsdIZAAz,"马明令",housed,"湊湊",D10124,x99th3TFvmJnw7NZvjw0,3500.00,1,3500.00,0.00,"Match","D10124-Z003",N/A
+meC3KOqSWHrqp05QCeC3,"邓北生",housed,"世亚",D10127,Zk0KLYQVa4jvWUqWNnZw,3500.00,1,3500.00,0.00,"Match","D10127-Z002",N/A
+mlKyJoMJjpjKqWJkCBSi,"胡艳娟",housed,"信隆",D10139,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+msmFP2b1vLEd2SjGnjOT,"董德荣",housed,"未知公司",D10139,CGNGF26ECM1pbQmfjfbG,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+nD4ABl7ulXf5ZNBxlGHu,"谭荣娥",housed,"未知公司",D10118,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+nh7EqK6qdSl2FyLqBbJ4,"黄伟梅",housed,"来发",D10120,X0TnOJyJJZUYlmLvIRq4,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+oydpe1BOlqid0HWa8PTi,"刘银平",housed,"十二星",D10109,X0TnOJyJJZUYlmLvIRq4,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+qOZtp7eVOgou5Hb2vAIS,"钟美媛",housed,"桦润",D10106,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+rVhYznYOeGeqhiA65bp2,"陈笑英",housed,"YB蒲罗",D10141,DHZ97KCR2axnXk5mthUf,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+rmQN1bLJ5RHdsWemDAvo,"苏金珠",housed,"湊湊",D10124,voDpQHBqtkbGvZVbN30n,3500.00,1,3500.00,0.00,"Match","D10124-Z003",N/A
+s0YXQ703MX68WSSeSH6o,"赖勇强",housed,"湊湊",D10124,CGNGF26ECM1pbQmfjfbG,3500.00,1,3500.00,0.00,"Match","D10124-Z003",N/A
+tIL98EFz3Byf5zO2UdBS,"吴尚彬",housed,"未知公司",D10122,2sJbqAf7yyD96UJ1L9FT,3500.00,1,3500.00,0.00,"Match","D10122-Z007",N/A
+tkyYvYtb8O7Zto4goTU1,"谭嘉欣",housed,"来发",D10102,X0TnOJyJJZUYlmLvIRq4,3500.00,1,3500.00,0.00,"Match","D10102-Z007",N/A
+vGBfRw3XX9KRiuKGltdA,"刘振彪（已离职）",housed,"沣来",D310,CGNGF26ECM1pbQmfjfbG,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+vdayhDCpWfMtGWuRQ9p5,"温清秀",housed,"桦润",D10106,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+vtnXP56spr0LmdhXcA0q,"李天杰",housed,"湊湊",D10104,x99th3TFvmJnw7NZvjw0,3500.00,1,3500.00,0.00,"Match","D10104-Z003",N/A
+wf9jICtbrlf1OjNb9vJb,"伍诺琦",housed,"依部国际",D10114,DHZ97KCR2axnXk5mthUf,3500.00,1,3500.00,0.00,"Match","D10114-Z002",N/A
+x2qLMdgUEz4pbF9K4BsS,"胡艳媚",housed,"信隆",D10139,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+xENgk1u3mHIMIad45TRn,"许水云",housed,"英皇珠宝",D10128,Yn497dTfvKpGnLm3MDQW,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+xFy7UDnzEJPOxtlGVkAE,"吴俊毅",housed,"老虎堂",D10101,CGNGF26ECM1pbQmfjfbG,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+xTqeTVKmeqbjXekzIWHQ,"叶结华",housed,"city super",D10118,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+xn79jGmVD0H1q77vF7OS,"王煜燃",housed,"YB得景有限公司",D10121,CGNGF26ECM1pbQmfjfbG,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+yIjVtBZnaaozXwmMMeH4,"欧颖",housed,"桦润",D10106,voDpQHBqtkbGvZVbN30n,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+ylaDeO6odwNLmkFy9GRj,"鍾子鋒",housed,"A-1面包",D10136,94ZIdGFZWjeimv4yDV5Q,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A
+z3uhgcpK1OiIh3WTi6IQ,"黎燕芳",housed,"来发馆",D10116,voDpQHBqtkbGvZVbN30n,3500.00,1,3500.00,0.00,"Match","D10116-Z0011",N/A
+z8I1yj5RTT4ZGzrMEWuF,"江锦波",housed,"未知公司",D10101,CGNGF26ECM1pbQmfjfbG,3500.00,0,0.00,3500.00,"No Invoice","N/A",N/A

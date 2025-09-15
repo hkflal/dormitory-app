@@ -282,6 +282,8 @@ const InvoicesPage = () => {
     const [showCTRModal, setShowCTRModal] = useState(false);
     const [updatingIssued, setUpdatingIssued] = useState({});
     const [showExportModal, setShowExportModal] = useState(false);
+    const [activeTab, setActiveTab] = useState('invoices'); // 'invoices' or 'contracts'
+    const [contracts, setContracts] = useState([]);
 
     const fetchInvoices = useCallback(async () => {
         if (!currentUser) {
@@ -322,9 +324,94 @@ const InvoicesPage = () => {
         }
     }, [currentUser]);
 
+    const fetchContracts = useCallback(async () => {
+        if (!currentUser) return;
+        
+        try {
+            // Get all employees with active contracts
+            const employeesSnapshot = await getDocs(collection(db, 'employees'));
+            const employeesData = employeesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            // Group employees by contract number
+            const contractsMap = {};
+            
+            employeesData.forEach(employee => {
+                const contractNumber = employee.activeCtr || employee.contractNumber || employee.contract_number;
+                if (contractNumber) {
+                    if (!contractsMap[contractNumber]) {
+                        contractsMap[contractNumber] = {
+                            contract_number: contractNumber,
+                            employees: [],
+                            company: employee.company || '',
+                            totalAmount: 0,
+                            hasContract: false,
+                            hasDeposit: false
+                        };
+                    }
+                    contractsMap[contractNumber].employees.push(employee);
+                    if (!contractsMap[contractNumber].company && employee.company) {
+                        contractsMap[contractNumber].company = employee.company;
+                    }
+                }
+            });
+            
+            // Get invoice data for each contract to calculate total amounts and document status
+            const invoicesSnapshot = await getDocs(collection(db, 'invoices'));
+            const invoicesData = invoicesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            Object.keys(contractsMap).forEach(contractNumber => {
+                const contractInvoices = invoicesData.filter(inv => inv.contract_number === contractNumber);
+                
+                // Calculate monthly payment amount (from most recent non-deposit invoice)
+                const recentInvoice = contractInvoices
+                    .filter(inv => !inv.is_deposit && inv.status !== 'newly_signed')
+                    .sort((a, b) => {
+                        const dateA = a.created_at?.toDate?.() || new Date(a.created_at || 0);
+                        const dateB = b.created_at?.toDate?.() || new Date(b.created_at || 0);
+                        return dateB - dateA;
+                    })[0];
+                
+                if (recentInvoice) {
+                    contractsMap[contractNumber].totalAmount = calculateTotal(
+                        recentInvoice.amount, 
+                        recentInvoice.n_employees, 
+                        recentInvoice.frequency
+                    );
+                }
+                
+                // Check document status from contract_documents collection
+                contractsMap[contractNumber].hasContract = false;
+                contractsMap[contractNumber].hasDeposit = contractInvoices.some(inv => inv.is_deposit || inv.status === 'deposit');
+            });
+            
+            // Check for uploaded contract documents
+            try {
+                const contractDocsSnapshot = await getDocs(collection(db, 'contract_documents'));
+                contractDocsSnapshot.docs.forEach(doc => {
+                    const docData = doc.data();
+                    if (contractsMap[docData.contract_number]) {
+                        contractsMap[docData.contract_number].hasContract = !!(docData.contract_url);
+                        if (docData.deposit_url) {
+                            contractsMap[docData.contract_number].hasDeposit = true;
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error checking contract documents:', error);
+            }
+            
+            setContracts(Object.values(contractsMap));
+        } catch (error) {
+            console.error('Error fetching contracts:', error);
+        }
+    }, [currentUser]);
+
     useEffect(() => {
         fetchInvoices();
-    }, [fetchInvoices]);
+        if (activeTab === 'contracts') {
+            fetchContracts();
+        }
+    }, [fetchInvoices, fetchContracts, activeTab]);
     
     const handleAddOrUpdateInvoice = async () => {
         // This function is called by AddInvoiceModal after it saves the invoice
@@ -518,8 +605,13 @@ const InvoicesPage = () => {
 
     const handleCTRCreated = () => {
         // Refresh the page or data after CTR is created
+        fetchContracts(); // Refresh contracts data
         setInfoModalMessage('合約創建成功！您現在可以為此合約創建發票。');
         setShowInfoModal(true);
+    };
+
+    const handleContractClick = (contractNumber) => {
+        router.push(`/invoice-detail/${contractNumber}`);
     };
 
     if (loading && invoices.length === 0) {
@@ -580,6 +672,31 @@ const InvoicesPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Tab Navigation */}
+            <div className="flex space-x-1 mb-6 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg w-fit">
+                <button
+                    onClick={() => setActiveTab('invoices')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                        activeTab === 'invoices'
+                            ? 'bg-white dark:bg-gray-800 text-primary-600 shadow'
+                            : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                    }`}
+                >
+                    發票管理
+                </button>
+                <button
+                    onClick={() => setActiveTab('contracts')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                        activeTab === 'contracts'
+                            ? 'bg-white dark:bg-gray-800 text-primary-600 shadow'
+                            : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                    }`}
+                >
+                    合約View
+                </button>
+            </div>
+
             <div className="flex items-center space-x-4 mb-4">
                 <div className="flex-1 max-w-sm">
                     <input type="text" placeholder="搜索發票號碼, 合約號, 員工..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
@@ -598,7 +715,11 @@ const InvoicesPage = () => {
                 </div>
             </div>
 
-            {sortedGroupKeys.map(group => (
+            {/* Conditional Content Based on Active Tab */}
+            {activeTab === 'invoices' ? (
+                // Invoice Management View
+                <>
+                    {sortedGroupKeys.map(group => (
                 <div key={group} className="mb-6">
                     <div className={`w-full text-left px-4 py-2 text-lg font-semibold rounded-t-lg ${getGroupHeaderClass(group)}`}>
                         {group} ({grouped[group].length})
@@ -623,7 +744,102 @@ const InvoicesPage = () => {
                         ))}
                     </div>
                 </div>
-            ))}
+                    ))}
+                </>
+            ) : (
+                // Contract View
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                            合約總覽 ({contracts.length})
+                        </h2>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        合約號碼
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        公司名稱
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        相關員工姓名
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        月租總額
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        文件狀態
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                {contracts.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="5" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                            {loading ? '載入中...' : '暫無合約資料'}
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    contracts.map(contract => (
+                                        <tr 
+                                            key={contract.contract_number}
+                                            onClick={() => handleContractClick(contract.contract_number)}
+                                            className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                                        >
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                                                    {contract.contract_number}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900 dark:text-white">
+                                                    {contract.company || '未設定'}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="text-sm text-gray-900 dark:text-white">
+                                                    {contract.employees.map(emp => emp.name).join(', ')}
+                                                    <span className="text-gray-500 ml-1">({contract.employees.length}人)</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                                    {contract.totalAmount > 0 ? formatCurrency(contract.totalAmount) : '未設定'}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex space-x-2">
+                                                    <label className="flex items-center space-x-1">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={contract.hasContract}
+                                                            readOnly
+                                                            className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                                                        />
+                                                        <span className="text-xs text-gray-600 dark:text-gray-400">合約</span>
+                                                    </label>
+                                                    <label className="flex items-center space-x-1">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={contract.hasDeposit}
+                                                            readOnly
+                                                            className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                                                        />
+                                                        <span className="text-xs text-gray-600 dark:text-gray-400">押金</span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
             
             {showAddModal && (
                 <AddInvoiceModal

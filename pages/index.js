@@ -192,7 +192,21 @@ export default function Dashboard() {
         const resignedEmployees = employeesData.filter(emp => emp.status === 'resigned').length;
         
         // Current month rent metrics using new calculation functions
+        console.log('🔍 Dashboard: About to call getCurrentMonthRentMetrics');
+        console.log(`🔍 Dashboard: Employees count: ${employeesData.length}`);
+        console.log(`🔍 Dashboard: Invoices count: ${updatedInvoicesData.length}`);
+        console.log(`🔍 Dashboard: Target year/month: ${currentYear}/${currentMonth}`);
+        
         const rentMetrics = getCurrentMonthRentMetrics(employeesData, updatedInvoicesData, currentYear, currentMonth);
+        
+        console.log('🔍 Dashboard: rentMetrics result:', rentMetrics);
+        console.log('🔧 DASHBOARD RECEIVED VALUES:', {
+          totalReceivableRent: rentMetrics.totalReceivableRent,
+          invoicedRent: rentMetrics.invoicedRent,
+          receivedRent: rentMetrics.receivedRent,
+          notYetReceivedRent: rentMetrics.notYetReceivedRent,
+          collectionRate: rentMetrics.collectionRate
+        });
         
         // Cost calculations (no operating costs)
         const costMetrics = calculateTotalCosts(propertiesData);
@@ -439,7 +453,7 @@ export default function Dashboard() {
             <div className="min-w-0 flex-1">
               <p className="text-blue-100 text-xs sm:text-sm font-medium">至 {currentDateString}本月已收租金</p>
               <p className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(stats.receivedRent)}</p>
-              <p className="text-blue-100 text-xs mt-1">收款率: {stats.collectionRate.toFixed(1)}%</p>
+              <p className="text-blue-100 text-xs mt-1">收款率: {(stats.collectionRate || 0).toFixed(1)}%</p>
             </div>
           </div>
         </div>
@@ -549,7 +563,7 @@ export default function Dashboard() {
             </div>
             <div className="text-center p-4 sm:p-6 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
               <p className="text-green-600 dark:text-green-400 text-sm font-medium mb-2">收款率</p>
-              <p className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-300">{stats.collectionRate.toFixed(1)}%</p>
+              <p className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-300">{(stats.collectionRate || 0).toFixed(1)}%</p>
               <p className="text-green-500 dark:text-green-400 text-xs mt-1">已收租金 / 應收租金</p>
             </div>
             <div className="text-center p-4 sm:p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">

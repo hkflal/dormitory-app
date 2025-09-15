@@ -1,0 +1,5 @@
+﻿發票號碼,合約號碼,員工姓名,公司,金額,人數,頻率,總金額,開始日期,結束日期,狀態,已開出,創建日期,收據URL,DOCX URL
+D10128-Z001,D10128,叶洁慧; 张晓冰; 许水云; 林丽芬; 曾春芳; 岑永梅; 熊家文; 陈丽珠,測試公司 A,3500,8,3,84000,14/4/2025,13/7/2025,已付款,否,N/A,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/receipts/D10128-Z001/receipt.pdf,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10128-Z001.docx
+CTR-D10164,D10164,吉大城,測試公司 B,3500,1,1,3500,18/6/2025,17/7/2025,已付款,是,N/A,,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/CTR-D10164.docx
+D10116-Z0012,D10116,王小明; 李小华,"Special ""Company"" with, Commas",4000,2,2,16000,15/6/2025,14/9/2025,已付款,是,N/A,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/receipts/D10116-Z0012/receipt.jpg,https://storage.googleapis.com/dormitory-management-6c1a5.firebasestorage.app/invoices/D10116-Z0012.docx
+D10103-Z010,D10103,陈小红,另一家公司,5000,1,1,5000,1/5/2025,31/7/2025,已付款,是,N/A,https://storage.googleapis.com/test/receipt5.pdf,https://storage.googleapis.com/test/invoice5.docx

@@ -29,7 +29,20 @@
       "Bash(find:*)",
       "Bash(npx firebase-tools login:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(pkill:*)",
+      "Bash(env)",
+      "Bash(firebase login:*)",
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(git rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx next build:*)",
+      "Bash(mv:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(open http://localhost:3001/employee-v2)",
+      "Bash(open http://localhost:3001)",
+      "Bash(open http://localhost:3001/payment-details)"
     ],
     "deny": []
   }

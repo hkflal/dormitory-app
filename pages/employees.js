@@ -15,7 +15,8 @@ import {
   BuildingOfficeIcon,
   PhoneIcon,
   CalendarDaysIcon,
-  Squares2X2Icon
+  Squares2X2Icon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 import Modal from '../components/Modal';
 import { 
@@ -36,6 +37,7 @@ import {
   filterEmployees,
   sortEmployees
 } from '../lib/employeeFilters';
+import Link from 'next/link';
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
@@ -422,10 +424,18 @@ export default function Employees() {
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">員工管理</h1>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">管理所有員工資料，快速篩選與查詢。</p>
             </div>
-            <button onClick={() => { resetForm(); setShowAddModal(true); }} className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg flex items-center justify-center space-x-2 font-medium min-h-[44px] transition-colors active:bg-primary-800">
-                <PlusIcon className="h-5 w-5" />
-                <span>新增員工</span>
-            </button>
+            <div className="flex items-center space-x-3">
+              <Link href="/employee-v2">
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 font-medium transition-colors">
+                  <ChartBarIcon className="h-5 w-5" />
+                  <span>時間線視圖</span>
+                </button>
+              </Link>
+              <button onClick={() => { resetForm(); setShowAddModal(true); }} className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg flex items-center justify-center space-x-2 font-medium min-h-[44px] transition-colors active:bg-primary-800">
+                  <PlusIcon className="h-5 w-5" />
+                  <span>新增員工</span>
+              </button>
+            </div>
           </div>
       </div>
       

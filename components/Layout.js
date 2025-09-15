@@ -16,13 +16,15 @@ import {
   XMarkIcon,
   MoonIcon,
   SunIcon,
-  CreditCardIcon
+  CreditCardIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 
 const allNavigation = [
   { name: '主頁', href: '/', icon: HomeIcon, roles: ['admin'] },
   { name: '物業管理', href: '/properties', icon: BuildingOfficeIcon, roles: ['admin'] },
   { name: '員工管理', href: '/employees', icon: UserGroupIcon, roles: ['admin', 'editor'] },
+  { name: '員工時間線', href: '/employee-v2', icon: ChartBarIcon, roles: ['admin', 'editor'] },
   { name: '財務管理', href: '/financials', icon: CurrencyDollarIcon, roles: ['admin'] },
   { name: '發票管理', href: '/invoices', icon: DocumentTextIcon, roles: ['admin', 'editor'] },
   { name: '付款明細', href: '/payment-details', icon: CreditCardIcon, roles: ['admin', 'editor'] },
