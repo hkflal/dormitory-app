@@ -19,7 +19,8 @@ export const AuthProvider = ({ children }) => {
   // Role-based email lists
   const adminEmails = [
     'info@hkflal.com',
-    'kazaffong@hkflal.com'
+    'kazaffong@hkflal.com',
+    'crystal@magicliving.com.hk'
   ];
 
   const editorEmails = [
