@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { 
-  ArrowUpIcon, 
+import {
+  ArrowUpIcon,
   ArrowDownIcon,
   CurrencyDollarIcon,
   BuildingOfficeIcon,
@@ -31,19 +31,19 @@ const StatCard = ({ title, value, change, changeType }) => (
 // Helper function: Check if employee needs to pay this month
 const checkIfEmployeeNeedsToPayThisMonth = (employee, year, month) => {
   const paymentFrequency = employee.paymentFrequency || employee.frequency || 1; // Default monthly
-  
+
   // For quarterly payment (frequency = 3), check if they have paid in the current quarter
   if (paymentFrequency === 3) {
     // Check if they paid in any month of the current quarter
     const currentQuarter = Math.floor(month / 3);
     const quarterStartMonth = currentQuarter * 3;
     const quarterMonths = [quarterStartMonth, quarterStartMonth + 1, quarterStartMonth + 2];
-    
+
     // For quarterly payment, we consider them as "paid" if they paid any month in the quarter
     // This will be handled in the payment check function
     return true; // Always true for quarterly, but amount is divided by frequency
   }
-  
+
   // For other frequencies, assume monthly for now
   return true;
 };
@@ -51,26 +51,26 @@ const checkIfEmployeeNeedsToPayThisMonth = (employee, year, month) => {
 // Helper function: Check if employee has paid this month
 const checkIfEmployeeHasPaidThisMonth = (employee, invoices, year, month) => {
   const paymentFrequency = employee.paymentFrequency || employee.frequency || 1;
-  
+
   if (paymentFrequency === 3) {
     // For quarterly payment, check if they paid in ANY month of the current quarter
     const currentQuarter = Math.floor(month / 3);
     const quarterStartMonth = currentQuarter * 3;
     const quarterMonths = [quarterStartMonth, quarterStartMonth + 1, quarterStartMonth + 2];
-    
+
     const employeePaidInvoices = invoices.filter(inv => {
       if (inv.status !== 'paid') return false;
-      
+
       // Check if invoice belongs to this employee
-      const isEmployeeInvoice = inv.employeeId === employee.id || 
-                              inv.employee_id === employee.id ||
-                              inv.employeeName === employee.name;
+      const isEmployeeInvoice = inv.employeeId === employee.id ||
+        inv.employee_id === employee.id ||
+        inv.employeeName === employee.name;
       if (!isEmployeeInvoice) return false;
-      
+
       // Check if invoice is for ANY month in the current quarter
       const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
       if (issueDate.getFullYear() !== year) return false;
-      
+
       return quarterMonths.includes(issueDate.getMonth());
     });
 
@@ -79,13 +79,13 @@ const checkIfEmployeeHasPaidThisMonth = (employee, invoices, year, month) => {
     // For monthly payment, check current month only
     const employeePaidInvoices = invoices.filter(inv => {
       if (inv.status !== 'paid') return false;
-      
+
       // Check if invoice belongs to this employee
-      const isEmployeeInvoice = inv.employeeId === employee.id || 
-                              inv.employee_id === employee.id ||
-                              inv.employeeName === employee.name;
+      const isEmployeeInvoice = inv.employeeId === employee.id ||
+        inv.employee_id === employee.id ||
+        inv.employeeName === employee.name;
       if (!isEmployeeInvoice) return false;
-      
+
       // Check if invoice is for current month
       const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
       return issueDate.getFullYear() === year && issueDate.getMonth() === month;
@@ -98,7 +98,7 @@ const checkIfEmployeeHasPaidThisMonth = (employee, invoices, year, month) => {
 // Calculate projected income including housed employees and prorated upcoming employees
 const calculateProjectedIncome = (employees, currentYear, currentMonth) => {
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  
+
   return employees.reduce((total, emp) => {
     const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
     if (empRent === 0) return total;
@@ -109,18 +109,18 @@ const calculateProjectedIncome = (employees, currentYear, currentMonth) => {
     } else if ((emp.status === 'approved' || emp.status === 'pending' || emp.status === 'pending_assignment') && emp.arrival_at) {
       // Prorated rent for upcoming employees based on arrival date
       const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
-      
+
       // Check if arrival date is in the current month
       if (arrivalDate.getFullYear() === currentYear && arrivalDate.getMonth() === currentMonth) {
         const arrivalDay = arrivalDate.getDate();
         const remainingDays = daysInMonth - arrivalDay + 1; // +1 to include arrival day
         const proratedRent = (remainingDays / daysInMonth) * empRent;
-        
+
         console.log(`📊 Prorated rent for ${emp.name}: ${remainingDays}/${daysInMonth} * ${empRent} = ${proratedRent.toFixed(2)}`);
         return total + proratedRent;
       }
     }
-    
+
     return total;
   }, 0);
 };
@@ -170,15 +170,17 @@ const FinancialsPage = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [invoicesSnapshot, propertiesSnapshot, employeesSnapshot] = await Promise.all([
+        const [invoicesSnapshot, propertiesSnapshot, employeesSnapshot, snapshotsSnapshot] = await Promise.all([
           getDocs(collection(db, 'invoices')),
           getDocs(collection(db, 'properties')),
           getDocs(collection(db, 'employees')),
+          getDocs(collection(db, 'financial_snapshots')),
         ]);
 
         const invoices = invoicesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         const properties = propertiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         const employees = employeesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const dbSnapshots = snapshotsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
         const now = new Date();
         const currentYear = now.getFullYear();
@@ -192,25 +194,25 @@ const FinancialsPage = () => {
 
         const housedEmployeesData = employees.filter(emp => emp.status === 'housed');
         setHousedEmployees(housedEmployeesData);
-        
+
         // Use the same projection model for theoretical revenue (housed + prorated upcoming)
         const theoreticalRevenue = calculateProjectedIncome(employees, currentYear, currentMonth);
 
         // For display purposes, both theoretical and "projected collected" are the same for current month
         const rentCollected = theoreticalRevenue;
-        
+
         // 🔍 Debug logging for financial calculations
         console.log(`📊 Financial Debug - Current Month: ${currentYear}-${currentMonth + 1}`);
         console.log(`📊 Housed Employees: ${housedEmployeesData.length}`);
         console.log(`📊 Current Month Invoices: ${currentMonthInvoices.length}`);
         console.log(`📊 Theoretical Revenue: ${formatCurrency(theoreticalRevenue)}`);
         console.log(`📊 Projected Revenue (Housed + Prorated Upcoming): ${formatCurrency(rentCollected)}`);
-        
+
         // Detailed breakdown for verification
         const housedTotal = employees
           .filter(emp => emp.status === 'housed')
           .reduce((sum, emp) => sum + (parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0), 0);
-        
+
         const upcomingTotal = employees
           .filter(emp => (emp.status === 'approved' || emp.status === 'pending' || emp.status === 'pending_assignment') && emp.arrival_at)
           .reduce((sum, emp) => {
@@ -225,49 +227,49 @@ const FinancialsPage = () => {
             }
             return sum;
           }, 0);
-        
+
         console.log(`📊 Breakdown: Housed=${formatCurrency(housedTotal)}, Upcoming Prorated=${formatCurrency(upcomingTotal)}, Total=${formatCurrency(housedTotal + upcomingTotal)}`);
-        
+
         // Debug upcoming employees with detailed August calculation
         const upcomingEmployees = employees.filter(emp => (emp.status === 'approved' || emp.status === 'pending' || emp.status === 'pending_assignment') && emp.arrival_at);
         console.log(`📊 Upcoming Employees Found: ${upcomingEmployees.length}`);
-        
+
         // Debug ALL employee statuses and check-in fields
         console.log(`🔍 ALL EMPLOYEE DATA ANALYSIS:`);
         console.log(`📊 Total employees in system: ${employees.length}`);
-        
+
         const statusCounts = {};
         const arrivalFields = new Set();
-        
+
         employees.forEach((emp, index) => {
           // Count statuses
           statusCounts[emp.status] = (statusCounts[emp.status] || 0) + 1;
-          
+
           // Find arrival date field names
           Object.keys(emp).forEach(key => {
-            if (key.toLowerCase().includes('checkin') || key.toLowerCase().includes('check_in') || 
-                key.toLowerCase().includes('arrival') || key.toLowerCase().includes('start')) {
+            if (key.toLowerCase().includes('checkin') || key.toLowerCase().includes('check_in') ||
+              key.toLowerCase().includes('arrival') || key.toLowerCase().includes('start')) {
               arrivalFields.add(key);
             }
           });
-          
+
           // Show first 3 employees' full data
           if (index < 3) {
             console.log(`   Employee ${index + 1}:`, emp);
           }
         });
-        
+
         console.log(`📊 Status distribution:`, statusCounts);
         console.log(`📊 Potential arrival date fields found:`, Array.from(arrivalFields));
-        
+
         let augustTotal = 0;
         let augustCount = 0;
-        
+
         console.log(`📊 AUGUST 2025 PRORATED CALCULATION:`);
         upcomingEmployees.forEach(emp => {
           const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
           const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
-          
+
           // Check if arrival is in August 2025
           if (arrivalDate.getFullYear() === 2025 && arrivalDate.getMonth() === 7) { // August is month 7 (0-based)
             const arrivalDay = arrivalDate.getDate();
@@ -275,42 +277,42 @@ const FinancialsPage = () => {
             const proratedRent = (remainingDays / 31) * empRent;
             augustTotal += proratedRent;
             augustCount++;
-            
+
             console.log(`   ${augustCount}. ${emp.name || emp.id}: Aug ${arrivalDay} | ${remainingDays}/31 days | ${empRent} rent | Prorated: ${proratedRent.toFixed(2)}`);
           }
         });
-        
+
         console.log(`📊 AUGUST TOTAL: ${augustCount} employees = ${augustTotal.toFixed(2)}`);
         console.log(`📊 All upcoming employees:`);
         upcomingEmployees.forEach(emp => {
           const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
           console.log(`   - ${emp.name || emp.id}: Status=${emp.status}, Arrival=${arrivalDate.toDateString()}, Rent=${emp.rent || emp.monthlyRent}`);
         });
-        
+
         // Debug individual employee calculations
         console.log(`🔍 Analyzing payment status...`);
         console.log(`📊 Sample invoice data:`, currentMonthInvoices.slice(0, 2));
         console.log(`📊 Sample employee data:`, housedEmployeesData.slice(0, 2));
-        
+
         let paidEmployeeCount = 0;
         let unpaidEmployeeCount = 0;
-        
+
         housedEmployeesData.forEach(emp => {
           const empRent = parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0;
           const paymentFrequency = emp.paymentFrequency || emp.frequency || 1;
           const monthlyAmount = empRent; // Already monthly rent
-          
+
           // Detailed payment check
           const matchingInvoices = currentMonthInvoices.filter(inv => {
-            const isEmployeeInvoice = inv.employeeId === emp.id || 
-                                    inv.employee_id === emp.id ||
-                                    inv.employeeName === emp.name;
+            const isEmployeeInvoice = inv.employeeId === emp.id ||
+              inv.employee_id === emp.id ||
+              inv.employeeName === emp.name;
             return isEmployeeInvoice;
           });
-          
+
           const paidInvoices = matchingInvoices.filter(inv => inv.status === 'paid');
           const hasPaid = checkIfEmployeeHasPaidThisMonth(emp, currentMonthInvoices, currentYear, currentMonth);
-          
+
           if (empRent > 0) {
             if (hasPaid) {
               paidEmployeeCount++;
@@ -324,29 +326,29 @@ const FinancialsPage = () => {
             }
           }
         });
-        
+
         console.log(`📊 Summary: ${paidEmployeeCount} paid, ${unpaidEmployeeCount} unpaid`);
-        
+
         const totalRentalCost = properties.reduce((acc, prop) => acc + (parseFloat(prop.cost) || 0), 0);
         const otherCosts = 0; // Placeholder for other costs, set to 0 for now
 
         setCurrentMonthStats({
-                  theoreticalRevenue: formatCurrency(theoreticalRevenue),
-        rentCollected: formatCurrency(rentCollected),
-        totalRentalCost: formatCurrency(totalRentalCost),
-        otherCosts: formatCurrency(otherCosts),
+          theoreticalRevenue: formatCurrency(theoreticalRevenue),
+          rentCollected: formatCurrency(rentCollected),
+          totalRentalCost: formatCurrency(totalRentalCost),
+          otherCosts: formatCurrency(otherCosts),
         });
 
         // 2. Property-wise Summary
         const summary = properties.map(prop => {
           const propHousedEmployees = employees.filter(emp => emp.assigned_property_id === prop.id && emp.status === 'housed');
-          
+
           const propTheoreticalRevenue = propHousedEmployees.reduce((acc, emp) => {
             return acc + (parseFloat(emp.rent) || parseFloat(emp.monthlyRent) || 0);
           }, 0);
 
           const propEmployeeIds = employees.filter(e => e.assigned_property_id === prop.id).map(e => e.id);
-          const propInvoices = invoices.filter(inv => 
+          const propInvoices = invoices.filter(inv =>
             (inv.employee_id && propEmployeeIds.includes(inv.employee_id))
           );
 
@@ -357,20 +359,20 @@ const FinancialsPage = () => {
             currentYear,
             currentMonth
           );
-          
+
           const propCost = parseFloat(prop.cost) || 0;
           const theoreticalProfit = propTheoreticalRevenue - propCost;
 
           // Calculate actual occupancy (housed employees) for this property
-          const actualOccupancy = employees.filter(emp => 
+          const actualOccupancy = employees.filter(emp =>
             emp.assigned_property_id === prop.id && emp.status === 'housed'
           ).length;
-          
+
           // Use static capacity (bed capacity) for the property
           const staticCapacity = prop.capacity || 0;
-          
+
           const occupancyRate = staticCapacity > 0 ? ((actualOccupancy / staticCapacity) * 100).toFixed(1) : 0;
-          
+
           return {
             id: prop.id,
             name: prop.name,
@@ -382,7 +384,7 @@ const FinancialsPage = () => {
           };
         });
         setPropertySummary(summary);
-        
+
         // 3. Monthly Trends & Historical Data
         // Use hardcoded data for Jan-July 2025, then calculate for other months
         const history = [];
@@ -406,99 +408,114 @@ const FinancialsPage = () => {
         // Calculate available months from the start of 2025 to current month
         const startYear = 2025;
         const startMonth = 0; // January
-        
+
         // Calculate total months from Jan 2025 to current month
         const totalMonths = (currentYear - startYear) * 12 + (currentMonth - startMonth) + 1;
-        
+
         for (let i = totalMonths - 1; i >= 0; i--) {
-            // Calculate the actual year and month for this iteration
-            const monthsFromStart = totalMonths - 1 - i;
-            const year = startYear + Math.floor((startMonth + monthsFromStart) / 12);
-            const month = (startMonth + monthsFromStart) % 12;
-            const date = new Date(year, month, 1);
+          // Calculate the actual year and month for this iteration
+          const monthsFromStart = totalMonths - 1 - i;
+          const year = startYear + Math.floor((startMonth + monthsFromStart) / 12);
+          const month = (startMonth + monthsFromStart) % 12;
+          const date = new Date(year, month, 1);
 
-            // Check if this is 2025 and within Jan-August range
-            const hardcodedEntry = year === 2025 && month <= 7 ? 
-              hardcodedData2025.find(entry => entry.month === month) : null;
+          // Check if this is 2025 and within Jan-August range
+          const hardcodedEntry = year === 2025 && month <= 7 ?
+            hardcodedData2025.find(entry => entry.month === month) : null;
 
-            if (hardcodedEntry) {
-              // Use hardcoded data
+          if (hardcodedEntry) {
+            // Use hardcoded data
+            history.push({
+              month: `${year} ${monthNames[month]}`,
+              rentCollected: formatCurrency(hardcodedEntry.totalIncome),
+              totalCosts: formatCurrency(hardcodedEntry.totalExpenses),
+              pnl: hardcodedEntry.pnl,
+              employees: hardcodedEntry.employees,
+              properties: hardcodedEntry.rooms
+            });
+          } else {
+            // Check if this is the current month for projection
+            const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
+
+            if (isCurrentMonth) {
+              // Use projections for current month
+              const projectedRent = calculateProjectedIncome(employees, year, month);
+              const projectedEmployeeCount = employees.filter(emp => {
+                if (emp.status === 'housed') return true;
+                if ((emp.status === 'approved' || emp.status === 'pending' || emp.status === 'pending_assignment') && emp.arrival_at) {
+                  const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
+                  return arrivalDate.getFullYear() === year && arrivalDate.getMonth() === month;
+                }
+                return false;
+              }).length;
+
+              const projectedPnl = projectedRent - totalMonthlyCost;
+
               history.push({
                 month: `${year} ${monthNames[month]}`,
-                rentCollected: formatCurrency(hardcodedEntry.totalIncome),
-                totalCosts: formatCurrency(hardcodedEntry.totalExpenses),
-                pnl: hardcodedEntry.pnl,
-                employees: hardcodedEntry.employees,
-                properties: hardcodedEntry.rooms
+                rentCollected: formatCurrency(projectedRent),
+                totalCosts: formatCurrency(totalMonthlyCost),
+                pnl: projectedPnl,
+                employees: projectedEmployeeCount,
+                properties: properties.length,
+                isProjection: true
               });
             } else {
-              // Check if this is the current month for projection
-              const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
-              
-              if (isCurrentMonth) {
-                // Use projections for current month
-                const projectedRent = calculateProjectedIncome(employees, year, month);
-                const projectedEmployeeCount = employees.filter(emp => {
-                  if (emp.status === 'housed') return true;
-                  if ((emp.status === 'approved' || emp.status === 'pending' || emp.status === 'pending_assignment') && emp.arrival_at) {
-                    const arrivalDate = emp.arrival_at?.toDate ? emp.arrival_at.toDate() : new Date(emp.arrival_at);
-                    return arrivalDate.getFullYear() === year && arrivalDate.getMonth() === month;
-                  }
-                  return false;
-                }).length;
-                
-                const projectedPnl = projectedRent - totalMonthlyCost;
-                
+              // Try to find snapshot in DB
+              const dbSnapshot = dbSnapshots.find(s => s.year === year && s.month === month);
+
+              if (dbSnapshot) {
                 history.push({
                   month: `${year} ${monthNames[month]}`,
-                  rentCollected: formatCurrency(projectedRent),
-                  totalCosts: formatCurrency(totalMonthlyCost),
-                  pnl: projectedPnl,
-                  employees: projectedEmployeeCount,
-                  properties: properties.length,
-                  isProjection: true
+                  rentCollected: formatCurrency(dbSnapshot.totalIncome),
+                  totalCosts: formatCurrency(dbSnapshot.totalExpenses),
+                  pnl: dbSnapshot.pnl,
+                  employees: dbSnapshot.employees,
+                  properties: dbSnapshot.rooms || properties.length,
+                  isProjection: false
                 });
               } else {
                 // Calculate dynamically for other months
                 const monthInvoices = invoices.filter(inv => {
-                    const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
-                    if (isNaN(issueDate.getTime())) return false;
-                    return issueDate.getFullYear() === year && issueDate.getMonth() === month;
+                  const issueDate = inv.issueDate?.toDate ? inv.issueDate.toDate() : new Date(inv.issueDate);
+                  if (isNaN(issueDate.getTime())) return false;
+                  return issueDate.getFullYear() === year && issueDate.getMonth() === month;
                 });
 
                 // Get employees who were housed during that month
                 const monthHousedEmployees = employees.filter(emp => {
-                    const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
-                    if (!checkInDate || isNaN(checkInDate.getTime())) return false; 
-                    return checkInDate <= date && emp.status === 'housed';
+                  const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
+                  if (!checkInDate || isNaN(checkInDate.getTime())) return false;
+                  return checkInDate <= date && emp.status === 'housed';
                 });
 
                 const rentCollected = calculateActualIncome(monthHousedEmployees, monthInvoices, year, month);
-                
+
                 // Note: Employee count is a snapshot of who had checked in by that month.
                 // This assumes a 'checkInDate' field exists on employee documents.
                 const employeeCount = employees.filter(emp => {
-                    const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
-                    if (!checkInDate || isNaN(checkInDate.getTime())) return false; 
-                    return checkInDate <= date;
+                  const checkInDate = emp.checkInDate?.toDate ? emp.checkInDate.toDate() : (emp.checkInDate ? new Date(emp.checkInDate) : null);
+                  if (!checkInDate || isNaN(checkInDate.getTime())) return false;
+                  return checkInDate <= date;
                 }).length;
 
                 const pnl = rentCollected - totalMonthlyCost;
 
                 history.push({
-                    month: `${year} ${monthNames[month]}`,
-                    rentCollected: formatCurrency(rentCollected),
-                    totalCosts: formatCurrency(totalMonthlyCost),
-                    pnl: pnl,
-                    employees: employeeCount,
-                    properties: properties.length,
-                    isProjection: false
+                  month: `${year} ${monthNames[month]}`,
+                  rentCollected: formatCurrency(rentCollected),
+                  totalCosts: formatCurrency(totalMonthlyCost),
+                  pnl: pnl,
+                  employees: employeeCount,
+                  properties: properties.length,
+                  isProjection: false
                 });
               }
             }
+          }
         }
         setHistoricalData(history.reverse());
-        
+
         const trends = history.map(h => ({
           name: h.month.split(' ')[1], // e.g., "一月"
           PNL: h.pnl,
@@ -562,35 +579,35 @@ const FinancialsPage = () => {
                 <XAxis dataKey="name" stroke="#9ca3af" />
                 <YAxis yAxisId="left" stroke="#9ca3af" />
                 <YAxis yAxisId="right" orientation="right" stroke="#9ca3af" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'rgba(31, 41, 55, 0.95)', 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'rgba(31, 41, 55, 0.95)',
                     color: '#f3f4f6',
-                    border: 'none', 
+                    border: 'none',
                     borderRadius: '0.5rem',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                  }} 
+                  }}
                   labelStyle={{ color: '#f3f4f6' }}
                   itemStyle={{ color: '#f3f4f6' }}
                 />
                 <Legend />
-                <Line 
-                  yAxisId="left" 
-                  type="monotone" 
-                  dataKey="PNL" 
-                  stroke="#8884d8" 
-                  strokeWidth={2} 
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="PNL"
+                  stroke="#8884d8"
+                  strokeWidth={2}
                   name="每月損益 (PNL)"
                   dot={(props) => {
                     const { cx, cy, payload } = props;
                     if (payload?.isProjection) {
                       return (
-                        <circle 
-                          cx={cx} 
-                          cy={cy} 
-                          r={5} 
-                          fill="#8884d8" 
-                          stroke="#fff" 
+                        <circle
+                          cx={cx}
+                          cy={cy}
+                          r={5}
+                          fill="#8884d8"
+                          stroke="#fff"
                           strokeWidth={3}
                           strokeDasharray="2 2"
                           opacity={0.9}
@@ -600,23 +617,23 @@ const FinancialsPage = () => {
                     return <circle cx={cx} cy={cy} r={3} fill="#8884d8" />;
                   }}
                 />
-                <Line 
-                  yAxisId="right" 
-                  type="monotone" 
-                  dataKey="Employees" 
-                  stroke="#82ca9d" 
-                  strokeWidth={2} 
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="Employees"
+                  stroke="#82ca9d"
+                  strokeWidth={2}
                   name="員工人數"
                   dot={(props) => {
                     const { cx, cy, payload } = props;
                     if (payload?.isProjection) {
                       return (
-                        <circle 
-                          cx={cx} 
-                          cy={cy} 
-                          r={5} 
-                          fill="#82ca9d" 
-                          stroke="#fff" 
+                        <circle
+                          cx={cx}
+                          cy={cy}
+                          r={5}
+                          fill="#82ca9d"
+                          stroke="#fff"
                           strokeWidth={3}
                           strokeDasharray="2 2"
                           opacity={0.9}
@@ -626,12 +643,12 @@ const FinancialsPage = () => {
                     return <circle cx={cx} cy={cy} r={3} fill="#82ca9d" />;
                   }}
                 />
-                <Line 
-                  yAxisId="right" 
-                  type="monotone" 
-                  dataKey="Properties" 
-                  stroke="#ffc658" 
-                  strokeWidth={2} 
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="Properties"
+                  stroke="#ffc658"
+                  strokeWidth={2}
                   name="物業數量"
                 />
               </LineChart>
@@ -641,7 +658,7 @@ const FinancialsPage = () => {
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">核心指標</h2>
             <div className="space-y-4">
-               <div className="flex items-center">
+              <div className="flex items-center">
                 <BuildingOfficeIcon className="h-8 w-8 text-blue-500" />
                 <div className="ml-4">
                   <p className="text-sm text-gray-500">總物業數</p>
@@ -687,18 +704,18 @@ const FinancialsPage = () => {
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis 
-                  dataKey="name" 
+                <XAxis
+                  dataKey="name"
                   tick={{ fontSize: 12 }}
                   className="text-gray-600 dark:text-gray-300"
                 />
-                <YAxis 
+                <YAxis
                   tick={{ fontSize: 12 }}
                   className="text-gray-600 dark:text-gray-300"
                 />
-                <Tooltip 
+                <Tooltip
                   formatter={(value, name) => [
-                    formatCurrency(value), 
+                    formatCurrency(value),
                     name === 'profit' ? '淨利潤' : name === 'cost' ? '成本' : '理論收入'
                   ]}
                   labelFormatter={(label) => `物業: ${label}`}
@@ -739,19 +756,19 @@ const FinancialsPage = () => {
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis 
-                  dataKey="month" 
+                <XAxis
+                  dataKey="month"
                   tick={{ fontSize: 12 }}
                   className="text-gray-600 dark:text-gray-300"
                 />
-                <YAxis 
+                <YAxis
                   tick={{ fontSize: 12 }}
                   className="text-gray-600 dark:text-gray-300"
                   tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
                 />
-                <Tooltip 
+                <Tooltip
                   formatter={(value, name) => [
-                    formatCurrency(value), 
+                    formatCurrency(value),
                     '總實收租金'
                   ]}
                   labelFormatter={(label) => `月份: ${label}`}
@@ -767,8 +784,8 @@ const FinancialsPage = () => {
                 <Legend />
                 <Bar dataKey="rentCollected" name="總實收租金">
                   {historicalData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
+                    <Cell
+                      key={`cell-${index}`}
                       fill={entry.isProjection ? '#60a5fa' : '#3b82f6'}
                       opacity={entry.isProjection ? 0.7 : 1}
                     />
@@ -791,73 +808,73 @@ const FinancialsPage = () => {
 
         {/* Property-wise Financial Summary */}
         <section className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">各物業財務摘要</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">物業</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">每月成本</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總收入 (理論)</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">淨利潤/虧損</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">入住率</th>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">各物業財務摘要</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">物業</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">每月成本</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總收入 (理論)</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">淨利潤/虧損</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">入住率</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {propertySummary.map((prop) => (
+                  <tr key={prop.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{prop.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-red-500">{formatCurrency(prop.cost || 0)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-green-500">{formatCurrency(prop.theoreticalRevenue || 0)}</td>
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${(prop.profit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {formatCurrency(prop.profit || 0)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{prop.occupancy}</td>
                   </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {propertySummary.map((prop) => (
-                    <tr key={prop.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{prop.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-500">{formatCurrency(prop.cost || 0)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-500">{formatCurrency(prop.theoreticalRevenue || 0)}</td>
-                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${(prop.profit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        {formatCurrency(prop.profit || 0)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{prop.occupancy}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         {/* Historical Data Table */}
         <section className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">每月快照</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">月份</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總實收租金</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總成本</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">每月損益 (PNL)</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">員工人數</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">物業數量</th>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">每月快照</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">月份</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總實收租金</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">總成本</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">每月損益 (PNL)</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">員工人數</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">物業數量</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {historicalData.map((item) => (
+                  <tr key={item.month} className={item.isProjection ? 'bg-blue-50 dark:bg-blue-900/20' : ''}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                      {item.month}
+                      {item.isProjection && (
+                        <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 animate-pulse">
+                          預計
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.rentCollected}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.totalCosts}</td>
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${item.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {formatCurrency(item.pnl)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.employees}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.properties}</td>
                   </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {historicalData.map((item) => (
-                    <tr key={item.month} className={item.isProjection ? 'bg-blue-50 dark:bg-blue-900/20' : ''}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                        {item.month}
-                        {item.isProjection && (
-                          <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 animate-pulse">
-                            預計
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.rentCollected}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.totalCosts}</td>
-                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${item.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        {formatCurrency(item.pnl)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.employees}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.properties}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       </div>
     </div>

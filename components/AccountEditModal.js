@@ -28,19 +28,19 @@ const AccountEditModal = ({ isOpen, onClose, accountInfo, onSave }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         // Parse employee names from text
         const employeeNames = employeeNamesText
             .split(',')
             .map(name => name.trim())
             .filter(name => name.length > 0);
-        
+
         const updatedInfo = {
             ...formData,
             employee_names: employeeNames,
             rental_amount: parseFloat(formData.rental_amount) || 0
         };
-        
+
         onSave(updatedInfo);
     };
 
@@ -146,6 +146,7 @@ const AccountEditModal = ({ isOpen, onClose, accountInfo, onSave }) => {
                         required
                     >
                         <option value={1}>1個月 (月租)</option>
+                        <option value={2}>2個月</option>
                         <option value={3}>3個月 (季租)</option>
                         <option value={6}>6個月 (半年租)</option>
                         <option value={12}>12個月 (年租)</option>

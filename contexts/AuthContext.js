@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged 
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
@@ -39,13 +39,13 @@ export const AuthProvider = ({ children }) => {
   // Get user role based on email
   const getUserRole = (user) => {
     if (!user) return null;
-    
+
     if (adminEmails.includes(user.email)) {
       return 'admin';
     } else if (editorEmails.includes(user.email)) {
       return 'editor';
     }
-    
+
     return null; // Unauthorized user
   };
 
@@ -68,30 +68,32 @@ export const AuthProvider = ({ children }) => {
   // Check if user can access a specific page
   const canAccessPage = (user, page) => {
     const role = getUserRole(user);
-    
+
     if (role === 'admin') {
       return true; // Admins can access all pages
     }
-    
+
     if (role === 'editor') {
-      // Editors can only access invoices and employees pages
+      // Editors can only access invoices, employees, and invoice details pages
       const allowedPages = ['/invoices', '/employees'];
-      return allowedPages.includes(page);
+      if (allowedPages.includes(page) || page.startsWith('/invoice-detail/')) {
+        return true;
+      }
     }
-    
+
     return false; // Unauthorized users can't access any pages
   };
 
   // Get default landing page based on role
   const getDefaultPage = (user) => {
     const role = getUserRole(user);
-    
+
     if (role === 'admin') {
       return '/'; // Admin goes to homepage
     } else if (role === 'editor') {
       return '/invoices'; // Editor goes to invoices page
     }
-    
+
     return '/login'; // Unauthorized users go to login
   };
 
